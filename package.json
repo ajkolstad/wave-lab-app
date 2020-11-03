@@ -1,0 +1,27 @@
+{
+  "name": "wave-lab-app",
+  "version": "1.0.0",
+  "description": "Website for wave lab app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "handlebars views/postTemplate.handlebars -f public/postTemplate.js",
+    "start": "node server.js",
+    "prestart": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ajkolstad/wave-lab-app.git"
+  },
+  "author": "Alex Kolstad",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ajkolstad/wave-lab-app/issues"
+  },
+  "homepage": "https://github.com/ajkolstad/wave-lab-app#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-handlebars": "^3.0.0",
+    "handlebars": "^4.7.6"
+  }
+}
