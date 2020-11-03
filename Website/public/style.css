@@ -8,6 +8,8 @@ body {
 
 header {
   background-color: rgb(215, 63, 9);
+  align-items: center;
+  position: relative;
 }
 
 .title-bar-container {
@@ -21,9 +23,10 @@ header {
   display: flex;
   justify-content: space-around;
   margin: 0 auto;
-  min-width: 600px;
+  min-width: 700px;
   max-width: 1000px;
 }
+
 
 .title-bar-text-container {
   margin: 0 0 0 20px;
@@ -32,6 +35,7 @@ header {
   display: flex;
   justify-content: space-around;
   margin: 0 auto;
+  padding-top: 30px;
 }
 
 .title-bar-text-container a {
@@ -42,9 +46,7 @@ header {
   margin: 0 0 0 20px;
   list-style: none;
   text-decoration: none;
-  display: flex;
-  justify-content: space-around;
-  margin: 0 auto;
+  padding-right: 30px;
 }
 
 main {
@@ -252,4 +254,21 @@ main {
 /*Live view stuff*/
 
 .live-container {
+  align-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(512px, 1fr));
+  grid-gap: 1em;
+  padding-bottom: 15px;
+}
+
+.live-viewpage-container {
+  align-content: center;
+}
+
+.video-title {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(255, 255, 255);
+  font-size: 27px;
+  font-weight: 200;
+  text-decoration: none;
 }
