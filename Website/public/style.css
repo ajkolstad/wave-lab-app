@@ -272,3 +272,23 @@ main {
   font-weight: 200;
   text-decoration: none;
 }
+
+/* Login authentication stuff */
+.login {
+  width: 40%;
+  align-self: center;
+  background-color: slategrey;
+  border: 1px solid gray;
+}
+
+.login-box {
+  padding: 5px;
+}
+
+.login-input-label {
+  width: 20%;
+}
+
+.login-input-field{
+  width: 80%;
+}
