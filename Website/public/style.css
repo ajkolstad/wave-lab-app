@@ -276,7 +276,7 @@ main {
 /* Login authentication stuff */
 .login-form {
   width: 40%;
-  align-self: center;
+  align-content: center;
   background-color: slategrey;
   border: 1px solid gray;
   border-style: outset;
@@ -333,7 +333,8 @@ main {
   margin: auto;
   padding: 20px;
   border: 1px solid #888;
-  width: 100%;
+  width: 80%;
+  align-self: center;
 }
 
 /* The Close Button */
