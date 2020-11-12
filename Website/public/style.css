@@ -351,3 +351,18 @@ main {
   text-decoration: none;
   cursor: pointer;
 }
+
+/*Set target water level*/
+.target-level-input-box {
+  width: 80%;
+
+}
+
+.target-input-field {
+  width: 40%;
+}
+
+.submit-target-button {
+  margin-top: 1em;
+  width: 10%;
+}
