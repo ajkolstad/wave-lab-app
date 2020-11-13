@@ -390,3 +390,18 @@ button {
   font-size: 30px;
   font-weight: 300;
 }
+
+/*Set target water level*/
+.target-level-input-box {
+  width: 80%;
+
+}
+
+.target-input-field {
+  width: 20%;
+}
+
+.submit-target-button {
+  margin-top: 1em;
+  width: 10%;
+}
