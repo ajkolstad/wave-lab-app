@@ -21,26 +21,22 @@
           <li><a href="/live">Live Views</a></li>
           <li><button id="login-modal-button">Login</button></li>
           <div id="login-modal" class="modal">
-            <div class="page-title">
-                <h1>Login</h1>
-            </div>
+            
             <div class="modal-content">
+                
                 <span class="close">&times;</span>
                 <div>
                     <div class="login-form">
+                      <div class="input-title">
+                        <h1>Sign in to Wave Lab</h1>
+                      </div>
                         <form action="" method="POST">
                             <div class="login-box">
-                                <div class="login-input-label">
-                                    <label>Username</label>
-                                </div>
-                                <input type="text" name="username" class="login-input-field" required="required"/>
+                                <input type="text" name="username" class="login-input-field" placeholder="Username" required="required"/>
                             </div>
 
                             <div class="login-box">
-                                <div class="login-input-label">
-                                    <label>Password</label>
-                                </div>
-                                <input type="password" name="password" class="login-input-field" required="required"/>
+                                <input type="password" name="password" class="login-input-field" placeholder="Password" required="required"/>
                             </div>
                             
                             <center><button name="login" class="login-button"></span>Login</button></center>
