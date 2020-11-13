@@ -100,11 +100,10 @@ button {
 
 .pool-name {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  color: rgb(255, 255, 255);
+  color: rgb(255, 0, 0);
   font-size: 40px;
   font-weight: 400;
   text-decoration: none;
-  
 }
 
 .pool-name-in-between {
@@ -403,5 +402,20 @@ button {
 
 .submit-target-button {
   margin-top: 1em;
-  width: 10%;
+  color: rgb(255, 255, 255);
+  font-size: 20px;
+  font-weight: 300;
+}
+
+.target-level-input-box input[type="text"], textarea {
+  background-color : rgb(26, 26, 29);
+  border: none;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(166, 166, 166);
+  font-size: 20px;
+  font-weight: 300;
+}
+
+.target-level-input-box input[type="text"] {
+  width: 110px;
 }
