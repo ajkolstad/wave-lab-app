@@ -2,6 +2,7 @@ CREATE TABLE User
 (
   Username VARCHAR(20) NOT NULL,
   Password VARCHAR(20) NOT NULL,
+  Name VARCHAR(40) NOT NULL,
   PRIMARY KEY (Username)
 );
 

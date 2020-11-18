@@ -2,8 +2,8 @@
 	require_once 'conn.php';
  
 	if(ISSET($_POST['login'])){
-		$username = $_POST['username'];
-		$password = $_POST['password'];
+		$Username = $_POST['Username'];
+		$Password = $_POST['Password'];
  
 		$query=$conn->query("SELECT COUNT(*) as count FROM `user` WHERE `username`='$username' AND `password`='$password'");
 		$row=$query->fetchArray();
