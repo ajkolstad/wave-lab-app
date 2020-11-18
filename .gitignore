@@ -1,4 +1,4 @@
 node_modules/
 .DS_Store
 XAMPP/*
-!XAMPP/mysql/data/
+!XAMPP/mysql/
