@@ -8,6 +8,7 @@
         <div class="page-content">
             <div class="fill-target-container">
                 <span class="pool-name-in-between">Current Fill Target </span><span class="target-level">3.87m</span>
+                {{#if message}}
                 <div>
                     <form action="" method="POST">
                         <div class="target-level-input-box">
@@ -16,6 +17,7 @@
                         </div>                        
                     </form>
                 </div>
+                {{/if}}
             </div>
             <div class="eta-container">
                 <span class="eta-text">ETA </span><span class="eta">3hrs</span>

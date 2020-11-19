@@ -11,19 +11,21 @@ function authenticateUser(req) {
     try {
         var username = req.cookies['username'];
         var password = req.cookies['password'];
-        console.log("Username: " + username + " password: " + password + "\n");
+        //console.log("[Webserver] User: \"" + username + "\" Authenticating...");
         //var calcToken = jwt.sign({ username }, process.env.JWT_SECRET, {
         //    expiresIn: process.env.JWT_EXPIRES_IN
         //});
         //console.log("Calctoken: " + calcToken);
         if (username && password) {
+            console.log("[Webserver] User: \"" + username + "\" Authenticated");
             return true;
         } else {
+            console.log("[Webserver] Authentication Failed: No User Found");
             return false;
         }
 
     } catch (error) {
-        console.log("failed");
+        console.log("[Webserver] Authentication Failed: No User Found");
         return false;
     }
     return false;
@@ -61,12 +63,23 @@ router.get("/live", (req, res) => {
 });
 
 router.get("/large-wave-flume", (req, res) => {
-
-    res.status(200).render(`layouts${req.url}`);
+    if (authenticateUser(req)) {
+        res.status(200).render(`layouts${req.url}`, {
+            message: "admin"
+        });
+    } else {
+        res.status(200).render(`layouts${req.url}`);
+    }
 });
 
 router.get("/directional-wave-basin", (req, res) => {
-    res.status(200).render(`layouts${req.url}`);
+    if (authenticateUser(req)) {
+        res.status(200).render(`layouts${req.url}`, {
+            message: "admin"
+        });
+    } else {
+        res.status(200).render(`layouts${req.url}`);
+    }
 });
 
 module.exports = router;
