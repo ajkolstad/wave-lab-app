@@ -1,0 +1,421 @@
+/*Wholistic Stuff*/
+body {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  margin: 0;
+  background-color: rgb(26, 26, 29);
+  color: rgb(255, 255, 255);
+}
+
+header {
+  background-color: rgb(215, 63, 9);
+  align-items: center;
+  position: relative;
+}
+
+.title-bar-container {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(214, 214, 214);
+  font-size: 20px;
+  font-weight: 100;
+  margin: 0 0 0 20px;
+  list-style: none;
+  text-decoration: none;
+  display: flex;
+  justify-content: space-around;
+  margin: 0 auto;
+  min-width: 700px;
+  max-width: 1000px;
+}
+
+
+.title-bar-text-container {
+  margin: 0 0 0 20px;
+  list-style: none;
+  text-decoration: none;
+  display: flex;
+  justify-content: space-around;
+  margin: 0 auto;
+  padding-top: 30px;
+}
+
+.title-bar-text-container a {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(255, 255, 255);
+  font-size: 20px;
+  font-weight: 400;
+  margin: 0 0 0 20px;
+  list-style: none;
+  text-decoration: none;
+  padding-right: 30px;
+}
+
+main {
+  width: 60%;
+  margin: 0 auto;
+}
+
+.page-title {
+  text-align: center;
+}
+
+.page-title h1 {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(255, 255, 255);
+  font-size: 60px;
+  font-weight: 300;
+}
+
+.page-title span {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(255, 255, 255);
+  font-size: 40px;
+  font-weight: 400;
+}
+
+
+
+button {
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(255, 255, 255);
+  font-size: 20px;
+  font-weight: 400;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.login-input-label {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(255, 255, 255);
+  font-size: 25px;
+  font-weight: 250;
+}
+
+/*Index Stuff*/
+.page-content a {
+  text-decoration: none;
+}
+
+.pool-name {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(255, 0, 0);
+  font-size: 40px;
+  font-weight: 400;
+  text-decoration: none;
+}
+
+.pool-name-in-between {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(255, 255, 255);
+  font-size: 40px;
+  font-weight: 400;
+  text-decoration: none;
+}
+
+.fill-level {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(255, 255, 255);
+  font-size: 40px;
+  font-weight: 400;
+  text-decoration: none;
+}
+
+/*Pool Pages*/
+
+.fill-target-container {
+  padding-top: 40px;
+}
+
+.target-level {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(255, 0, 0);
+  font-size: 40px;
+  font-weight: 400;
+}
+
+.eta-container {
+  padding-top: 40px;
+}
+
+.eta-text {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(255, 192, 50);
+  font-size: 40px;
+  font-weight: 400;
+}
+
+.eta {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(255, 255, 255);
+  font-size: 40px;
+  font-weight: 400;
+}
+
+.graph-information-container {
+  padding-top: 80px;
+}
+
+.graph-container {
+  background-color: rgb(215, 63, 9);
+  padding-bottom: 80px;
+}
+
+.graph-container h3 {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(255, 255, 255);
+  font-size: 40px;
+  font-weight: 400;
+}
+
+.stat-container {
+  display: flex;
+  justify-content: space-around;
+  margin: 0 auto;
+  padding-top: 20px;
+}
+
+
+.last-filled-text {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(255, 255, 255);
+  font-size: 27px;
+  font-weight: 400;
+}
+
+.last-filled {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(255, 255, 255);
+  font-size: 27px;
+  font-weight: 400;
+}
+
+.last-filled-time {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(166, 166, 166);
+  font-size: 27px;
+  font-weight: 200;
+  padding: 0;
+  margin: 0;
+}
+
+.fill-time-container {
+  width: 50%;
+}
+
+.fill-time-text {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(21, 135, 251);
+  font-size: 20px;
+  font-weight: 400;
+  padding: 0;
+  margin: 0;
+}
+
+.fill-time {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(255, 255, 255);
+  font-size: 20px;
+  font-weight: 400;
+  padding: 0;
+  margin: 0;
+  
+}
+
+.water-used-container {
+  width: 50%;
+}
+
+.water-used-text {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(102, 213, 250);
+  font-size: 20px;
+  font-weight: 400;
+  padding: 0;
+  margin: 0;
+}
+
+.water-used {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(255, 255, 255);
+  font-size: 20px;
+  font-weight: 400;
+  padding: 0;
+  margin: 0;
+}
+
+.live-view-container {
+  padding-top: 70px;
+}
+
+.live-view-text {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(255, 255, 255);
+  font-size: 27px;
+  font-weight: 400;
+  padding-bottom: 20px;
+}
+
+.live-view {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+}
+
+.live-view iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/*Live view stuff*/
+
+.live-container {
+  align-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(512px, 1fr));
+  grid-gap: 1em;
+  padding-bottom: 15px;
+}
+
+.live-viewpage-container {
+  align-content: center;
+}
+
+.video-title {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(255, 255, 255);
+  font-size: 27px;
+  font-weight: 200;
+  text-decoration: none;
+}
+
+/* Login authentication stuff */
+.login-form {
+  align-content: center;
+  background-color: rgb(26, 26, 29);
+  padding: 10px; 
+  border: 3px rgb(215, 63, 9);;
+  border-radius: 20px;
+}
+
+.login-box {
+  padding: 5px;
+}
+
+.login-input-label {
+  width: 20%;
+  padding-bottom: 10px;
+}
+
+.login-input-field{
+  width: 100%;
+  border-top-style: inset;
+  height: 20px;
+}
+
+.login-button {
+  border-radius: 5px;
+  margin-top: 1em;
+  height: 2em;
+  width: 4em;
+  color: white;
+  font-weight: bold;
+}
+
+/* Login Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.75); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  margin: auto;
+  padding: 20px;
+  width: 337px;
+  align-self: center;
+  border-radius: 25px;
+  align-items: center;
+}
+
+.login-input-field {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(26, 26, 29);
+  font-size: 20px;
+  font-weight: 200;
+  height: 30px;
+  width: 300px;
+  border-radius: 7px;
+}
+
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  padding-right: 15px;
+  padding-top: 5px;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.input-title {
+  text-align: center;
+}
+
+.input-title h1 {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(255, 255, 255);
+  font-size: 30px;
+  font-weight: 300;
+}
+
+/*Set target water level*/
+.target-level-input-box {
+  width: 80%;
+
+}
+
+.target-input-field {
+  width: 20%;
+}
+
+.submit-target-button {
+  margin-top: 1em;
+  color: rgb(255, 255, 255);
+  font-size: 20px;
+  font-weight: 300;
+}
+
+.target-level-input-box input[type="text"], textarea {
+  background-color : rgb(26, 26, 29);
+  border: none;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgb(166, 166, 166);
+  font-size: 20px;
+  font-weight: 300;
+}
+
+.target-level-input-box input[type="text"] {
+  width: 110px;
+}

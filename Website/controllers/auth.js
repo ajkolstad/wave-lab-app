@@ -1,5 +1,6 @@
 var mysql = require('mysql');
 var env = require('dotenv');
+var jwt = require('jsonwebtoken');
 
 
 env.config({ path: './config.env'})
@@ -21,40 +22,42 @@ exports.login = async (req, res) => {
                 message: 'Please enter an Username and Password'
             })
         }
+        console.log("Webserver: User: \"" + username + "\" attempting login...");
         database.query('SELECT * FROM user WHERE username = ?',[username], async (error, results) => {
-            console.log(results);
-            console.log("yeet1");
-            if(!results || password != results[0].password) {
-                console.log("yeet2");
+            console.log("Database: Checking for Username: " + username);
+            //console.log(results);
+            if(results.length < 1) {
                     res.status(401).render(`layouts${"/login"}`, {
                         message: 'Incorrect Username or Password'
                     });
-                    console.log("yeet3.5");
+                    console.log("Database: Username " + username + " not found");
+            } else if(password != results[0].Password) {
+                res.status(401).render(`layouts${"/login"}`, {
+                    message: 'Incorrect Username or Password'
+                });
+                console.log("Webserver: Incorrect password for Username: " + username);
             } else {
-                var id = results[0].username;
+                console.log("Webserver: Login successful")
+                var id = results[0].Username;
+                //console.log("Username: " + id);
                 var token = jwt.sign({ id }, process.env.JWT_SECRET, {
                     expiresIn: process.env.JWT_EXPIRES_IN
                 });
-                console.log("Token: " + token);
-
+                //console.log("Token: " + token);
                 var cookieOptions = {
                     expires: new Date(
                         Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000
                     ),
                     httpOnly: true
                 };
-                res.cookie('jwt', token, cookieOptions);
-                res.status(200).redirect(`layouts${"/"}`);
+                console.log("Webserver: Cookie created for User: " + username);
+                res.cookie('Snickerdoodle', token, cookieOptions);
+                res.status(200).render(`layouts${"/"}`);
             }
         });
     } catch (error) {
         res.status(401).render(`layouts${"/login"}`, {
             message: 'Incorrect Username or Password'
         });
-        console.log("yeet4");
     }
-    res.status(401).render(`layouts${"/login"}`, {
-        message: 'Incorrect Username or Password'
-    });
-    console.log("yeet5");
 }

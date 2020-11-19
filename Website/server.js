@@ -7,6 +7,8 @@ var app = express();
 var env = require('dotenv');
 var cookieParser = require('cookie-parser');
 
+app.use(cookieParser());
+
 env.config({ path: './config.env'})
 
 
@@ -28,11 +30,11 @@ database.connect(function(error) {
 
 app.use(express.urlencoded({ extended: false}));
 
-app.use(express.json())
+app.use(express.json());
 
-//app.use(cookieParser);
 
-app.engine('handlebars', exphbs({ defaultLayout: 'newmain' }));
+
+app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
 
 app.set('view engine', 'handlebars');
 
