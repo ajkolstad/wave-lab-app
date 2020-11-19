@@ -1,40 +1,15 @@
-nav {
-    background-color: rgb(215, 63, 9);
-    display: flex;
-    justify-content: space-between;
-}
 
-nav ul {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding-top: 12px;
-}
-
-nav li {
-    list-style: none;
-}
-
-nav li a {
-    text-decoration: none;
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    color: white;
-    font-size: 20px;
-    font-weight: 100;
-    padding: 5px 20px;
-}
-
-nav li a:hover {
-    color: rgb(200, 200, 200);
-    text-decoration: none;
-}
 
 html, body {
     height: 100%;
 }
 
 body {
-    background-color: rgb(26, 26, 29);
+    background-color: #343a40;
+}
+
+h1 {
+    color: white;
 }
 
 
