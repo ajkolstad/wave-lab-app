@@ -15,7 +15,12 @@
             <li><a href="/large-wave-flume">Large Wave Flume</a></li>
             <li><a href="/directional-wave-basin">Directional Wave Basin</a></li>
             <li><a href="/live">Live Views</a></li>
-            <li><a href="/login">Login</a></li>
+            {{#if message}}
+              <li><a href="/logout">Log Out</a></li>
+            {{else}}
+              <li><a href="/login">Login</a></li>
+            {{/if}}
+            
           </ul>
       </nav>
     {{{body}}}

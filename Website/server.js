@@ -21,10 +21,10 @@ var database = mysql.createConnection({
 
 database.connect(function(error) {
     if(!!error) {
-        console.log('Database: Error connecting to Database');
+        console.log('[Database]  Error connecting to Database');
         console.log(error);
     } else {
-        console.log('Database: Connected to Database');
+        console.log('[Database]  Connected to Database');
     }
 })
 
@@ -41,7 +41,7 @@ app.set('view engine', 'handlebars');
 app.use(express.static('public'));
 
 app.listen(port, function () {
-  console.log("Webserver: Server listening on port ", port);
+  console.log("[Webserver] Server listening on port ", port);
 });
 
 
@@ -50,7 +50,6 @@ app.listen(port, function () {
 ///Routes
 app.use('/', require('./routes/pages'));
 app.use('/auth', require('./routes/auth'));
-
 
 
 /*
