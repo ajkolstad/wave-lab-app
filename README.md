@@ -1,7 +1,10 @@
 # How to start:
  - pull files
- - Install XAMPP and replace the /mqsql/ with the one prodiced from this repo
+ - Install XAMPP launch Apache and MySQL
  - open terminal and type "cd Website", then "node server.js"
+ - go to localhost/phpmyadmin, make a new database and import the databaseSetp.sql
+ - You may have to add each table by themselves, with the User table being added last
+ - Make your own user
 
 # How to access:
  - Site will be at localhost:3000
