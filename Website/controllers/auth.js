@@ -1,6 +1,7 @@
 var mysql = require('mysql');
 var env = require('dotenv');
 
+
 env.config({ path: './config.env'})
 
 var database = mysql.createConnection({
@@ -22,10 +23,13 @@ exports.login = async (req, res) => {
         }
         database.query('SELECT * FROM user WHERE username = ?',[username], async (error, results) => {
             console.log(results);
-            if(results  != null || password != results[0].password) {
+            console.log("yeet1");
+            if(!results || password != results[0].password) {
+                console.log("yeet2");
                     res.status(401).render(`layouts${"/login"}`, {
                         message: 'Incorrect Username or Password'
                     });
+                    console.log("yeet3.5");
             } else {
                 var id = results[0].username;
                 var token = jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -47,9 +51,10 @@ exports.login = async (req, res) => {
         res.status(401).render(`layouts${"/login"}`, {
             message: 'Incorrect Username or Password'
         });
-        console.log("yeet");
+        console.log("yeet4");
     }
     res.status(401).render(`layouts${"/login"}`, {
         message: 'Incorrect Username or Password'
     });
+    console.log("yeet5");
 }

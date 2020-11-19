@@ -12,6 +12,7 @@ CREATE TABLE Target_Depth
   Target_Flume_Name INT NOT NULL,
   Tdate DATE NOT NULL,
   Username VARCHAR(255) NOT NULL,
+  isComplete INT NOT NULL,
   PRIMARY KEY (Tdate),
   FOREIGN KEY (Username) REFERENCES User(Username)
 );
