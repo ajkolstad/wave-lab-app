@@ -19,7 +19,7 @@ CREATE TABLE Target_Depth
 
 CREATE TABLE Depth_Data
 (
-  Ddate DATE NOT NULL,
+  Ddate DATETIME NOT NULL,
   Depth FLOAT NOT NULL,
   Depth_Flume_Name INT NOT NULL,
   PRIMARY KEY (Ddate)
