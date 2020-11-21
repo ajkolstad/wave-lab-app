@@ -12,6 +12,8 @@ app.use(cookieParser());
 env.config({ path: './config.env'})
 
 
+
+
 var database = mysql.createConnection({
     host: process.env.DATABASE_HOST,
     user: process.env.DATABASE_USER,
@@ -34,7 +36,9 @@ app.use(express.json());
 
 
 
-app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
+app.engine('handlebars', exphbs({ 
+    defaultLayout: 'main',
+}));
 
 app.set('view engine', 'handlebars');
 
@@ -50,6 +54,8 @@ app.listen(port, function () {
 ///Routes
 app.use('/', require('./routes/pages'));
 app.use('/auth', require('./routes/auth'));
+
+
 
 
 /*
