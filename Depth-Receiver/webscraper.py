@@ -14,7 +14,7 @@ end = 0
 
 for index, char in enumerate(reversed(line)):
     if char == ',':
-        start = int(index)
+        start = int(index) - 1
         break
 
 for index, char in enumerate(reversed(line)):
