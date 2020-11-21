@@ -90,9 +90,8 @@ router.get("/", async (req, res) => {
         } else {
             basinText = "Currently " + directionalWaveBasinDepth + "m";
         }
-        basinProgText = "Filling to " + directionalWaveBasinTarget;
+        basinProgText = "Filling to " + directionalWaveBasinTarget + "m";
     }
-
     if (largeWaveFlumeTarget == -1) {
         if (largeWaveFlumeDepth == "error") {
             flumeText = "Error reading depth";
@@ -113,7 +112,7 @@ router.get("/", async (req, res) => {
         } else {
             flumeText = "Currently " + largeWaveFlumeDepth + "m";
         }
-        flumeProgText = "Filling to " + largeWaveFlumeTarget;
+        flumeProgText = "Filling to " + largeWaveFlumeTarget + "m";
     }
     
     
