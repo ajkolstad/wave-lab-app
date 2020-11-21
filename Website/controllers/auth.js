@@ -30,12 +30,12 @@ exports.login = async (req, res) => {
             //console.log(results);
             if(results.length < 1) {
                     res.status(401).render(`layouts${"/login"}`, {
-                        message: 'Incorrect Username or Password 1'
+                        message: 'Incorrect Username or Password'
                     });
                     console.log("[Database]  Username " + username + " not found");
             } else if(password != results[0].Password) {
                 res.status(401).render(`layouts${"/login"}`, {
-                    message: 'Incorrect Username or Password 2'
+                    message: 'Incorrect Username or Password'
                 });
                 console.log("[Webserver] Incorrect password for Username: " + username);
             } else {
@@ -62,7 +62,7 @@ exports.login = async (req, res) => {
         });
     } catch (error) {
         res.status(401).render(`layouts${"/login"}`, {
-            message: 'Incorrect Username or Password 3'
+            message: 'Incorrect Username or Password'
         });
     }
 };
