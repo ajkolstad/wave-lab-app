@@ -29,7 +29,7 @@ database.connect(function(error) {
     }
 })
 
-
+/*INSERT INTO `target_depth`(`Tdepth`, `Target_Flume_Name`, `Tdate`, `Username`, `isComplete`) VALUES ("2.78","1",CURRENT_TIMESTAMP(),"ajkolstad","0")*/
 
 function authenticateUser(req) {
     try {
@@ -54,7 +54,6 @@ function authenticateUser(req) {
     }
     return false;
 }
-
 
 router.get("/", async (req, res) => {
     directionalWaveBasinDepth = await getDepth(0);
@@ -115,9 +114,6 @@ router.get("/", async (req, res) => {
         flumeProgText = "Filling to " + largeWaveFlumeTarget + "m";
     }
     
-    
-    
-
     if (authenticateUser(req)) {
         res.status(200).render(`layouts${req.url}`, {
             message: "admin",
@@ -157,20 +153,110 @@ router.get("/live", (req, res) => {
     }
 });
 
-router.get("/large-wave-flume", (req, res) => {
+router.get("/large-wave-flume", async (req, res) => {
+    largeWaveFlumeDepth = await getDepth(1);
+    largeWaveFlumeTarget = await getTarget(1);
+    largeWaveFlumeTargetTime = await getTargetTime(1);
+    largeWaveFlumeTargetUser = await getTargetUser(1);
+
+    var flumeText = "";
+    var flumeProgText = "";
+    var flumeTimeText = "";
+    var flumeUserText = "";
+
+    if (largeWaveFlumeTarget == -1) {
+        if (largeWaveFlumeDepth == "error") {
+            flumeText = "Error reading depth";
+        } else {
+            flumeText = "Filled to " + largeWaveFlumeDepth + "m";
+        }
+        flumeProgText = "Completed filling";
+        flumeTimeText = "No time set";
+        flumeUserText = "No user set";
+    } else if (largeWaveFlumeTarget == "error") {
+        if (largeWaveFlumeDepth == "error") {
+            flumeText = "Error reading depth";
+        } else {
+            flumeText = "Currently " + largeWaveFlumeDepth + "m";
+        }
+        flumeProgText = "No job found";
+        flumeTimeText = "Error finding time";
+        flumeUserText = "Error finding user";
+    } else {
+        if (largeWaveFlumeDepth == "error") {
+            flumeText = "Error reading depth";
+        } else {
+            flumeText = "Currently " + largeWaveFlumeDepth + "m";
+        }
+        flumeProgText = "Filling to " + largeWaveFlumeTarget + "m";
+        flumeTimeText = "Set at " + largeWaveFlumeTargetTime;
+        flumeUserText = "Set by " + largeWaveFlumeTargetUser;
+    }
+    
+    
+    
+
     if (authenticateUser(req)) {
         res.status(200).render(`layouts${req.url}`, {
-            message: "admin"
+            message: "admin",
+            flumeDepth: flumeText,
+            flumeProg: flumeProgText,
+            flumeTime: flumeTimeText,
+            flumeUser: flumeUserText
         });
     } else {
         res.status(200).render(`layouts${req.url}`);
     }
 });
 
-router.get("/directional-wave-basin", (req, res) => {
+router.get("/directional-wave-basin", async (req, res) => {
+    directionalWaveBasinDepth = await getDepth(0);
+    directionalWaveBasinTarget = await getTarget(0);
+    directionalWaveBasinTargetTime = await getTargetTime(0);
+    directionalWaveBasinTargetUser = await getTargetUser(0);
+
+    var basinText = "";
+    var basinProgText = "";
+    var basinTimeText = "";
+    var basinUserText = "";
+
+    if (directionalWaveBasinTarget == -1) {
+        if (directionalWaveBasinDepth == "error") {
+            basinText = "Error reading depth";
+        } else {
+            basinText = "Filled to " + directionalWaveBasinDepth + "m";
+        }
+            
+        basinProgText = "Completed filling";
+        basinTimeText = "No time set";
+        basinUserText = "No user set";
+    } else if (directionalWaveBasinTarget == "error") {
+        if (directionalWaveBasinDepth == "error") {
+            basinText = "Error reading depth";
+        } else {
+            basinText = "Currently " + directionalWaveBasinDepth + "m";
+        }
+        basinProgText = "No job found";
+        basinTimeText = "Error finding time";
+        basinUserText = "Error finding user";
+    } else {
+        if (directionalWaveBasinTarget == "error") {
+            basinText = "Error reading depth";
+        } else {
+            basinText = "Currently " + directionalWaveBasinDepth + "m";
+        }
+        basinProgText = "Filling to " + directionalWaveBasinTarget + "m";
+        basinTimeText = "Set at " + directionalWaveBasinTargetTime;
+        basinUserText = "Set by " + directionalWaveBasinTargetUser;
+    }
+
     if (authenticateUser(req)) {
         res.status(200).render(`layouts${req.url}`, {
-            message: "admin"
+            message: "admin",
+            basinDepth: basinText,
+            basinProg: basinProgText,
+            basinTime: basinTimeText,
+            basinUser: basinUserText
         });
     } else {
         res.status(200).render(`layouts${req.url}`);
@@ -178,7 +264,6 @@ router.get("/directional-wave-basin", (req, res) => {
 });
 
 module.exports = router;
-
 
 async function getDepth(flumeNumber) {
     if (flumeNumber == 0) {
@@ -227,6 +312,60 @@ async function getTarget(flumeNumber) {
                     if(results.length < 1) resolve("error");
                     else if (results[0].isComplete == 1) resolve(-1);
                     else resolve(results[0].Tdepth);
+                });
+            } catch (error) {
+                resolve("error");
+            }
+        })
+    }
+    resolve("error");
+}
+
+async function getTargetTime(flumeNumber) {
+    if (flumeNumber == 0) {
+        return new Promise((resolve, reject) => {
+            try {
+                database.query('SELECT * FROM `target_depth` WHERE Target_Flume_Name = 0 ORDER BY Tdate DESC LIMIT 1',(error, results) => {
+                    if(results.length < 1) resolve("error");
+                    resolve(results[0].Tdate);
+                });
+            } catch (error) {
+                resolve("error");
+            }
+        })
+    } else {
+        return new Promise((resolve, reject) => {
+            try {
+                database.query('SELECT * FROM `target_depth` WHERE Target_Flume_Name = 1 ORDER BY Tdate DESC LIMIT 1',(error, results) => {
+                    if(results.length < 1) resolve("error");
+                    resolve(results[0].Tdate);
+                });
+            } catch (error) {
+                resolve("error");
+            }
+        })
+    }
+    resolve("error");
+}
+
+async function getTargetUser(flumeNumber) {
+    if (flumeNumber == 0) {
+        return new Promise((resolve, reject) => {
+            try {
+                database.query('SELECT * FROM `target_depth` WHERE Target_Flume_Name = 0 ORDER BY Tdate DESC LIMIT 1',(error, results) => {
+                    if(results.length < 1) resolve("error");
+                    resolve(results[0].Username);
+                });
+            } catch (error) {
+                resolve("error");
+            }
+        })
+    } else {
+        return new Promise((resolve, reject) => {
+            try {
+                database.query('SELECT * FROM `target_depth` WHERE Target_Flume_Name = 1 ORDER BY Tdate DESC LIMIT 1',(error, results) => {
+                    if(results.length < 1) resolve("error");
+                    resolve(results[0].Username);
                 });
             } catch (error) {
                 resolve("error");

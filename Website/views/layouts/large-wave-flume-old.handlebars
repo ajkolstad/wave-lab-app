@@ -1,0 +1,55 @@
+<link rel="stylesheet" href="/oldstyle.css">
+<body>
+    <main class="index">
+        <div class="page-title">
+            <h1>Large Wave Flume</h1>
+            <span class="fill-level">0.3225m</span>
+        </div>
+        <div class="page-content">
+            <div class="fill-target-container">
+                <span class="pool-name-in-between">Current Fill Target </span><span class="target-level">2.68m</span>
+                {{#if message}}
+                <div>
+                    <form action="" method="POST">
+                        <div class="target-level-input-box">
+                            <input type="text" name="target" class="target-input-field" placeholder="New Target" required="required"/>
+                            <button name="submit-target" class="submit-target-button"></span>Confirm</button>
+                        </div>                        
+                    </form>
+                </div>
+                {{/if}}
+            </div>
+            <div class="eta-container">
+                <span class="eta-text">ETA </span><span class="eta">3hrs</span>
+            </div>
+
+            <div class="graph-information-container">
+                <span class="last-filled-text">Last Filled to </span><span class="last-filled">6m</span>
+                <h2 class="last-filled-time">9:46</h2>
+                <div class="graph-container">
+                    <h3>This is where the graph goes</h3>
+                </div>
+                <div class="stat-container">
+                    <div class="fill-time-container">
+                        <h2 class="fill-time-text">Fill Time</h2>
+                        <h2 class="fill-time">12hr</h2>
+                    </div>
+                    <div class="water-used-container">
+                        <h2 class="water-used-text">Water Used</h2>
+                        <h2 class="water-used">20,000gal</h2>
+                    </div>
+                </div>
+
+            </div>
+            <div class="live-view-container">
+                <h2 class="live-view-text">Live View</h2>
+                <div class="live-view">
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/ciioaETC6wE?autoplay=1&mute=1&controls=0&modestbranding" frameborder="0" allowfullscreen></iframe>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</body>
+
+</html>

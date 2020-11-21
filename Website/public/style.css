@@ -1,16 +1,13 @@
 
-
-html, body {
-    height: 100%;
-}
-
-body {
-    background-color: #343a40;
-}
-
 h1 {
     color: white;
 }
+
+main {
+    width: 60%;
+    margin: 0 auto;
+}
+
 
 
 .text-center {
