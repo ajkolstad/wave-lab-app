@@ -149,7 +149,13 @@ router.get("/login", (req, res) => {
 });
 
 router.get("/live", (req, res) => {
-    res.status(200).render(`layouts${req.url}`);
+    if (authenticateUser(req)) {
+        res.status(200).render(`layouts${req.url}`, {
+            message: "admin"
+        });
+    } else {
+        res.status(200).render(`layouts${req.url}`);
+    }
 });
 
 router.get("/large-wave-flume", (req, res) => {
