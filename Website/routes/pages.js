@@ -123,7 +123,12 @@ router.get("/", async (req, res) => {
             flumeProg: flumeProgText
         });
     } else {
-        res.status(200).render(`layouts${req.url}`);
+        res.status(200).render(`layouts${req.url}`, {
+            basinDepth: basinText,
+            flumeDepth: flumeText,
+            basinProg: basinProgText,
+            flumeProg: flumeProgText
+        });
     }
     
 });
@@ -205,7 +210,12 @@ router.get("/large-wave-flume", async (req, res) => {
             flumeUser: flumeUserText
         });
     } else {
-        res.status(200).render(`layouts${req.url}`);
+        res.status(200).render(`layouts${req.url}`, {
+            flumeDepth: flumeText,
+            flumeProg: flumeProgText,
+            flumeTime: flumeTimeText,
+            flumeUser: flumeUserText
+        });
     }
 });
 
@@ -259,7 +269,12 @@ router.get("/directional-wave-basin", async (req, res) => {
             basinUser: basinUserText
         });
     } else {
-        res.status(200).render(`layouts${req.url}`);
+        res.status(200).render(`layouts${req.url}`, {
+            basinDepth: basinText,
+            basinProg: basinProgText,
+            basinTime: basinTimeText,
+            basinUser: basinUserText
+        });
     }
 });
 
