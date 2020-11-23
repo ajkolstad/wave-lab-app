@@ -44,8 +44,18 @@ app.set('view engine', 'handlebars');
 
 app.use(express.static('public'));
 
+// Runs as soon as the server turns on and every 10 minutes(600000 ms) adds the current depth of each flume to the database
+/*async function continously_get_depth(){
+    setTimeout(function(){
+        console.log("2");
+        
+        continously_get_depth();
+    }, 30000);
+}*/
+
 app.listen(port, function () {
   console.log("[Webserver] Server listening on port ", port);
+  //continously_get_depth();
 });
 
 
