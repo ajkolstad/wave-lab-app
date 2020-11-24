@@ -10,3 +10,6 @@
 # How to access:
  - Site will be at localhost:3000
  - PHPMyadmin will be at localhost/phpmyadmin
+    DWB : 0
+    LWF : 1
+
