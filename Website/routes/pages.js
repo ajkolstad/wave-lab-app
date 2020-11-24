@@ -4,6 +4,7 @@ router.use(require('cookie-parser')());
 var env = require('dotenv');  /*  */
 var jwt = require('jsonwebtoken');
 var mysql = require('mysql');
+const { VM } = require('handlebars');
 
 env.config({ path: './config.env'})
 
