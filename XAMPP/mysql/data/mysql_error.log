@@ -262,3 +262,62 @@ InnoDB: using atomic writes.
 2020-11-21 10:45:10 0 [Note] Plugin 'FEEDBACK' is disabled.
 2020-11-21 10:45:10 0 [Note] Server socket created on IP: '::'.
 2020-11-21 10:45:10 0 [Note] InnoDB: Buffer pool(s) load completed at 201121 10:45:10
+InnoDB: using atomic writes.
+2020-11-21 13:26:44 0 [Note] InnoDB: Mutexes and rw_locks use Windows interlocked functions
+2020-11-21 13:26:44 0 [Note] InnoDB: Uses event mutexes
+2020-11-21 13:26:44 0 [Note] InnoDB: Compressed tables use zlib 1.2.11
+2020-11-21 13:26:44 0 [Note] InnoDB: Number of pools: 1
+2020-11-21 13:26:44 0 [Note] InnoDB: Using SSE2 crc32 instructions
+2020-11-21 13:26:44 0 [Note] InnoDB: Initializing buffer pool, total size = 16M, instances = 1, chunk size = 16M
+2020-11-21 13:26:44 0 [Note] InnoDB: Completed initialization of buffer pool
+2020-11-21 13:26:44 0 [Note] InnoDB: Starting crash recovery from checkpoint LSN=464911
+2020-11-21 13:26:44 0 [Note] InnoDB: 128 out of 128 rollback segments are active.
+2020-11-21 13:26:44 0 [Note] InnoDB: Removed temporary tablespace data file: "ibtmp1"
+2020-11-21 13:26:44 0 [Note] InnoDB: Creating shared tablespace for temporary tables
+2020-11-21 13:26:44 0 [Note] InnoDB: Setting file 'C:\Users\ajkol\Documents\School\CS 461\wave-lab-app\XAMPP\mysql\data\ibtmp1' size to 12 MB. Physically writing the file full; Please wait ...
+2020-11-21 13:26:44 0 [Note] InnoDB: File 'C:\Users\ajkol\Documents\School\CS 461\wave-lab-app\XAMPP\mysql\data\ibtmp1' size is now 12 MB.
+2020-11-21 13:26:44 0 [Note] InnoDB: Waiting for purge to start
+2020-11-21 13:26:44 0 [Note] InnoDB: 10.4.16 started; log sequence number 464920; transaction id 788
+2020-11-21 13:26:44 0 [Note] InnoDB: Loading buffer pool(s) from C:\Users\ajkol\Documents\School\CS 461\wave-lab-app\XAMPP\mysql\data\ib_buffer_pool
+2020-11-21 13:26:44 0 [Note] Plugin 'FEEDBACK' is disabled.
+2020-11-21 13:26:44 0 [Note] Server socket created on IP: '::'.
+InnoDB: using atomic writes.
+2020-11-21 21:42:13 0 [Note] InnoDB: Mutexes and rw_locks use Windows interlocked functions
+2020-11-21 21:42:13 0 [Note] InnoDB: Uses event mutexes
+2020-11-21 21:42:13 0 [Note] InnoDB: Compressed tables use zlib 1.2.11
+2020-11-21 21:42:13 0 [Note] InnoDB: Number of pools: 1
+2020-11-21 21:42:13 0 [Note] InnoDB: Using SSE2 crc32 instructions
+2020-11-21 21:42:13 0 [Note] InnoDB: Initializing buffer pool, total size = 16M, instances = 1, chunk size = 16M
+2020-11-21 21:42:13 0 [Note] InnoDB: Completed initialization of buffer pool
+2020-11-21 21:42:13 0 [Note] InnoDB: Starting crash recovery from checkpoint LSN=464929
+2020-11-21 21:42:13 0 [Note] InnoDB: 128 out of 128 rollback segments are active.
+2020-11-21 21:42:13 0 [Note] InnoDB: Removed temporary tablespace data file: "ibtmp1"
+2020-11-21 21:42:13 0 [Note] InnoDB: Creating shared tablespace for temporary tables
+2020-11-21 21:42:13 0 [Note] InnoDB: Setting file 'C:\Users\ajkol\Documents\School\CS 461\wave-lab-app\XAMPP\mysql\data\ibtmp1' size to 12 MB. Physically writing the file full; Please wait ...
+2020-11-21 21:42:13 0 [Note] InnoDB: File 'C:\Users\ajkol\Documents\School\CS 461\wave-lab-app\XAMPP\mysql\data\ibtmp1' size is now 12 MB.
+2020-11-21 21:42:13 0 [Note] InnoDB: Waiting for purge to start
+2020-11-21 21:42:13 0 [Note] InnoDB: 10.4.16 started; log sequence number 464938; transaction id 788
+2020-11-21 21:42:13 0 [Note] InnoDB: Loading buffer pool(s) from C:\Users\ajkol\Documents\School\CS 461\wave-lab-app\XAMPP\mysql\data\ib_buffer_pool
+2020-11-21 21:42:13 0 [Note] Plugin 'FEEDBACK' is disabled.
+2020-11-21 21:42:13 0 [Note] InnoDB: Buffer pool(s) load completed at 201121 21:42:13
+2020-11-21 21:42:13 0 [Note] Server socket created on IP: '::'.
+InnoDB: using atomic writes.
+2020-11-21 23:00:46 0 [Note] InnoDB: Mutexes and rw_locks use Windows interlocked functions
+2020-11-21 23:00:46 0 [Note] InnoDB: Uses event mutexes
+2020-11-21 23:00:46 0 [Note] InnoDB: Compressed tables use zlib 1.2.11
+2020-11-21 23:00:46 0 [Note] InnoDB: Number of pools: 1
+2020-11-21 23:00:46 0 [Note] InnoDB: Using SSE2 crc32 instructions
+2020-11-21 23:00:46 0 [Note] InnoDB: Initializing buffer pool, total size = 16M, instances = 1, chunk size = 16M
+2020-11-21 23:00:46 0 [Note] InnoDB: Completed initialization of buffer pool
+2020-11-21 23:00:47 0 [Note] InnoDB: Starting crash recovery from checkpoint LSN=465248
+2020-11-21 23:00:47 0 [Note] InnoDB: 128 out of 128 rollback segments are active.
+2020-11-21 23:00:47 0 [Note] InnoDB: Removed temporary tablespace data file: "ibtmp1"
+2020-11-21 23:00:47 0 [Note] InnoDB: Creating shared tablespace for temporary tables
+2020-11-21 23:00:47 0 [Note] InnoDB: Setting file 'C:\Users\ajkol\Documents\School\CS 461\wave-lab-app\XAMPP\mysql\data\ibtmp1' size to 12 MB. Physically writing the file full; Please wait ...
+2020-11-21 23:00:47 0 [Note] InnoDB: File 'C:\Users\ajkol\Documents\School\CS 461\wave-lab-app\XAMPP\mysql\data\ibtmp1' size is now 12 MB.
+2020-11-21 23:00:47 0 [Note] InnoDB: Waiting for purge to start
+2020-11-21 23:00:47 0 [Note] InnoDB: 10.4.16 started; log sequence number 465257; transaction id 811
+2020-11-21 23:00:47 0 [Note] InnoDB: Loading buffer pool(s) from C:\Users\ajkol\Documents\School\CS 461\wave-lab-app\XAMPP\mysql\data\ib_buffer_pool
+2020-11-21 23:00:47 0 [Note] Plugin 'FEEDBACK' is disabled.
+2020-11-21 23:00:47 0 [Note] InnoDB: Buffer pool(s) load completed at 201121 23:00:47
+2020-11-21 23:00:47 0 [Note] Server socket created on IP: '::'.

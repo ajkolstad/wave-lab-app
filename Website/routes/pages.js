@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 router.use(require('cookie-parser')());
-var env = require('dotenv');
+var env = require('dotenv');  /*  */
 var jwt = require('jsonwebtoken');
 var mysql = require('mysql');
 
