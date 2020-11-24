@@ -6,7 +6,7 @@ var mysql = require('mysql');
 var app = express();
 var env = require('dotenv');
 var cookieParser = require('cookie-parser');
-var tools = require("./monitor/target.js");
+var tools = require("../monitor/target.js");
 
 
 app.use(cookieParser());
