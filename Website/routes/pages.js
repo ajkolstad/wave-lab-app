@@ -4,6 +4,9 @@ router.use(require('cookie-parser')());
 var env = require('dotenv');
 var jwt = require('jsonwebtoken');
 var mysql = require('mysql');
+const { VM } = require('handlebars');
+
+var tools = require("./target.js");
 
 env.config({ path: './config.env'})
 
@@ -28,15 +31,8 @@ database.connect(function(error) {
         console.log('[Router]  Connected to Database');
     }
 
-    //when db connect, if monitor isnt running monitor[x] == 0, spin up monitor function
-    if(!monitor[0])
-    {
-        check_complete(0);
-    }
-    if(!monitor[1])
-    {
-        check_complete(1);
-    }
+    tools.check_complete(0);
+    tools.check_complete(1);
 })
 
 /*INSERT INTO `target_depth`(`Tdepth`, `Target_Flume_Name`, `Tdate`, `Username`, `isComplete`) VALUES ("2.78","1",CURRENT_TIMESTAMP(),"ajkolstad","0")*/

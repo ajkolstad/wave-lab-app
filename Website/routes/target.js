@@ -1,6 +1,34 @@
+var mysql = require('mysql');
 
-var monitor = [0, 0];
-var CHECK_DB_INTERVAL = 10000;          //amount of time in ms to wait before checking for target fill
+var database = mysql.createConnection({
+    host: process.env.DATABASE_HOST,
+    user: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+    database: process.env.DATABASE
+});
+
+database.connect(function(error) {
+    if(!!error) {
+        console.log('[Monitor]  Error connecting to Database');
+        console.log(error);
+    } else {
+        console.log('[Monitor]  Connected to Database');
+    }
+
+    //check_complete(0);
+
+    /*/when db connect, if monitor isnt running monitor[x] == 0, spin up monitor function
+    if(!monitor[0])
+    {
+        check_complete(0);
+    }
+    if(!monitor[1])
+    {
+        check_complete(1);
+    }
+    */
+})
+
 
 async function getDepth(flumeNumber) {
     if (flumeNumber == 0) {
@@ -29,12 +57,60 @@ async function getDepth(flumeNumber) {
     resolve("error");
 }
 
+var monitor = [0, 0];
+var CHECK_DB_INTERVAL = 10000;          //amount of time in ms to wait before checking for target fill
+
 function sleep(ms)
 {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 //looping function for monitoring a fill target
+this.check_complete = async function check_complete(flumeNumber)
+{
+    switch (flumeNumber)
+    {
+        case 0:
+            console.log("[Monitor][DWB] Starting...");
+            break;
+        case 1:
+            console.log("[Monitor][LWF] Starting...");
+            break;
+    }
+
+    //mutex-ish lock to prevent an army of monitor funcs
+    monitor[flumeNumber] = 1;
+    while(monitor[flumeNumber] == 1)
+    {
+        var check = await isComplete(flumeNumber);
+        switch (check)
+        {
+            case 1:
+                monitor[flumeNumber] = 0;
+                    console.log("ending");
+                break;
+            case -1:
+                console.log("monitor spun up with wrong flume number")
+                break;
+            default:
+                //console.log(flumeNumber + " not yet complete");
+                break;
+        }
+
+        //wait interval before checking again
+        await sleep(CHECK_DB_INTERVAL);
+    }
+    switch (flumeNumber)
+    {
+        case 0:
+            console.log("[Monitor][DWB] Ended");
+            break;
+        case 1:
+            console.log("[Monitor][LWF] Ended");
+            break;
+    }
+}
+
 async function check_complete(flumeNumber)
 {
     switch (flumeNumber)
@@ -106,7 +182,7 @@ async function isComplete(flumeNumber) {
                         if(results[0].Tdepth > current_depth)
                         {
                             //not complete
-                            console.log("[Monitor][DWB] " + results[0].Tdepth + " > " + current_depth);
+                            console.log("[Monitor][DWB] " + current_depth + " ==> " + results[0].Tdepth);
                         }
                         else if(results[0].Tdepth <= current_depth)
                         {
@@ -144,7 +220,7 @@ async function isComplete(flumeNumber) {
                         if(results[0].Tdepth > current_depth)
                         {
                             //not complete
-                            console.log("[Monitor][LWF] " + results[0].Tdepth + " > " + current_depth);
+                            console.log("[Monitor][LWF] " + current_depth + " ==> " + results[0].Tdepth);
                         }
                         else if(results[0].Tdepth <= current_depth)
                         {
