@@ -13,9 +13,6 @@ var largeWaveFlumeDepth = 0;
 var directionalBasinTarget = 0;
 var largeWaveFlumeTarget = 0;
 
-var monitor = [0, 0];
-var CHECK_DB_INTERVAL = 10000;          //amount of time in ms to wait before checking for target fill
-
 var database = mysql.createConnection({
     host: process.env.DATABASE_HOST,
     user: process.env.DATABASE_USER,
