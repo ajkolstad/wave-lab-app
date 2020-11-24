@@ -1,4 +1,10 @@
+var env = require('dotenv');
 var mysql = require('mysql');
+
+env.config({ path: './config.env'})
+
+var monitor = [0, 0];
+var CHECK_DB_INTERVAL = 10000;          //amount of time in ms to wait before checking for target fill
 
 var database = mysql.createConnection({
     host: process.env.DATABASE_HOST,
@@ -14,19 +20,6 @@ database.connect(function(error) {
     } else {
         console.log('[Monitor]  Connected to Database');
     }
-
-    //check_complete(0);
-
-    /*/when db connect, if monitor isnt running monitor[x] == 0, spin up monitor function
-    if(!monitor[0])
-    {
-        check_complete(0);
-    }
-    if(!monitor[1])
-    {
-        check_complete(1);
-    }
-    */
 })
 
 
@@ -56,9 +49,6 @@ async function getDepth(flumeNumber) {
     }
     resolve("error");
 }
-
-var monitor = [0, 0];
-var CHECK_DB_INTERVAL = 10000;          //amount of time in ms to wait before checking for target fill
 
 function sleep(ms)
 {

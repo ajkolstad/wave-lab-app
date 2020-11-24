@@ -6,8 +6,6 @@ var jwt = require('jsonwebtoken');
 var mysql = require('mysql');
 const { VM } = require('handlebars');
 
-var tools = require("./target.js");
-
 env.config({ path: './config.env'})
 
 var directionalWaveBasinDepth = 0;
@@ -30,9 +28,6 @@ database.connect(function(error) {
     } else {
         console.log('[Router]  Connected to Database');
     }
-
-    tools.check_complete(0);
-    tools.check_complete(1);
 })
 
 /*INSERT INTO `target_depth`(`Tdepth`, `Target_Flume_Name`, `Tdate`, `Username`, `isComplete`) VALUES ("2.78","1",CURRENT_TIMESTAMP(),"ajkolstad","0")*/
