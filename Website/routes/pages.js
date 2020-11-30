@@ -14,6 +14,7 @@ var largeWaveFlumeDepth = 0;
 var directionalBasinTarget = 0;
 var largeWaveFlumeTarget = 0;
 
+
 var database = mysql.createConnection({
     host: process.env.DATABASE_HOST,
     user: process.env.DATABASE_USER,
