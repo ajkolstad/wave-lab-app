@@ -15,6 +15,20 @@
 		0B1210C825BA231000F84FDB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B12109D25BA230E00F84FDB /* ContentView.swift */; };
 		0B1210C925BA231000F84FDB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B12109E25BA230F00F84FDB /* Assets.xcassets */; };
 		0B1210CA25BA231000F84FDB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B12109E25BA230F00F84FDB /* Assets.xcassets */; };
+		0B4BF2FD25C37329004CF045 /* Video Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF2FC25C37329004CF045 /* Video Player.swift */; };
+		0B4BF2FE25C37329004CF045 /* Video Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF2FC25C37329004CF045 /* Video Player.swift */; };
+		0B4BF30425C3741D004CF045 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF30325C3741D004CF045 /* HomeView.swift */; };
+		0B4BF30525C3741D004CF045 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF30325C3741D004CF045 /* HomeView.swift */; };
+		0B4BF30B25C37456004CF045 /* LWFView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF30A25C37456004CF045 /* LWFView.swift */; };
+		0B4BF30C25C37456004CF045 /* LWFView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF30A25C37456004CF045 /* LWFView.swift */; };
+		0B4BF31225C3754E004CF045 /* DWBView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF31125C3754E004CF045 /* DWBView.swift */; };
+		0B4BF31325C3754E004CF045 /* DWBView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF31125C3754E004CF045 /* DWBView.swift */; };
+		0B4BF31925C3757D004CF045 /* LiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF31825C3757D004CF045 /* LiveView.swift */; };
+		0B4BF31A25C3757D004CF045 /* LiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF31825C3757D004CF045 /* LiveView.swift */; };
+		0B4BF32025C375A6004CF045 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF31F25C375A6004CF045 /* SettingsView.swift */; };
+		0B4BF32125C375A6004CF045 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF31F25C375A6004CF045 /* SettingsView.swift */; };
+		0B4BF32725C37604004CF045 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF32625C37604004CF045 /* Profile.swift */; };
+		0B4BF32825C37604004CF045 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF32625C37604004CF045 /* Profile.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +63,13 @@
 		0B1210BE25BA230F00F84FDB /* Tests macOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests macOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B1210C225BA230F00F84FDB /* Tests_macOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests_macOS.swift; sourceTree = "<group>"; };
 		0B1210C425BA230F00F84FDB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0B4BF2FC25C37329004CF045 /* Video Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Video Player.swift"; sourceTree = "<group>"; };
+		0B4BF30325C3741D004CF045 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		0B4BF30A25C37456004CF045 /* LWFView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LWFView.swift; sourceTree = "<group>"; };
+		0B4BF31125C3754E004CF045 /* DWBView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DWBView.swift; sourceTree = "<group>"; };
+		0B4BF31825C3757D004CF045 /* LiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveView.swift; sourceTree = "<group>"; };
+		0B4BF31F25C375A6004CF045 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		0B4BF32625C37604004CF045 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +122,13 @@
 				0B12109C25BA230E00F84FDB /* Wave_Lab_ManagementApp.swift */,
 				0B12109D25BA230E00F84FDB /* ContentView.swift */,
 				0B12109E25BA230F00F84FDB /* Assets.xcassets */,
+				0B4BF2FC25C37329004CF045 /* Video Player.swift */,
+				0B4BF30325C3741D004CF045 /* HomeView.swift */,
+				0B4BF30A25C37456004CF045 /* LWFView.swift */,
+				0B4BF31125C3754E004CF045 /* DWBView.swift */,
+				0B4BF31825C3757D004CF045 /* LiveView.swift */,
+				0B4BF31F25C375A6004CF045 /* SettingsView.swift */,
+				0B4BF32625C37604004CF045 /* Profile.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -231,7 +259,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1230;
-				LastUpgradeCheck = 1230;
+				LastUpgradeCheck = 1240;
 				TargetAttributes = {
 					0B1210A225BA230F00F84FDB = {
 						CreatedOnToolsVersion = 12.3;
@@ -309,7 +337,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B1210C725BA231000F84FDB /* ContentView.swift in Sources */,
+				0B4BF32025C375A6004CF045 /* SettingsView.swift in Sources */,
+				0B4BF30425C3741D004CF045 /* HomeView.swift in Sources */,
+				0B4BF30B25C37456004CF045 /* LWFView.swift in Sources */,
 				0B1210C525BA230F00F84FDB /* Wave_Lab_ManagementApp.swift in Sources */,
+				0B4BF31925C3757D004CF045 /* LiveView.swift in Sources */,
+				0B4BF31225C3754E004CF045 /* DWBView.swift in Sources */,
+				0B4BF32725C37604004CF045 /* Profile.swift in Sources */,
+				0B4BF2FD25C37329004CF045 /* Video Player.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -318,7 +353,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B1210C825BA231000F84FDB /* ContentView.swift in Sources */,
+				0B4BF32125C375A6004CF045 /* SettingsView.swift in Sources */,
+				0B4BF30525C3741D004CF045 /* HomeView.swift in Sources */,
+				0B4BF30C25C37456004CF045 /* LWFView.swift in Sources */,
 				0B1210C625BA230F00F84FDB /* Wave_Lab_ManagementApp.swift in Sources */,
+				0B4BF31A25C3757D004CF045 /* LiveView.swift in Sources */,
+				0B4BF31325C3754E004CF045 /* DWBView.swift in Sources */,
+				0B4BF32825C37604004CF045 /* Profile.swift in Sources */,
+				0B4BF2FE25C37329004CF045 /* Video Player.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -389,6 +431,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				"DEVELOPMENT_TEAM[sdk=*]" = "";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -471,6 +514,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = YS2DBPK69W;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = iOS/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -492,6 +536,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = YS2DBPK69W;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = iOS/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -514,6 +559,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				ENABLE_PREVIEWS = YES;
@@ -536,6 +582,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				ENABLE_PREVIEWS = YES;

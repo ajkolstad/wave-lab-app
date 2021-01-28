@@ -5,16 +5,31 @@
 //  Created by Alex Kolstad on 1/28/21.
 //
 
+import Foundation
 import SwiftUI
+import WebKit
 
-struct Video_Player: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+struct Webview: UIViewRepresentable {
+    
+    var url: String
+    
+    func makeUIView(context: Context) -> WKWebView {
+        
+        guard let url = URL(string: self.url) else {
+            return WKWebView()
+        }
+        
+        let configuration = WKWebViewConfiguration()
+        configuration.allowsInlineMediaPlayback = true
+        
+        let request = URLRequest(url: url)
+        let wkwebview = WKWebView(frame: CGRect(x: 0, y: 0, width: 480, height: 240), configuration: configuration)
+
+        wkwebview.load(request)
+        
+
+        return wkwebview
     }
-}
-
-struct Video_Player_Previews: PreviewProvider {
-    static var previews: some View {
-        Video_Player()
+    func updateUIView(_ uiView: WKWebView, context: UIViewRepresentableContext<Webview>) {
     }
 }

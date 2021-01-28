@@ -9,8 +9,28 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        TabView {
+            HomeView().tabItem {
+                    Image(systemName: "house.fill")
+                    Text("Home")
+            }
+            LWFView().tabItem {
+                    Image(systemName: "drop")
+                    Text("LWF")
+            }
+            DWBView().tabItem {
+                    Image(systemName: "drop.fill")
+                    Text("DWB")
+            }
+            LiveView().tabItem {
+                    Image(systemName: "play.rectangle")
+                    Text("Live")
+            }
+            SettingsView().tabItem {
+                    Image(systemName: "gear")
+                    Text("Settings")
+            }
+        }
     }
 }
 
@@ -19,3 +39,5 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+
+
