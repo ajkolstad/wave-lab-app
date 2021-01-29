@@ -34,7 +34,7 @@ struct LWFView: View {
                     Text("Current Fill Target")
                         .font(.title2)
                     if editLWF {
-                        TextField("Name", text: $curFillTargetLWF).textFieldStyle(RoundedBorderTextFieldStyle())
+                        TextField("Fill Level", text: $curFillTargetLWF).textFieldStyle(RoundedBorderTextFieldStyle())
                             //.padding(.leading, 5)
                             .font(.title2)
                             .autocapitalization(.words)

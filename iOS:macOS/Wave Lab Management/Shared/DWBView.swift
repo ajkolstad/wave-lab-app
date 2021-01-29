@@ -32,7 +32,7 @@ struct DWBView: View {
                     Text("Current Fill Target")
                         .font(.title2)
                     if editDWB {
-                        TextField("Name", text: $curFillTargetDWB).textFieldStyle(RoundedBorderTextFieldStyle())
+                        TextField("Fill Level", text: $curFillTargetDWB).textFieldStyle(RoundedBorderTextFieldStyle())
                             //.padding(.leading, 5)
                             .font(.title2)
                             .autocapitalization(.words)
