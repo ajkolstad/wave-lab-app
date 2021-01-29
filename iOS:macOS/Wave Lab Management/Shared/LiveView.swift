@@ -9,7 +9,39 @@ import SwiftUI
 
 struct LiveView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Text("Live Views")
+                .font(.title)
+                .padding(.bottom, 20)
+            VStack (alignment: .leading){
+                Text("Large Wave Flume")
+                    .font(.title2)
+                ScrollView(.horizontal) {
+                    HStack (spacing: 20){
+                        Webview(url: "https://www.youtube.com/embed/ciioaETC6wE?playsinline=1")
+                            .frame(width: 384, height: 216)
+                        Webview(url: "https://www.youtube.com/embed/V3JsFPQA6YQ?playsinline=1")
+                            .frame(width: 384, height: 216)
+                        Webview(url: "https://www.youtube.com/embed/VCluhS3RJpI?playsinline=1")
+                            .frame(width: 384, height: 216)
+                    }
+                }.padding(.bottom, 10)
+                Divider()
+                Text("Directional Wave Basin")
+                    .font(.title2)
+                    .padding(.top, 20)
+                ScrollView(.horizontal) {
+                    HStack (spacing: 20){
+                        Webview(url: "https://www.youtube.com/embed/pHmmBQYVPCI?playsinline=1")
+                            .frame(width: 384, height: 216)
+                        Webview(url: "https://www.youtube.com/embed/xNzdOP3ixd4?playsinline=1")
+                            .frame(width: 384, height: 216)
+                        Webview(url: "https://www.youtube.com/embed/Z7V0x92PpXU?playsinline=1")
+                            .frame(width: 384, height: 216)
+                    }
+                }
+            }
+        }
     }
 }
 
