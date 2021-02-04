@@ -14,6 +14,7 @@ var largeWaveFlumeDepth = 0;
 var directionalBasinTarget = 0;
 var largeWaveFlumeTarget = 0;
 
+
 var database = mysql.createConnection({
     host: process.env.DATABASE_HOST,
     user: process.env.DATABASE_USER,
@@ -150,13 +151,7 @@ router.get("/login", (req, res) => {
 });
 
 router.get("/live", (req, res) => {
-    if (authenticateUser(req)) {
-        res.status(200).render(`layouts${req.url}`, {
-            message: "admin"
-        });
-    } else {
         res.status(200).render(`layouts${req.url}`);
-    }
 });
 
 router.get("/large-wave-flume", async (req, res) => {
@@ -198,9 +193,6 @@ router.get("/large-wave-flume", async (req, res) => {
         flumeTimeText = "Set at " + largeWaveFlumeTargetTime;
         flumeUserText = "Set by " + largeWaveFlumeTargetUser;
     }
-    
-    
-    
 
     if (authenticateUser(req)) {
         res.status(200).render(`layouts${req.url}`, {
