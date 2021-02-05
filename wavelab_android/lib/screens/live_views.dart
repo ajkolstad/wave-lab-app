@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import '../widgets/header.dart';
 import '../screens/large_wave_flume.dart';
 import '../screens/directional_wave_basin.dart';
 import '../widgets/play_youtube.dart';
-import '../widgets/app_drawer.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 
@@ -35,13 +33,6 @@ class LiveViewState extends State<LiveView> {
   }
 */
   Widget build(BuildContext context){
-    return AppHeader(
-      header_title: 'Live View',
-      body: lwf_body(),
-    );
-  }
-
-  Widget lwf_body() {
     return SingleChildScrollView(
         padding: EdgeInsetsDirectional.only(
             start: 5.0,
@@ -56,18 +47,10 @@ class LiveViewState extends State<LiveView> {
                   mainAxisAlignment: MainAxisAlignment.center,
               ),
               lv_intro(),
-              bay10_video(),
-              bay10_lwf(),
-              bay14_video(),
-              bay14_lwf(),
-              nLwf_video(),
-              nWall_lwf(),
-              nDwb_video(),
-              nWall_dwb(),
-              wDwb_video(),
-              wWall_dwb(),
-              nwDwb_video(),
-              nWCorner_dwb()
+              LWF_Intro(),
+              LWF_Live(),
+              DWB_Intro(),
+              DWB_Live(),
             ]
         )
     );
@@ -75,17 +58,18 @@ class LiveViewState extends State<LiveView> {
 
   Widget lv_intro(){
     return SizedBox(
-        width: MediaQuery.of(context).size.width * .8,
+        //width: MediaQuery.of(context).size.width * .8,
         child: Container(
             margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
             padding: EdgeInsets.fromLTRB(25, 10, 20, 10),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              //mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Row(
+                  //mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(
-                        child: Text('Wave View', style: TextStyle(fontSize: 30, color: Colors.white))
+                        child: Text('Wave View', style: TextStyle(fontSize: 35, color: Colors.white))
                     )
                   ],
                 )
@@ -95,11 +79,77 @@ class LiveViewState extends State<LiveView> {
     );
   }
 
+  Widget LWF_Intro() {
+    return SizedBox(
+        //width: MediaQuery.of(context).size.width * .8,
+        child: Container(
+            margin: EdgeInsets.fromLTRB(0, 0, 0, 15),
+            padding: EdgeInsets.fromLTRB(25, 0, 20, 0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Container(
+                        child: Text('Large Wave Flume', style: TextStyle(fontSize: 30, color: Colors.white))
+                    )
+                  ],
+                )
+              ],
+            )
+        )
+    );
+  }
+
+  Widget LWF_Live() {
+    return Container(
+        padding: EdgeInsets.fromLTRB(20, 0, 10, 0),
+      height: MediaQuery.of(context).size.width * .6,
+    child: ListView(
+        scrollDirection:Axis.horizontal,
+        children: <Widget>[
+          Container(
+              width: MediaQuery.of(context).size.width * .6,
+              child: Column(
+            children: <Widget>[
+              bay10_video(),
+              bay10_lwf(),
+            ],
+          )),
+          Container(
+            width: 10.0,
+          ),
+          Container(
+              width: MediaQuery.of(context).size.width * .6,
+
+              child: Column(
+            children: <Widget>[
+              bay14_video(),
+              bay14_lwf(),
+            ],
+          )),
+          Container(
+            width: 10.0,
+          ),
+          Container(
+              width: MediaQuery.of(context).size.width * .6,
+
+              child: Column(
+            children: <Widget>[
+              nLwf_video(),
+              nWall_lwf(),
+            ],
+          ))
+        ],
+      )
+    );
+  }
+
   Widget bay10_video(){
     return SizedBox(
-      width: MediaQuery.of(context).size.width * .8,
+      //width: MediaQuery.of(context).size.width * .8,
       child: Container(
-          margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+          margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
           child: Youtuber(url: 'https://www.youtube.com/watch?v=ciioaETC6wE&feature=emb_title')
       )
     );
@@ -107,7 +157,7 @@ class LiveViewState extends State<LiveView> {
 
   Widget bay10_lwf(){
     return SizedBox(
-        width: MediaQuery.of(context).size.width * .8,
+        //width: MediaQuery.of(context).size.width * .8,
         child: Container(
             color: Colors.white,
             child: Column(
@@ -162,7 +212,7 @@ class LiveViewState extends State<LiveView> {
 
   Widget bay14_video(){
     return SizedBox(
-        width: MediaQuery.of(context).size.width * .8,
+        //width: MediaQuery.of(context).size.width * .8,
         child: Container(
             margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
             child: Youtuber(url: 'https://www.youtube.com/watch?v=V3JsFPQA6YQ&feature=emb_title')
@@ -172,7 +222,7 @@ class LiveViewState extends State<LiveView> {
 
   Widget bay14_lwf(){
     return SizedBox(
-        width: MediaQuery.of(context).size.width * .8,
+        //width: MediaQuery.of(context).size.width * .8,
         child: Container(
             color: Colors.white,
             child: Column(
@@ -227,7 +277,7 @@ class LiveViewState extends State<LiveView> {
 
   Widget nLwf_video(){
     return SizedBox(
-        width: MediaQuery.of(context).size.width * .8,
+        //width: MediaQuery.of(context).size.width * .8,
         child: Container(
             margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
             child: Youtuber(url: 'https://www.youtube.com/watch?v=VCluhS3RJpI&feature=emb_title')
@@ -237,7 +287,7 @@ class LiveViewState extends State<LiveView> {
 
   Widget nWall_lwf(){
     return SizedBox(
-        width: MediaQuery.of(context).size.width * .8,
+        //width: MediaQuery.of(context).size.width * .8,
         child: Container(
             color: Colors.white,
             child: Column(
@@ -287,6 +337,72 @@ class LiveViewState extends State<LiveView> {
 
         )
 
+    );
+  }
+
+  Widget DWB_Intro() {
+    return SizedBox(
+        //width: MediaQuery.of(context).size.width * .8,
+        child: Container(
+            margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
+            padding: EdgeInsets.fromLTRB(25, 0, 20, 0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Wrap(
+                  children: <Widget>[
+                    Container(
+                        child: Text('Directional Wave Basin', style: TextStyle(fontSize: 30, color: Colors.white))
+                    )
+                  ],
+                )
+              ],
+            )
+        )
+    );
+  }
+
+  Widget DWB_Live() {
+    return Container(
+        padding: EdgeInsets.fromLTRB(20, 0, 10, 0),
+        height: MediaQuery.of(context).size.width * .6,
+        child: ListView(
+          scrollDirection:Axis.horizontal,
+          children: <Widget>[
+            Container(
+                width: MediaQuery.of(context).size.width * .6,
+                child: Column(
+                  children: <Widget>[
+                    nDwb_video(),
+                    nWall_dwb()
+                  ],
+                )),
+            Container(
+              width: 10.0,
+            ),
+            Container(
+                width: MediaQuery.of(context).size.width * .6,
+
+                child: Column(
+                  children: <Widget>[
+                    wDwb_video(),
+                    wWall_dwb()
+                  ],
+                )),
+            Container(
+              width: 10.0,
+            ),
+            Container(
+                width: MediaQuery.of(context).size.width * .6,
+
+                child: Column(
+                  children: <Widget>[
+                    nwDwb_video(),
+                    nWCorner_dwb()
+                  ],
+                ))
+          ],
+        )
     );
   }
 

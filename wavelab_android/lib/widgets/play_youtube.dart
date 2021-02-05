@@ -17,9 +17,13 @@ class YoutuberState extends State<Youtuber>{
     _controller = YoutubePlayerController(
       initialVideoId: YoutubePlayer.convertUrlToId(widget.url),
       flags: YoutubePlayerFlags(
-        autoPlay: true,
+        autoPlay: false,
         isLive: true,
         mute: true,
+        //controlsVisibleAtStart: true,
+        //enableCaption: true,
+        //hideThumbnail: false,
+        //hideControls: false
       ),
     );
   }

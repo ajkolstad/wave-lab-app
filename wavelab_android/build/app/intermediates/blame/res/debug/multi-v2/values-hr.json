@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\tobst\\AndroidStudioProjects\\wavelab_android\\build\\app\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-hr\\values-hr.xml",
+            "outputFile": "C:\\Users\\tobst\\cmder\\wave-lab-app\\wavelab_android\\build\\app\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-hr\\values-hr.xml",
             "map": [
                 {
                     "source": "C:\\Users\\tobst\\.gradle\\caches\\transforms-2\\files-2.1\\d8e69336e21c6a428e8a9e9d99518477\\appcompat-1.0.0\\res\\values-hr\\values-hr.xml",
