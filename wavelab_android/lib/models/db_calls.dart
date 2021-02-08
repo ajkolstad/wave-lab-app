@@ -10,6 +10,7 @@ class dbCalls{
   static const _GET_CUR_DEPTH_LWF = "GET_CUR_DEPTH_LWF";
   static const _GET_T_DEPTH_DWB = "GET_T_DEPTH_DWB";
   static const _GET_T_DEPTH_LWF = "GET_T_DEPTH_LWF";
+  static const _ADD_T_DEPTH = "ADD_T_DEPTH";
 
   static List<depthData> parseDepth(String responseBody){
     final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
@@ -94,6 +95,30 @@ class dbCalls{
     } catch (e){
       print("error: ${e}");
       return List<targetData>();
+    }
+  }
+
+  static Future<String> addTarget(double Tdepth, int fName, DateTime Tdate, String uName, int isComplete) async{
+    try{
+      var map = Map<String, dynamic>();
+      map['action'] = _ADD_T_DEPTH;
+      map['Tdepth'] = Tdepth.toString();
+      map['fName'] = fName.toString();
+      map['Tdate'] = Tdate.toString();
+      map['uName'] = uName.toString();
+      map['isComplete'] = isComplete.toString();
+      final response = await http.post(ROOT, body: map);
+      print('addTarget Response: ${response.body}');
+      if(200 == response.statusCode) {
+        return response.body;
+      }
+      else {
+        return "error";
+      }
+    }
+    catch(e) {
+      print("Error: ${e}");
+      return "error";
     }
   }
 }

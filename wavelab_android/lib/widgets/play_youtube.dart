@@ -20,10 +20,10 @@ class YoutuberState extends State<Youtuber>{
         autoPlay: false,
         isLive: true,
         mute: true,
-        //controlsVisibleAtStart: true,
-        //enableCaption: true,
-        //hideThumbnail: false,
-        //hideControls: false
+        controlsVisibleAtStart: false,
+        disableDragSeek: true,
+        enableCaption: true,
+        //hideControls: true
       ),
     );
   }
@@ -51,7 +51,7 @@ class YoutuberState extends State<Youtuber>{
       player: YoutubePlayer(
         controller: _controller,
         bottomActions: <Widget>[
-          ProgressBar(isExpanded: true)
+          ProgressBar(isExpanded: false)
         ],
       ),
       builder: (context, player){

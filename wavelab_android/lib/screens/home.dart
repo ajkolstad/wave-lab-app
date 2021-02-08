@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../widgets/play_youtube.dart';
 import '../widgets/change_darkmode.dart';
 import '../models/db_calls.dart';
@@ -14,50 +15,54 @@ class Home extends StatefulWidget{
 
 class HomeState extends State<Home> {
 
-  List<depthData> _curDepthDataLwf;
-  List<depthData> _curDepthDataDwb;
-  List<targetData> _tDepthDataLwf;
-  List<targetData> _tDepthDataDwb;
-  String _curDepthLwf = "";
-  String _curDepthDwb = "";
-  String _tDepthLwf = "";
-  String _tDepthDwb = "";
-  DateTime date;
+  List<depthData> _curDepthDataLwf = [];
+  List<depthData> _curDepthDataDwb = [];
+  List<targetData> _tDepthDataLwf = [];
+  List<targetData> _tDepthDataDwb = [];
+  double _curDepthLwf;
+  double _curDepthDwb;
+  double _tDepthLwf;
+  double _tDepthDwb;
+  DateTime curTime = new DateTime.now();
+  DateTime dateLwf;
+  DateTime dateDwb;
   //bool _darkmode;
   //final curDarkmode = new darkmode();
 
-  getCurDepthLwf() {
+  void getCurDepthLwf() {
     dbCalls.getCurDepthLwf().then((depthData) {
       setState(() {
         _curDepthDataLwf = depthData;
-        _curDepthLwf = _curDepthDataLwf[0].depth;
+        _curDepthLwf = double.parse(_curDepthDataLwf[0].depth);
       });
     });
   }
 
-  getCurDepthDwb(){
+  void getCurDepthDwb(){
     dbCalls.getCurDepthDwb().then((depthData) {
       setState(() {
         _curDepthDataDwb = depthData;
-        _curDepthDwb = _curDepthDataDwb[0].depth;
+        _curDepthDwb = double.parse(_curDepthDataDwb[0].depth);
       });
     });
   }
 
-  getTDepthLwf(){
+  void getTDepthLwf(){
     dbCalls.getTDepthLwf().then((targetData) {
       setState(() {
         _tDepthDataLwf = targetData;
-        _tDepthLwf = _tDepthDataLwf[0].Tdepth;
+        _tDepthLwf = double.parse(_tDepthDataLwf[0].Tdepth);
+        dateLwf = DateTime.parse(_tDepthDataLwf[0].tDate);
       });
     });
   }
 
-  getTDepthDwb(){
+  void getTDepthDwb(){
     dbCalls.getTDepthDwb().then((targetData) {
       setState(() {
         _tDepthDataDwb = targetData;
-        _tDepthDwb = _tDepthDataDwb[0].Tdepth;
+        _tDepthDwb = double.parse(_tDepthDataDwb[0].Tdepth);
+        dateDwb = DateTime.parse(_tDepthDataDwb[0].tDate);
       });
     });
   }
@@ -67,20 +72,19 @@ class HomeState extends State<Home> {
     super.initState();
     setState(() {
       getCurDepthLwf();
-      print("depth: ${_curDepthLwf}");
+      //print("depth: ${_curDepthLwf}");
       getCurDepthDwb();
-      print("2: ${_curDepthDwb}");
+      //print("2: ${_curDepthDwb}");
       getTDepthLwf();
       getTDepthDwb();
     });
-
+    print("currentTime: ${curTime}");
     /*setState(() {
       curDarkmode.initDarkmode();
       _darkmode = curDarkmode.getDarkmode();
     });*/
   }
 
-  static const DBROOT = 'http://localhost/Employees/employee_action.php';
   Widget build(BuildContext context){
     return SingleChildScrollView(
         padding: EdgeInsetsDirectional.only(
@@ -149,10 +153,28 @@ class HomeState extends State<Home> {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Container(
-                    padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
-                  child: Text("Waiting to fill to ${_tDepthLwf}m at 12:00AM", style: TextStyle(color: Colors.white),)
-                )]
+                if(_tDepthDataLwf[0].isComplete == 1 && _curDepthLwf >= _tDepthLwf)
+                  Container(
+                      padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
+                      child: Text("Filling Complete", style: TextStyle(color: Colors.white),)
+                  )
+                else if(_tDepthDataLwf[0].isComplete == 1)
+                  Container(
+                      padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
+                      child: Text("Not Filling", style: TextStyle(color: Colors.white),)
+                  )
+                else if(dateLwf.isAfter(curTime))
+                    Container(
+                        padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
+                        child: Text("Waiting to fill to ${_tDepthLwf}m at ${DateFormat('jm').format(dateLwf)}", style: TextStyle(color: Colors.white),)
+                    )
+                else
+                  Container(
+                      padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
+                      child: Text("Filling to ${_tDepthLwf}m now", style: TextStyle(color: Colors.white),)
+                  )
+              ]
+
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -165,7 +187,7 @@ class HomeState extends State<Home> {
                 width: MediaQuery.of(context).size.width * .9,
                 child: Container(
                     //margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                    //child: Youtuber(url: 'https://www.youtube.com/watch?v=ciioaETC6wE')
+                    child: Youtuber(url: 'https://www.youtube.com/watch?v=ciioaETC6wE')
                 )
             )
           ],
@@ -193,10 +215,26 @@ class HomeState extends State<Home> {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Container(
-                  padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
-                  child: Text("Filling to ${_tDepthDwb}m now", style: TextStyle(color: Colors.white),)
-              )
+              if(_tDepthDataDwb[0].isComplete == 1 && _curDepthDwb >= _tDepthDwb)
+                Container(
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
+                    child: Text("Filling Complete", style: TextStyle(color: Colors.white),)
+                )
+              else if(_tDepthDataDwb[0].isComplete == 1)
+                Container(
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
+                    child: Text("Not Filling", style: TextStyle(color: Colors.white),)
+                )
+              else if(dateDwb.isAfter(curTime))
+                Container(
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
+                    child: Text("Waiting to fill to ${_tDepthDwb}m at ${DateFormat('jm').format(dateDwb)}", style: TextStyle(color: Colors.white),)
+                )
+              else
+                Container(
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
+                    child: Text("Filling to ${_tDepthDwb}m now", style: TextStyle(color: Colors.white),)
+                )
             ]
           ),
           Row(
@@ -212,7 +250,7 @@ class HomeState extends State<Home> {
               width: MediaQuery.of(context).size.width * .9,
               child: Container(
                   //margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                  //child: Youtuber(url: 'https://www.youtube.com/watch?v=pHmmBQYVPCI&feature=emb_title')
+                  child: Youtuber(url: 'https://www.youtube.com/watch?v=pHmmBQYVPCI&feature=emb_title')
               )
           )
         ],

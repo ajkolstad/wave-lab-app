@@ -1,5 +1,4 @@
 <?php
-//Make a new folder in XAMPP/htdocs called WavelabDB and add this file to WavelabDB
 //Variables to connect to database
 $servername = "localhost";
 $username = "root";
@@ -83,6 +82,25 @@ else if("GET_T_DEPTH_LWF" == $action){
     else{
         echo "error";
     }
+    $conn->close();
+    return;
+}
+
+else if("ADD_T_DEPTH" == $action){
+    $Tdepth = $_POST["Tdepth"];
+    print($Tdepth);
+    $fName = $_POST["fName"];
+    print($fName);
+    $Tdate = $_POST["Tdate"];
+    print($Tdate);
+    $uName = $_POST["uName"];
+    print($uName);
+    $isComplete = $_POST["isComplete"];
+    print($isComplete);
+    print("before call");
+    $sql = "INSERT INTO `target_depth` (`Tdepth`, `Target_Flume_Name`, `Tdate`, `Username`, `isComplete`) VALUES ('$Tdepth', '$fName', '$Tdate', '$uName', '$isComplete')";
+    $result = $conn->query($sql);
+    echo "success";
     $conn->close();
     return;
 }

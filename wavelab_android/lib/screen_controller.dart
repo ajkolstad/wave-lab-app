@@ -21,17 +21,17 @@ class ScreenController extends StatefulWidget {
 
 class ScreenControllerState extends State<ScreenController> {
 
-  final curDarkmode = new darkmode();
+  //final curDarkmode = new darkmode();
   bool _darkmode;
 
   @override
   void initState() {
     super.initState();
     setState(() {
-      curDarkmode.initDarkmode();
-      _darkmode = curDarkmode.getDarkmode();
+      //curDarkmode.initDarkmode();
+      //_darkmode = curDarkmode.getDarkmode();
     });
-      print("Darkmode: ${_darkmode}");
+      //print("Darkmode: ${_darkmode}");
   }
 
   /*
