@@ -86,8 +86,8 @@ def cleanDepthTable():
                                        user='root',
                                        password='')
     query = db.cursor(prepared = True)
-    clean = """DELETE FROM `depth_data` WHERE Ddate < (SELECT DATE_ADD(NOW(), INTERVAL -2 DAY))"""
-    query.execute(clean)
+    cleanDB = """DELETE FROM `depth_data` WHERE Ddate < (SELECT DATE_ADD(NOW(), INTERVAL -7 DAY))"""
+    query.execute(cleanDB)
     db.commit()
 
 def main():
@@ -105,7 +105,7 @@ def main():
         DWB = getDepth(0)
         LWF = getDepth(1)
         updateDB(DWB)
-        time.sleep(1)
+        time.sleep(0.5)
         updateDB(LWF)
         cleanDepthTable()
         time.sleep(DB_MONITOR_INTERVAL)
