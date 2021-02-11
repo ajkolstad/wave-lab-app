@@ -1,3 +1,6 @@
+//deprecated, moved to using valves.py
+
+
 var env = require('dotenv');
 var mysql = require('mysql');
 
