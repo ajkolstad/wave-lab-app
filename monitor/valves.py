@@ -13,8 +13,8 @@ sql_DWB_check_for_new_target = "SELECT * FROM `target_depth` WHERE Tdate < CURRE
 sql_LWF_check_for_new_target = "SELECT * FROM `target_depth` WHERE Tdate < CURRENT_TIMESTAMP AND Target_Flume_Name = 1 and isComplete = 0 ORDER BY Tdate DESC LIMIT 1;"
 sql_DWB_check_if_fill_met = "SELECT * FROM `target_depth` WHERE Tdate < CURRENT_TIMESTAMP AND Target_Flume_Name = 0 ORDER BY Tdate DESC LIMIT 1;"
 sql_LWF_check_if_fill_met = "SELECT * FROM `target_depth` WHERE Tdate < CURRENT_TIMESTAMP AND Target_Flume_Name = 1 ORDER BY Tdate DESC LIMIT 1;"
-sql_DWB_update_isComplete = "UPDATE target_depth SET isComplete = 1 WHERE Tdepth > %s AND Tdepth < %s AND Target_Flume_Name = 0;"
-sql_LWF_update_isComplete = "UPDATE target_depth SET isComplete = 1 WHERE Tdepth > %s AND Tdepth < %s AND Target_Flume_Name = 1;"
+sql_DWB_update_isComplete = """UPDATE target_depth SET isComplete = 1 WHERE Tdepth > %s AND Tdepth < %s AND Target_Flume_Name = 0;"""
+sql_LWF_update_isComplete = """UPDATE target_depth SET isComplete = 1 WHERE Tdepth > %s AND Tdepth < %s AND Target_Flume_Name = 1;"""
 
 """
 FUNCITONS
@@ -113,7 +113,9 @@ def check_complete_DWB():
             high = truncate(records[0], 2) +.05
             low = truncate(records[0], 2) - .05
             print("[Target Monitor][DWB] Fill finished, updating database")
-            query.execute("UPDATE target_depth SET isComplete = 1 WHERE Tdepth > %s AND Tdepth < %s AND Target_Flume_Name = 0", (low, high))
+            val = (low, high)
+            query.execute(sql_DWB_update_isComplete, val)
+            db.commit()
 
         
 def check_complete_LWF():
@@ -139,7 +141,9 @@ def check_complete_LWF():
             high = truncate(records[0], 2) +.05
             low = truncate(records[0], 2) - .05
             print("[Target Monitor][LWF] Fill finished, updating database")
-            query.execute("UPDATE target_depth SET isComplete = 1 WHERE Tdepth > %s AND Tdepth < %s AND Target_Flume_Name = 1", (low, high))
+            val = (low, high)
+            query.execute(sql_LWF_update_isComplete, val)
+            db.commit()
 
 
 """
