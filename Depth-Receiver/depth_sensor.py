@@ -1,6 +1,13 @@
 import sys, os, os.path
-import mysql.connector
-import sqlalchemy as db
+import mysql, time, math
+from mysql.connector import Error
+import sqlalchemy as sqlite_db
+
+
+db = None
+query = None
+DB_MONITOR_INTERVAL = 5
+
 
 from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
@@ -29,31 +36,80 @@ FACILITIES = [ "LWF", "DWB"]
 # DBFILEPATH = "/a1/walve/data/levels.sqlite"
 DBFILEPATH = "levels.sqlite"
 
-def main():
-    path = DBFILEPATH
-    argv = sys.argv
-    
-    if len(argv) == 2:
-        path = argv[1]
-    
-    if os.path.exists(path):
-        print("File exists: %s" % path)
-    else:
-        print("File doesn't exist: %s" % path)
+def connect_db():
+    """ Connect to MySQL database """
+    try:
+        db = mysql.connector.connect(host='localhost',
+                                       database='wave_lab_database',
+                                       user='root',
+                                       password='')
+        if db.is_connected():
+            print('[Valves] Connected to Database')
 
+    except Error as err:
+        print(err)
+
+def getDepth(basin):
     # Create db connection and metadata
-    engine = db.create_engine('sqlite:///%s' % path, echo=DEBUG)
+    engine = sqlite_db.create_engine('sqlite:///%s' % DBFILEPATH, echo=DEBUG)
     connection = engine.connect()
-    metaData = db.MetaData()
+    metaData = sqlite_db.MetaData()
 
     # Load data table
-    depths = db.Table('data', metaData, autoload=True, autoload_with=engine)
+    depths = sqlite_db.Table('data', metaData, autoload=True, autoload_with=engine)
     Session = sessionmaker(bind = engine)
     session = Session()
 
     results = session.query(Data).order_by(Data.datetime.desc()).limit(2)
-    for row in results:
-        print(row.basin, " : ", row.value)
+    if basin == 1:
+        return results[0]
+    elif basin == 0:
+        return results[1]
+    else:
+        print("\terror, not valid basin")
+
+def updateDB(basin):
+    db = mysql.connector.connect(host='localhost',
+                                       database='wave_lab_database',
+                                       user='root',
+                                       password='')
+    query = db.cursor(prepared = True)
+
+    UPDATE_DB = """INSERT INTO `depth_data`(`Ddate`, `Depth`, `Depth_Flume_Name`) VALUES (CURRENT_TIMESTAMP, %s, %s)"""
+    val = (basin.value, basin.basin)
+    query.execute(UPDATE_DB, val)
+    db.commit()
+
+def cleanDepthTable():
+    db = mysql.connector.connect(host='localhost',
+                                       database='wave_lab_database',
+                                       user='root',
+                                       password='')
+    query = db.cursor(prepared = True)
+    clean = """DELETE FROM `depth_data` WHERE Ddate < (SELECT DATE_ADD(NOW(), INTERVAL -2 DAY))"""
+    query.execute(clean)
+    db.commit()
+
+def main():
+    DBFILEPATH = "levels.sqlite"
+    argv = sys.argv
+    if len(argv) == 2:
+        DBFILEPATH = argv[1]
+    
+    if os.path.exists(DBFILEPATH):
+        print("File exists: %s" % DBFILEPATH)
+    else:
+        print("File doesn't exist: %s" % DBFILEPATH)
+
+    while(True):
+        DWB = getDepth(0)
+        LWF = getDepth(1)
+        updateDB(DWB)
+        time.sleep(1)
+        updateDB(LWF)
+        cleanDepthTable()
+        time.sleep(DB_MONITOR_INTERVAL)
+    
 
 
 if __name__ == "__main__":
