@@ -4,6 +4,10 @@ IMPORTS and VARIABLES
 import mysql, time, math
 from mysql.connector import Error
 
+from time import sleep
+from control import *
+from conf import facility_controls
+
 
 db = None
 query = None
@@ -39,10 +43,10 @@ def close_db():
     else:
         printf("[Target Monitor] Database not closed successfully")
 
+"""
+Returns a value truncated to a specific number of decimal places.
+"""
 def truncate(number, decimals=0):
-    """
-    Returns a value truncated to a specific number of decimal places.
-    """
     if not isinstance(decimals, int):
         raise TypeError("decimal places must be an integer.")
     elif decimals < 0:
@@ -53,8 +57,10 @@ def truncate(number, decimals=0):
     factor = 10.0 ** decimals
     return math.trunc(number * factor) / factor
 
+"""
+Connects to database and executes a query for the associated flume / basin, otherwise returns none
+"""
 def get_depth(flumeNumber):
-    
     db = mysql.connector.connect(host='localhost',
                                        database='wave_lab_database',
                                        user='root',
@@ -76,8 +82,11 @@ def get_depth(flumeNumber):
     
     return res
     
-
+"""
+Constant daemon to monitor LWF and DWB on interval
+"""
 def monitor_database():
+    
     print("[Target Monitor][DWB] Starting...")
     check_complete_DWB()
     print("[Target Monitor][LWF] Starting...")
@@ -85,7 +94,7 @@ def monitor_database():
 
     i = 0
     while i <= 10:
-        time.sleep(DB_MONITOR_INTERVAL)
+        sleep(DB_MONITOR_INTERVAL)
         check_complete_DWB()
         check_complete_LWF()
 
@@ -97,22 +106,38 @@ def check_complete_DWB():
                                        password='')
     query = db.cursor(prepared = True)
     
+    # Executes query to get the currently set targets if they exist, then fetchs the closest upcoming / currently enacted
     query.execute(sql_DWB_check_for_new_target)
     records = query.fetchone()
 
+    #if no fill target is present, output statement and return
     if records is None:
         print("[Target Monitor][DWB] Not filling    no target found")
+        return
+
+    #otherwise a fill target exists and could need to be acted upon
     else:
+        # get facility controls and print status to terminal
+        ctrl = facility_controls['DWB']['basin_north']
+        ctrl.print_status_header()
+        ctrl.print_status()
+
         date = records[2]
         query.execute(sql_DWB_check_if_fill_met)
         records = query.fetchone()
+
+        #if no fill target is present, output statement and return
         if current_depth < records[0]:
             print("[Target Monitor][DWB] Filling    ", current_depth, " ==> ", truncate(records[0], 2))
+            # if ctrl.status() == clos:
+            #   ctrl.open()
 
         elif current_depth >= records[0]:
+            print("[Target Monitor][DWB] Fill finished, updating database")
+            # elif ctrl.status() == open:
+            #   ctrl.close() 
             high = truncate(records[0], 2) +.05
             low = truncate(records[0], 2) - .05
-            print("[Target Monitor][DWB] Fill finished, updating database")
             val = (low, high)
             query.execute(sql_DWB_update_isComplete, val)
             db.commit()
@@ -126,21 +151,41 @@ def check_complete_LWF():
                                        password='')
     query = db.cursor(prepared = True)
     
+    # Executes query to get the currently set targets if they exist, then fetchs the closest upcoming / currently enacted
     query.execute(sql_LWF_check_for_new_target)
     records = query.fetchone()
     if records is None:
         print("[Target Monitor][LWF] Not filling,   no target found")
+        return
+    
+    #otherwise a fill target exists and could need to be acted upon
     else:
+        # get facility controls and print status to terminal
+        ctrl_north = facility_controls['LWF']['flume_north']
+        ctrl_south = facility_controls['LWF']['flume_south']
+
+        ctrl_north.print_status_header()
+        ctrl_north.print_status()
+        ctrl_south.print_status()
+
         date = records[2]
         query.execute(sql_LWF_check_if_fill_met)
         records = query.fetchone()
         if current_depth < records[0]:
             print("[Target Monitor][LWF] Filling    ", current_depth, " ==> ", truncate(records[0], 2))
+            # if ctrl_north.status() == clos:
+            #   ctrl_north.open()
+            # if ctrl_south.status() == clos:
+            #   ctrl_south.open()
 
         elif current_depth > records[0]:
+            print("[Target Monitor][LWF] Fill finished, updating database")
+            # elif ctrl_north.status() == open:
+            #   ctrl_north.close() 
+            # elif ctrl_south.status() == open:
+            #   ctrl_south.close() 
             high = truncate(records[0], 2) +.05
             low = truncate(records[0], 2) - .05
-            print("[Target Monitor][LWF] Fill finished, updating database")
             val = (low, high)
             query.execute(sql_LWF_update_isComplete, val)
             db.commit()
