@@ -6,7 +6,7 @@ import sqlalchemy as sqlite_db
 
 db = None
 query = None
-DB_MONITOR_INTERVAL = 5
+DB_MONITOR_INTERVAL = 30
 
 
 from datetime import datetime
