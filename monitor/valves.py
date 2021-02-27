@@ -1,5 +1,5 @@
 """
-IMPORTS and VARIABLES
+IMPORTS
 """
 import mysql, time, math
 from mysql.connector import Error
@@ -7,11 +7,19 @@ from mysql.connector import Error
 from time import sleep
 from control import *
 from conf import facility_controls
+from dotenv import load_dotenv
 
 
+"""
+GLOBAL VARIABLES
+"""
 db = None
 query = None
 DB_MONITOR_INTERVAL = 30
+
+sql_check_for_new_target = """SELECT * FROM `target_depth` WHERE Tdate < CURRENT_TIMESTAMP AND Target_Flume_Name = %s and isComplete = 0 ORDER BY Tdate DESC LIMIT 1;"""
+sql_check_if_fill_met = """SELECT * FROM `target_depth` WHERE Tdate < CURRENT_TIMESTAMP AND Target_Flume_Name = %s ORDER BY Tdate DESC LIMIT 1;"""
+sql_update_isComplete = """UPDATE target_depth SET isComplete = 1 WHERE Target_Flume_Name = %s;"""
 
 sql_DWB_check_for_new_target = "SELECT * FROM `target_depth` WHERE Tdate < CURRENT_TIMESTAMP AND Target_Flume_Name = 0 and isComplete = 0 ORDER BY Tdate DESC LIMIT 1;"
 sql_LWF_check_for_new_target = "SELECT * FROM `target_depth` WHERE Tdate < CURRENT_TIMESTAMP AND Target_Flume_Name = 1 and isComplete = 0 ORDER BY Tdate DESC LIMIT 1;"
@@ -23,26 +31,6 @@ sql_LWF_update_isComplete = """UPDATE target_depth SET isComplete = 1 WHERE Tdep
 """
 FUNCITONS
 """
-def connect_db():
-    """ Connect to MySQL database """
-    try:
-        db = mysql.connector.connect(host='localhost',
-                                       database='wave_lab_database',
-                                       user='root',
-                                       password='')
-        if db.is_connected():
-            print('[Valves] Connected to Database')
-
-    except Error as err:
-        print(err)
-
-def close_db():
-    if db is not None and db.is_connected():
-        print("[Target Monitor] Closing Database")
-        db.close()
-    else:
-        printf("[Target Monitor] Database not closed successfully")
-
 """
 Returns a value truncated to a specific number of decimal places.
 """
@@ -61,10 +49,16 @@ def truncate(number, decimals=0):
 Connects to database and executes a query for the associated flume / basin, otherwise returns none
 """
 def get_depth(flumeNumber):
-    db = mysql.connector.connect(host='localhost',
+    # db = mysql.connector.connect(
+    #         host = os.getenv('DATABASE_HOST'),
+    #         user = os.getenv('DATABASE_USER'),
+    #         password = os.getenv('DATABASE_PASSWORD'),
+    #         database = os.getenv('DATABASE')
+    # )
+    db = mysql.connector.connect(host='engr-db.engr.oregonstate.edu',
                                        database='wave_lab_database',
-                                       user='root',
-                                       password='')
+                                       user='wave_lab_database',
+                                       password='1amSmsjbRKB5ez4P')
     query = db.cursor()
     
     if flumeNumber == 0:
@@ -100,10 +94,16 @@ def monitor_database():
 
 def check_complete_DWB():
     current_depth = get_depth(0)
-    db = mysql.connector.connect(host='localhost',
+    # db = mysql.connector.connect(
+    #         host = os.getenv('DATABASE_HOST'),
+    #         user = os.getenv('DATABASE_USER'),
+    #         password = os.getenv('DATABASE_PASSWORD'),
+    #         database = os.getenv('DATABASE')
+    # )
+    db = mysql.connector.connect(host='engr-db.engr.oregonstate.edu',
                                        database='wave_lab_database',
-                                       user='root',
-                                       password='')
+                                       user='wave_lab_database',
+                                       password='1amSmsjbRKB5ez4P')
     query = db.cursor(prepared = True)
     
     # Executes query to get the currently set targets if they exist, then fetchs the closest upcoming / currently enacted
@@ -119,8 +119,8 @@ def check_complete_DWB():
     else:
         # get facility controls and print status to terminal
         ctrl = facility_controls['DWB']['basin_north']
-        ctrl.print_status_header()
-        ctrl.print_status()
+        # ctrl.print_status_header()
+        # ctrl.print_status()
 
         date = records[2]
         query.execute(sql_DWB_check_if_fill_met)
@@ -128,13 +128,15 @@ def check_complete_DWB():
 
         #if no fill target is present, output statement and return
         if current_depth < records[0]:
-            print("[Target Monitor][DWB] Filling    ", current_depth, " ==> ", truncate(records[0], 2))
-            # if ctrl.status() == clos:
+            print "[Target Monitor][DWB] Filling    ", current_depth, " ==> ", truncate(records[0], 2)
+            if ctrl.status() == "clos":
+                print "Opening"
             #   ctrl.open()
 
         elif current_depth >= records[0]:
             print("[Target Monitor][DWB] Fill finished, updating database")
-            # elif ctrl.status() == open:
+            if ctrl.status() == "open":
+                print "Closing"
             #   ctrl.close() 
             high = truncate(records[0], 2) +.05
             low = truncate(records[0], 2) - .05
@@ -144,11 +146,16 @@ def check_complete_DWB():
 
         
 def check_complete_LWF():
-    current_depth = get_depth(1)
-    db = mysql.connector.connect(host='localhost',
+    # db = mysql.connector.connect(
+    #         host = os.getenv('DATABASE_HOST'),
+    #         user = os.getenv('DATABASE_USER'),
+    #         password = os.getenv('DATABASE_PASSWORD'),
+    #         database = os.getenv('DATABASE')
+    # )
+    db = mysql.connector.connect(host='engr-db.engr.oregonstate.edu',
                                        database='wave_lab_database',
-                                       user='root',
-                                       password='')
+                                       user='wave_lab_database',
+                                       password='1amSmsjbRKB5ez4P')
     query = db.cursor(prepared = True)
     
     # Executes query to get the currently set targets if they exist, then fetchs the closest upcoming / currently enacted
@@ -164,25 +171,29 @@ def check_complete_LWF():
         ctrl_north = facility_controls['LWF']['flume_north']
         ctrl_south = facility_controls['LWF']['flume_south']
 
-        ctrl_north.print_status_header()
-        ctrl_north.print_status()
-        ctrl_south.print_status()
+        # ctrl_north.print_status_header()
+        # ctrl_north.print_status()
+        # ctrl_south.print_status()
 
         date = records[2]
         query.execute(sql_LWF_check_if_fill_met)
         records = query.fetchone()
         if current_depth < records[0]:
-            print("[Target Monitor][LWF] Filling    ", current_depth, " ==> ", truncate(records[0], 2))
-            # if ctrl_north.status() == clos:
+            print "[Target Monitor][LWF] Filling    ", current_depth, " ==> ", truncate(records[0], 2)
+            if ctrl_north.status() == clos:
+                print "[Target Monitor][LWF] Opening"
             #   ctrl_north.open()
-            # if ctrl_south.status() == clos:
+            if ctrl_south.status() == clos:
+                print "[Target Monitor][LWF] Opening"
             #   ctrl_south.open()
 
         elif current_depth > records[0]:
             print("[Target Monitor][LWF] Fill finished, updating database")
-            # elif ctrl_north.status() == open:
+            if ctrl_north.status() == open:
+                print "[Target Monitor][LWF] Closing"
             #   ctrl_north.close() 
-            # elif ctrl_south.status() == open:
+            if ctrl_south.status() == open:
+                print "[Target Monitor][LWF] Closing"
             #   ctrl_south.close() 
             high = truncate(records[0], 2) +.05
             low = truncate(records[0], 2) - .05

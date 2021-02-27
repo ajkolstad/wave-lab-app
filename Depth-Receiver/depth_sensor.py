@@ -53,10 +53,10 @@ def getDepth(basin):
         print("\terror, not valid basin")
 
 def updateDB(basin):
-    db = mysql.connector.connect(host='localhost',
+    db = mysql.connector.connect(host='engr-db.engr.oregonstate.edu',
                                        database='wave_lab_database',
-                                       user='root',
-                                       password='')
+                                       user='wave_lab_database',
+                                       password='1amSmsjbRKB5ez4P')
     query = db.cursor(prepared = True)
 
     # UPDATE_DB = """UPDATE `depth_data` SET `Depth` = %s AND 'Ddate' = CURRENT_TIMESTAMP WHERE `depth_data`.`Depth_flume_name` = %s"""
@@ -72,10 +72,10 @@ def updateDB(basin):
     db.commit()
 
 def cleanDepthTable():
-    db = mysql.connector.connect(host='localhost',
+    db = mysql.connector.connect(host='engr-db.engr.oregonstate.edu',
                                        database='wave_lab_database',
-                                       user='root',
-                                       password='')
+                                       user='wave_lab_database',
+                                       password='1amSmsjbRKB5ez4P')
     query = db.cursor(prepared = True)
     cleanDB = """DELETE FROM `depth_data` WHERE Ddate < (SELECT DATE_ADD(NOW(), INTERVAL -7 DAY))"""
     query.execute(cleanDB)
