@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:fl_animated_linechart/fl_animated_linechart.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import '../models/depth_data.dart';
+import '../inheritable_data.dart';
 import '../models/db_calls.dart';
 import '../models/target_data.dart';
-import '../widgets/set_target.dart';
+import '../models/user.dart';
+import '../models/darkmode_state.dart';
 import '../widgets/play_youtube.dart';
-import '../widgets/change_darkmode.dart';
-
-//import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:io';
 
 class DirectionalWaveBasin extends StatefulWidget{
 
@@ -16,20 +17,29 @@ class DirectionalWaveBasin extends StatefulWidget{
 }
 
 class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
-  final curDarkmode = new darkmode();
   List<targetData> _tDepthDataDwb = [];
+  List<targetData> _prevTDepthDataDwb = [];
+  List<depthData> _depthData = [];
+  var graphLine = Map<DateTime, double>();
+  var initGraphLine = Map<DateTime, double>(); // initial line that all points = 0.0 before DB data is received
 
-  String username = "admin";
-  int dropdownValue = 0;
-  double _tDepthDwb;
-  bool editTarget = false;
+  int dropdownValue = 0, graphDataMarker = 0;
+  double _tDepthDwb, _prevTarget, depthHolder;
+  bool editTarget = false; // Bool that opens the Hour offset carousell if the button is pressed
   bool editOffset = false;
-  bool boolTarget = false;
-  bool _darkmode;
+  bool boolTarget = false; // Bool that shows the buttons to add a new target depth to DB
+  bool atEdge = true; // Bool that checks if line graph is showing data at an edge of the depth data
+  DateTime prevTargetDate;// Date when previous target depth was set
+  DateTime dayCheck; // Date a day ago from when app is running
+  DateTime now = new DateTime.now(); // Date when app is running
+  DateTime latestDepth, earliestDepth;
+  DateTime lineStart, lineEnd;
+  Darkmode darkmodeClass;
+  User user;
 
 
   void getTDepthDwb(){
-    dbCalls.getTDepthLwf().then((targetData) {
+    dbCalls.getTDepthDwb().then((targetData) {
       setState(() {
         _tDepthDataDwb = targetData;
         _tDepthDwb = double.parse(_tDepthDataDwb[0].Tdepth);
@@ -37,15 +47,83 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
     });
   }
 
+  void getPrevTDwb(){
+    dbCalls.getPreviousTargetDwb().then((targetData) {
+      setState(() {
+        _prevTDepthDataDwb = targetData;
+        _prevTarget = double.parse(_prevTDepthDataDwb[0].Tdepth);
+        prevTargetDate = DateTime.parse(_prevTDepthDataDwb[0].tDate);
+        //print("prevTargetDate: ${prevTargetDate}");
+      });
+    });
+  }
+
+  void getGraphDepth(){
+    DateTime start;
+    DateTime end;
+    dbCalls.getAllDepthDwb().then((depthData) {
+      setState(() {
+        _depthData = depthData;
+        for(int i = 0; i < _depthData.length; i++){
+          DateTime date = DateTime.parse(_depthData[i].dDate);
+          // Get the bounds for the data on the first line graph
+          if(i == 0) {
+            start = date;
+            latestDepth = date;
+            lineStart = date;
+            lineEnd = lineStart.subtract(new Duration(hours: 4));
+            end = start.subtract(new Duration(hours: 4));
+          }
+          // add data in the bounds to the line for the line graph
+          if(date.isBefore(end) != true)
+            graphLine[date] = double.parse(_depthData[i].depth);
+          // Get the latest data available in DB
+          if(i == (_depthData.length - 1))
+            earliestDepth = date;
+          //graphData[date] = double.parse(_depthData[i].depth);
+        }
+      });
+    });
+  }
+
+  // inital line where all values equal 0.0 and will be used before DB response is recieved
+  void initGraph(){
+    DateTime now = new DateTime.now();
+    initGraphLine[now] = 0.0;
+    now = now.subtract(new Duration(hours: 2));
+    initGraphLine[now] = 0.0;
+    now = now.subtract(new Duration(hours: 2));
+    initGraphLine[now] = 0.0;
+  }
+
+  @override
   void initState() {
     super.initState();
-    getTDepthDwb();
-    curDarkmode.initDarkmode();
-    _darkmode = curDarkmode.getDarkmode();
-    print("Darkmode: ${_darkmode}");
+    if (this.mounted) {
+      setState(() {
+        getTDepthDwb();
+        getPrevTDwb();
+        getGraphDepth();
+        initGraph();
+        dayCheck = now.subtract(new Duration(days: 1));
+      //  print("dayCheck: ${dayCheck}");
+      });
+    }
+  }
+
+  void initDarkmode(){
+    if (this.mounted) {
+      setState(() {
+        final dmodeContainer = StateContainer.of(context);
+        darkmodeClass = dmodeContainer.darkmode;
+        user = dmodeContainer.user;
+      });
+    }
   }
 
   Widget build(BuildContext context){
+    initDarkmode();
+
     return SingleChildScrollView(
         padding: EdgeInsetsDirectional.only(
             start: 5.0,
@@ -64,10 +142,11 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
             if(boolTarget) addTargetButton(),
             estimate_time(),
             lastFill(),
-            dwb_barChart(),
+            dwb_lineChart(),
+            switch_lineChart(),
             generalInfo(),
-            live_view_intro(),
-            nDwb_video(),
+            //live_view_intro(),
+            //nDwb_video(),
           ],
         )
     );
@@ -85,7 +164,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(
-                        child: Text('Directional Wave Basin', style: TextStyle(fontSize: 35, color: Colors.white))
+                        child: Text('Directional Wave Basin', style: TextStyle(fontSize: 35, color: darkmodeClass.darkmodeState ? Colors.white : Colors.black))
                     )
                   ],
                 )
@@ -110,11 +189,11 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
                   children: <Widget>[
                     if(editTarget) Column(
                         children: <Widget>[
-                          Text("Current Fill", style: TextStyle(color: Colors.white, fontSize: 20.0)),
-                          Text("Target ", style: TextStyle(color: Colors.white, fontSize: 20.0))
+                          Text("Current Fill", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0)),
+                          Text("Target ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0))
                         ]
                     )
-                    else Text("Current Fill Target", style: TextStyle(color: Colors.white, fontSize: 20.0)),
+                    else Text("Current Fill Target", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0)),
                     if(editTarget) Container(
                         width: MediaQuery.of(context).size.width * .4,
                         padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
@@ -142,21 +221,12 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
             ),
             Column(
               children: <Widget>[
-                if(editTarget) FlatButton(
-                  child: Text("done", style: TextStyle(color: Colors.grey, fontSize: 20)),
-                  //color: Colors.grey,
-                  padding: EdgeInsets.all(0),
-                  textColor: Colors.grey,
-                  onPressed: () {setState(() {
-                    editTarget = false;
-                  });},
-                )
-                else FlatButton(
+                if(user.Name != "" &&  editTarget != true) FlatButton(
                   child: Text("edit", style: TextStyle(color: Colors.grey, fontSize: 20)),
-                  //color: Colors.grey,
                   padding: EdgeInsets.all(0),
                   textColor: Colors.grey,
                   onPressed: () {setState(() {
+                    depthHolder = _tDepthDwb;
                     boolTarget = true;
                     editTarget = true;
                   });},
@@ -174,15 +244,17 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
             children: [
               if(curSlide == dropdownValue)Container(
                   width: MediaQuery.of(context).size.width * .6,
-                  decoration: new BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(7.0)),
-                      color: Colors.grey[800]
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(option, style: TextStyle(color: Colors.white, fontSize: 20))
-                    ],
+                  height: 30,
+                  child: FlatButton(
+                    color: darkmodeClass.darkmodeState ? Colors.grey[800] : Colors.grey[400],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(7.0),
+                    ),
+                    child: Text(option, style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20)),
+                    onPressed: () {
+                      setState(() {
+                        editOffset = false;
+                      });},
                   )
               )
               else Container(
@@ -190,9 +262,10 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text(option, style: TextStyle(color: Colors.white, fontSize: 20))
+                      Text(option, style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20))
                     ],
-                  )                )
+                  )
+              )
             ]
         )
     );
@@ -201,7 +274,12 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
   Widget carouselSlider(){
     return Container(
         width: MediaQuery.of(context).size.width * .6,
-        //height: 150,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(7.0)),
+          border: Border.all(
+            color: Colors.red,
+          ),
+        ),
         child: CarouselSlider(
 
           options: CarouselOptions(
@@ -217,7 +295,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
               }),
 
           items: <Widget>[
-            carouselOptions("now", 0),
+            carouselOptions("0 hours", 0),
             carouselOptions("1 hour", 1),
             carouselOptions("2 hours", 2),
             carouselOptions("3 hours", 3),
@@ -256,48 +334,44 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
           children: <Widget>[
             Column(
               children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    if(editOffset) carouselSlider()
-                    else if(dropdownValue != 0) Column(
-                        children: <Widget>[
-                          Text("Fill in ${dropdownValue} hours", style: TextStyle(color: Colors.white, fontSize: 20.0)),
-                        ]
-                    )
-                    else Column(
-                        children: <Widget>[
-                          Text("Fill now", style: TextStyle(color: Colors.white, fontSize: 20.0)),
-                        ],
-                      )
-
-                  ],
-
-                )
-              ],
-            ),
-            Column(
-              children: <Widget>[
-                if(editOffset) FlatButton(
-                  child: Text("done", style: TextStyle(color: Colors.grey, fontSize: 20)),
-                  //color: Colors.grey,
-                  padding: EdgeInsets.all(0),
-                  textColor: Colors.grey,
-                  onPressed: () {setState(() {
-                    print("Index: ${dropdownValue}");
-                    editOffset = false;
-                  });},
-                )
-                else FlatButton(
-                  child: Text("edit", style: TextStyle(color: Colors.grey, fontSize: 20)),
-                  //color: Colors.grey,
-                  padding: EdgeInsets.all(0),
-                  textColor: Colors.grey,
-                  onPressed: () {setState(() {
-                    boolTarget = true;
-                    editOffset = true;
-                  });},
-                )
+                // Display carousel slider if user pressed button and editOffset is true
+                if(editOffset)
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Text("Fill in ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0)),
+                        carouselSlider()
+                      ]
+                  )
+                // Display current hour offset in button
+                else
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Text("Fill in", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0)),
+                        Container(
+                            width: MediaQuery.of(context).size.width * .4,
+                            padding: EdgeInsets.fromLTRB(6, 0, 10, 0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                FlatButton(
+                                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(6.0),
+                                      side: BorderSide(color: Colors.red)
+                                  ),
+                                  child: Text("$dropdownValue hours", style: TextStyle(color: Colors.red, fontSize: 20)),
+                                  onPressed: () {
+                                    setState(() {
+                                      editOffset = true;
+                                    });},
+                                )
+                              ],
+                            )
+                        )
+                      ]
+                  )
               ],
             ),
           ],
@@ -309,7 +383,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
     editTarget = false;
     DateTime tDate = new DateTime.now();
     tDate = tDate.add(new Duration(hours: dropdownValue));
-    dbCalls.addTarget(_tDepthDwb, 0, tDate, username, 0);
+    dbCalls.addTarget(_tDepthDwb, 0, tDate, user.Name, 0);
     setState(() {
       boolTarget = false;
       editOffset = false;
@@ -324,23 +398,31 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             Container(
-                child: RaisedButton(
-                  child: Text("Cancel", style: TextStyle(color: Colors.white, fontSize: 20)),
-                  onPressed: () {setState(() {
-                    boolTarget = false;
-                    editOffset = false;
-                    editTarget = false;
-                  });},
-                  color: Colors.grey[800],
+                child: FlatButton(
                   padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6.0),
+                      side: BorderSide(color: Colors.red)
+                  ),
+                  child: Text("Cancel", style: TextStyle(color: Colors.red, fontSize: 20)),
+                  onPressed: () {
+                    setState(() {
+                      boolTarget = false;
+                      editOffset = false;
+                      editTarget = false;
+                      _tDepthDwb = depthHolder;
+                    });},
                 )
             ),
             Container(
-                child: RaisedButton(
-                  child: Text("Done", style: TextStyle(color: Colors.white, fontSize: 20)),
-                  onPressed: addTarget,
-                  color: Colors.grey[800],
-                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                child: FlatButton(
+                    padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6.0),
+                        side: BorderSide(color: Colors.red)
+                    ),
+                    child: Text("Add Target", style: TextStyle(color: Colors.red, fontSize: 20)),
+                    onPressed: addTarget
                 )
             )
           ],
@@ -349,11 +431,11 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
 
   Widget estimate_time(){
     return Container(
-        padding: EdgeInsets.fromLTRB(25, 0, 0, 0),
+        width: MediaQuery.of(context).size.width * 0.9,
         child: Row(
           children: <Widget>[
             Text("ETA", style: TextStyle(color: Colors.yellowAccent, fontSize: 20)),
-            Text(" 3hrs", style: TextStyle(color: Colors.white, fontSize: 20))
+            Text(" 3hrs", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20))
           ],
         )
     );
@@ -368,19 +450,36 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
+                if(_prevTDepthDataDwb.length < 1)
+                  Container(
+                    padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
+                    child: Text("Generating last filled", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15)),
+                  )
+                else
                 Container(
                   padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                  child: Text("Last Filled to 6m", style: TextStyle(color: Colors.white, fontSize: 15)),
+                  child: Text("Last Filled to ${_prevTarget}m", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15)),
                 ),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Container(
-                    padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                    child: Text("9:46 AM", style: TextStyle(color: Colors.grey[800], fontSize: 15))
-                )
+                if(_prevTDepthDataDwb.length < 1)
+                  Container(
+                      padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                      child: Text("Generating date}", style: TextStyle(color: Colors.grey[800], fontSize: 15))
+                  )
+                else if(prevTargetDate.isAfter(dayCheck))
+                  Container(
+                      padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                      child: Text("${DateFormat('jm').format(prevTargetDate)}", style: TextStyle(color: Colors.grey[800], fontSize: 15))
+                  )
+                else
+                  Container(
+                      padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                      child: Text("${DateFormat('Md').format(prevTargetDate)} ${DateFormat('jm').format(prevTargetDate)}", style: TextStyle(color: Colors.grey[800], fontSize: 15))
+                  )
               ],
             )
           ],
@@ -388,13 +487,170 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
     );
   }
 
-  Widget dwb_barChart(){
-    return SizedBox(
-        width: MediaQuery.of(context).size.width * .9,
-        height: MediaQuery.of(context).size.width * .2,
-        child: Container(
-            color: Colors.yellowAccent
+  Widget dwb_lineChart(){
+    return Column(
+      children: <Widget>[
+        if(graphLine.length < 1)
+          SizedBox(
+              width: MediaQuery.of(context).size.width * .9,
+              height: 200,
+              child: AnimatedLineChart(
+                  LineChart.fromDateTimeMaps(
+                      [initGraphLine], [Colors.blue], ['S'],
+                      tapTextFontWeight: FontWeight.w400
+                  )
+              )
+          )
+        else SizedBox(
+            width: MediaQuery.of(context).size.width * .9,
+            height: 200,
+            child: AnimatedLineChart(
+                LineChart.fromDateTimeMaps(
+                    [graphLine], [Colors.blue], ['S'],
+                    tapTextFontWeight: FontWeight.w400
+                )
+            )
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            if(lineStart == null)
+              Container(
+                  padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                  child: Text("Generating date", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15))
+              )
+            else if(DateFormat('Md').format(lineStart) != DateFormat('Md').format(lineEnd))
+              Container(
+                  padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                  child: Text("${DateFormat('Md').format(lineEnd)}/${DateFormat('Md').format(lineStart)}", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15))
+              )
+            else
+              Container(
+                  padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                  child: Text("${DateFormat('Md').format(lineStart)}", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15))
+              )
+          ],
         )
+      ],
+    );
+  }
+
+  Widget increase_lineChart(){
+    int pos = 0, holder;
+    bool stop = false;
+    double depth;
+    DateTime date;
+    setState(() {
+      graphLine.clear();
+      while(stop == false) {
+        date = DateTime.parse(_depthData[graphDataMarker].dDate);
+        print('date: $date');
+        depth = double.parse(_depthData[graphDataMarker].depth);
+        graphLine[date] = depth;
+        if(pos == 0){
+          setState(() {
+            lineEnd = date;
+            lineStart = lineEnd.add(new Duration(hours: 4));
+          });
+        }
+        graphDataMarker -= 1;
+        pos += 1;
+        if(date.isAfter(lineStart) || (graphDataMarker) < 0)
+          stop = true;
+      }
+      if(lineStart.isAfter(earliestDepth))
+        atEdge = true;
+      else
+        atEdge = false;
+    });
+  }
+
+  Widget decrease_lineChart(){
+    int pos = 0;
+    bool stop = false;
+    DateTime date, lineStart, lineEnd;
+    double depth;
+    setState(() {
+      print("graphDataMarker: $graphDataMarker");
+      print("Length: ${graphLine.length}");
+      graphDataMarker = graphDataMarker + graphLine.length - 1;
+      print("new graphDataMarker: $graphDataMarker");
+      graphLine.clear();
+      while(stop == false) {
+        date = DateTime.parse(_depthData[graphDataMarker + pos].dDate);
+        print("date: $date");
+        depth = double.parse(_depthData[graphDataMarker + pos].depth);
+        graphLine[date] = depth;
+        if(pos == 0) {
+          setState(() {
+            lineStart = date;
+            lineEnd = lineStart.subtract(new Duration(hours: 4));
+          });
+        }
+        pos += 1;
+          if(date.isBefore(lineEnd) || (graphDataMarker + pos) >= _depthData.length)
+            stop = true;
+      }
+      if(lineEnd.isBefore(latestDepth))
+        atEdge = true;
+      else
+        atEdge = false;
+    });
+  }
+
+  // Display buttons to move datetimes in direction pressed
+  Widget switch_lineChart() {
+    return Column(
+      children: <Widget>[
+        if(atEdge)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              if(graphDataMarker == 0)
+                RaisedButton.icon(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6.0),
+                    ),
+                    label: Text('Scroll left', style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15)),
+                    color: darkmodeClass.darkmodeState ? Colors.grey[800] : Colors.grey[400],
+                    icon: Icon(Icons.arrow_back_ios, color: darkmodeClass.darkmodeState ? Colors.white : Colors.black),
+                    onPressed: decrease_lineChart
+                )
+              else RaisedButton.icon(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6.0),
+                  ),
+                  label: Text('Scroll right', style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15)),
+                  color: darkmodeClass.darkmodeState ? Colors.grey[800] : Colors.grey[400],
+                  icon: Icon(Icons.arrow_forward_ios, color: darkmodeClass.darkmodeState ? Colors.white : Colors.black),
+                  onPressed: increase_lineChart
+              )
+            ],
+          )
+        else Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            RaisedButton.icon(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6.0),
+                ),
+                label: Text('Scroll left', style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15)),
+                color: darkmodeClass.darkmodeState ? Colors.grey[800] : Colors.grey[400],
+                icon: Icon(Icons.arrow_back_ios, color: darkmodeClass.darkmodeState ? Colors.white : Colors.black),
+                onPressed: decrease_lineChart
+            ),
+            RaisedButton.icon(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6.0),
+                ),
+                label: Text('Scroll right', style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15)),
+                color: darkmodeClass.darkmodeState ? Colors.grey[800] : Colors.grey[400],
+                icon: Icon(Icons.arrow_forward_ios, color: darkmodeClass.darkmodeState ? Colors.white : Colors.black),
+                onPressed: increase_lineChart
+            )
+          ],
+        )
+      ],
     );
   }
 
@@ -408,7 +664,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
             Column(
               children: <Widget>[
                 Text("Fill Time", style: TextStyle(color: Colors.blue, fontSize: 15)),
-                Text("12hrs", style: TextStyle(color: Colors.white, fontSize: 15))
+                Text("12hrs", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15))
               ],
             ),
             Container(
@@ -417,7 +673,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
             Column(
               children: <Widget>[
                 Text("Water Used", style: TextStyle(color: Colors.lightBlue, fontSize: 15)),
-                Text("22,387 gal", style: TextStyle(color: Colors.white, fontSize: 15))
+                Text("22,387 gal", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15))
               ],
             )
           ],
@@ -431,7 +687,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Text("Live Views", style: TextStyle(color: Colors.white, fontSize: 20))
+            Text("Live View : North Wall", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20))
           ],
         )
     );

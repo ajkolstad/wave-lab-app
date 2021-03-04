@@ -8,7 +8,7 @@ class depthData{
   factory depthData.fromJson(Map<String, dynamic> json){
     return depthData(
       dDate: json['Ddate'] as String,
-        depth: json['Depth'] as String,
+      depth: json['Depth'] as String,
       depth_flume_name: json['Depth_Flume_Name'] as String,
     );
   }

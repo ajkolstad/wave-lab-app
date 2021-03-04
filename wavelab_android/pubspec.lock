@@ -85,6 +85,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.2.1"
+  fl_animated_linechart:
+    dependency: "direct main"
+    description:
+      name: fl_animated_linechart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.4"
   flutter:
     dependency: "direct main"
     description: flutter

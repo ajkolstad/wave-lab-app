@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:intl/intl.dart';
+import '../inheritable_data.dart';
 import '../widgets/play_youtube.dart';
-import '../widgets/change_darkmode.dart';
+import '../models/darkmode_state.dart';
 import '../models/db_calls.dart';
 import '../models/depth_data.dart';
 import '../models/target_data.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget{
 
@@ -26,66 +27,83 @@ class HomeState extends State<Home> {
   DateTime curTime = new DateTime.now();
   DateTime dateLwf;
   DateTime dateDwb;
-  //bool _darkmode;
-  //final curDarkmode = new darkmode();
+  Darkmode darkmodeClass;
+  bool _darkmode;
 
   void getCurDepthLwf() {
+    print("in");
     dbCalls.getCurDepthLwf().then((depthData) {
-      setState(() {
-        _curDepthDataLwf = depthData;
-        _curDepthLwf = double.parse(_curDepthDataLwf[0].depth);
-      });
+      if (this.mounted) {
+        setState(() {
+          _curDepthDataLwf = depthData;
+          _curDepthLwf = double.parse(_curDepthDataLwf[0].depth);
+        });
+      }
     });
   }
 
   void getCurDepthDwb(){
     dbCalls.getCurDepthDwb().then((depthData) {
-      setState(() {
-        _curDepthDataDwb = depthData;
-        _curDepthDwb = double.parse(_curDepthDataDwb[0].depth);
-      });
+      if (this.mounted) {
+        setState(() {
+          _curDepthDataDwb = depthData;
+          _curDepthDwb = double.parse(_curDepthDataDwb[0].depth);
+        });
+      }
     });
   }
 
   void getTDepthLwf(){
     dbCalls.getTDepthLwf().then((targetData) {
-      setState(() {
-        _tDepthDataLwf = targetData;
-        _tDepthLwf = double.parse(_tDepthDataLwf[0].Tdepth);
-        dateLwf = DateTime.parse(_tDepthDataLwf[0].tDate);
-      });
+      if (this.mounted) {
+        setState(() {
+          _tDepthDataLwf = targetData;
+          _tDepthLwf = double.parse(_tDepthDataLwf[0].Tdepth);
+          dateLwf = DateTime.parse(_tDepthDataLwf[0].tDate);
+        });
+      }
     });
   }
 
   void getTDepthDwb(){
     dbCalls.getTDepthDwb().then((targetData) {
-      setState(() {
-        _tDepthDataDwb = targetData;
-        _tDepthDwb = double.parse(_tDepthDataDwb[0].Tdepth);
-        dateDwb = DateTime.parse(_tDepthDataDwb[0].tDate);
-      });
+      if (this.mounted) {
+        setState(() {
+          _tDepthDataDwb = targetData;
+          _tDepthDwb = double.parse(_tDepthDataDwb[0].Tdepth);
+          dateDwb = DateTime.parse(_tDepthDataDwb[0].tDate);
+        });
+      }
     });
   }
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      getCurDepthLwf();
-      //print("depth: ${_curDepthLwf}");
-      getCurDepthDwb();
-      //print("2: ${_curDepthDwb}");
-      getTDepthLwf();
-      getTDepthDwb();
-    });
-    print("currentTime: ${curTime}");
-    /*setState(() {
-      curDarkmode.initDarkmode();
-      _darkmode = curDarkmode.getDarkmode();
-    });*/
+    if (this.mounted) {
+      setState(() {
+        getCurDepthLwf();
+        getCurDepthDwb();
+        getTDepthLwf();
+        getTDepthDwb();
+      });
+      print("currentTime: ${curTime}");
+    }
+  }
+
+  void initDarkmode(){
+    if (this.mounted) {
+      setState(() {
+        final dmodeContainer = StateContainer.of(context);
+        darkmodeClass = dmodeContainer.darkmode;
+        //_darkmode = darkmodeClass.darkmodeState;
+      });
+    }
   }
 
   Widget build(BuildContext context){
+    initDarkmode();
+
     return SingleChildScrollView(
         padding: EdgeInsetsDirectional.only(
             start: 5.0,
@@ -107,6 +125,20 @@ class HomeState extends State<Home> {
     );
   }
 
+  Widget liveVideo(String url) {
+    return Container(
+      //height: 250,
+      //width: MediaQuery.of(context).size.width * .8,
+        child: Column(
+            children: [
+              Container(
+                  child: Youtuber(url: url)
+              )
+            ]
+        )
+    );
+  }
+
   Widget intro_section(){
     return SizedBox(
         width: MediaQuery.of(context).size.width * .9,
@@ -122,7 +154,7 @@ class HomeState extends State<Home> {
                             padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
                             //mainAxisAlignment: MainAxisAlignment.center,
                             //color: Color.fromRGBO(214, 214, 214, 1),
-                            child: Text('Home', style: TextStyle(color: Colors.white, fontSize: 40))
+                            child: Text('Home', style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 40))
                         )
                       ]
                   ),
@@ -136,42 +168,46 @@ class HomeState extends State<Home> {
     return Container(
         padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
         decoration: BoxDecoration(
-        color: Colors.grey[800],
+        color: darkmodeClass.darkmodeState ? Colors.grey[800] : Colors.grey[400],
           borderRadius: BorderRadius.all(Radius.circular(10.0))
       ),
         margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
-        //color: Colors.grey[800],
         width: MediaQuery.of(context).size.width * .9,
         child: Column(
           children: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text("Large Wave Basin", style: TextStyle(color: Colors.white, fontSize: 20.0))
+                Text("Large Wave Flume", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0))
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                if(_tDepthDataLwf[0].isComplete == 1 && _curDepthLwf >= _tDepthLwf)
+                if(_tDepthDataLwf.length < 1)
                   Container(
                       padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
-                      child: Text("Filling Complete", style: TextStyle(color: Colors.white),)
+                      child: Text("Generating target", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black),)
+                  )
+                else if(_tDepthDataLwf[0].isComplete == 1 && _curDepthLwf >= _tDepthLwf)
+                  Container(
+                      padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
+                      child: Text("Filling Complete", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black),)
                   )
                 else if(_tDepthDataLwf[0].isComplete == 1)
                   Container(
                       padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
-                      child: Text("Not Filling", style: TextStyle(color: Colors.white),)
+                      child: Text("Not Filling", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black),)
                   )
                 else if(dateLwf.isAfter(curTime))
                     Container(
                         padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
-                        child: Text("Waiting to fill to ${_tDepthLwf}m at ${DateFormat('jm').format(dateLwf)}", style: TextStyle(color: Colors.white),)
+                        child: Text("Waiting to fill to ${_tDepthLwf}m at ${DateFormat('jm').format(dateLwf)}", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black),)
                     )
                 else
                   Container(
                       padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
-                      child: Text("Filling to ${_tDepthLwf}m now", style: TextStyle(color: Colors.white),)
+                      child: Text("Filling to ${_tDepthLwf}m now", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black),)
                   )
               ]
 
@@ -179,19 +215,39 @@ class HomeState extends State<Home> {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Container(
-                    padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                    child: Text("Currently ${_curDepthLwf}m", style: TextStyle(color: Colors.white))
+                if(_curDepthLwf == null)
+                  Container(
+                      padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                      child: Text("Generating current depth", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black))
+                  )
+                else
+                  Container(
+                      padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                      child: Text("Currently ${_curDepthLwf}m", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black))
             )]),
-            Container(
-                width: MediaQuery.of(context).size.width * .9,
-                child: Container(
+          Container(
+              width: MediaQuery.of(context).size.width * .9,
+
+              child: CarouselSlider(
+              options: CarouselOptions(height: 173, autoPlay: false, enableInfiniteScroll: false, enlargeCenterPage: true),
+              items: [
+                liveVideo('https://www.youtube.com/watch?v=ciioaETC6wE&feature=emb_title'),
+                liveVideo('https://www.youtube.com/watch?v=V3JsFPQA6YQ&feature=emb_title'),
+                liveVideo('https://www.youtube.com/watch?v=VCluhS3RJpI&feature=emb_title')
+              ])
+          )
+        ]
+        )
+    /*Container(
+        width: MediaQuery.of(context).size.width * .9,
+
+        child: Container(
                     //margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
                     child: Youtuber(url: 'https://www.youtube.com/watch?v=ciioaETC6wE')
                 )
             )
           ],
-        )
+        )*/
     );
   }
 
@@ -199,59 +255,73 @@ class HomeState extends State<Home> {
     return Container(
         padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
         decoration: BoxDecoration(
-          color: Colors.grey[800],
+          color: darkmodeClass.darkmodeState ? Colors.grey[800] : Colors.grey[400],
             borderRadius: BorderRadius.all(Radius.circular(10.0))
         ),
-      //color: Colors.grey[800],
       width: MediaQuery.of(context).size.width * .9,
       child: Column(
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text("Directional Wave Basin", style: TextStyle(color: Colors.white, fontSize: 20.0))
+              Text("Directional Wave Basin", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0))
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              if(_tDepthDataDwb[0].isComplete == 1 && _curDepthDwb >= _tDepthDwb)
+              if(_tDepthDataDwb.length < 1)
                 Container(
                     padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
-                    child: Text("Filling Complete", style: TextStyle(color: Colors.white),)
+                    child: Text("Filling Complete", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black),)
+                )
+              else if(_tDepthDataDwb[0].isComplete == 1 && _curDepthDwb >= _tDepthDwb)
+                Container(
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
+                    child: Text("Filling Complete", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black),)
                 )
               else if(_tDepthDataDwb[0].isComplete == 1)
                 Container(
                     padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
-                    child: Text("Not Filling", style: TextStyle(color: Colors.white),)
+                    child: Text("Not Filling", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black),)
                 )
               else if(dateDwb.isAfter(curTime))
                 Container(
                     padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
-                    child: Text("Waiting to fill to ${_tDepthDwb}m at ${DateFormat('jm').format(dateDwb)}", style: TextStyle(color: Colors.white),)
+                    child: Text("Waiting to fill to ${_tDepthDwb}m at ${DateFormat('jm').format(dateDwb)}", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black),)
                 )
               else
                 Container(
                     padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
-                    child: Text("Filling to ${_tDepthDwb}m now", style: TextStyle(color: Colors.white),)
+                    child: Text("Filling to ${_tDepthDwb}m now", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black),)
                 )
             ]
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Container(
-                  padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                  child: Text("Currently ${_curDepthDwb}m", style: TextStyle(color: Colors.white))
-              )
+              if(_curDepthDwb == null)
+                Container(
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                    child: Text("Generating current depth", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black))
+                )
+              else
+                Container(
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                    child: Text("Currently ${_curDepthDwb}m", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black))
+                )
             ]
           ),
           Container(
               width: MediaQuery.of(context).size.width * .9,
-              child: Container(
-                  //margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                  child: Youtuber(url: 'https://www.youtube.com/watch?v=pHmmBQYVPCI&feature=emb_title')
-              )
+
+              child: CarouselSlider(
+                  options: CarouselOptions(height: 173, autoPlay: false, enableInfiniteScroll: false, enlargeCenterPage: true),
+                  items: [
+                    liveVideo('https://www.youtube.com/watch?v=pHmmBQYVPCI&feature=emb_title'),
+                    liveVideo('https://www.youtube.com/watch?v=xNzdOP3ixd4&feature=emb_title'),
+                    liveVideo('https://www.youtube.com/watch?v=Z7V0x92PpXU&feature=emb_title')
+                  ])
           )
         ],
       )

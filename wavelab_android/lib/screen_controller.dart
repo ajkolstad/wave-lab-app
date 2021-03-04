@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/home.dart';
 import 'screens/large_wave_flume.dart';
 import 'screens/directional_wave_basin.dart';
 import 'screens/live_views.dart';
 import 'screens/settings.dart';
-import 'widgets/change_darkmode.dart';
+import 'models/darkmode_state.dart';
 import 'models/app_icons.dart';
+import 'inheritable_data.dart';
 class ScreenController extends StatefulWidget {
 
   //final SharedPreferences preferences;
@@ -21,34 +21,18 @@ class ScreenController extends StatefulWidget {
 
 class ScreenControllerState extends State<ScreenController> {
 
-  //final curDarkmode = new darkmode();
-  bool _darkmode;
+  static Darkmode darkmodeClass;
+  static bool _darkmode;
 
-  @override
-  void initState() {
-    super.initState();
-    setState(() {
-      //curDarkmode.initDarkmode();
-      //_darkmode = curDarkmode.getDarkmode();
-    });
-      //print("Darkmode: ${_darkmode}");
-  }
-
-  /*
-  void initDarkmode() async{
+  void initDarkmode(){
+    if (this.mounted) {
       setState(() {
-        _darkmode = preferences.getBool('darkmode') ?? false;
+        final dmodeContainer = StateContainer.of(context);
+        darkmodeClass = dmodeContainer.darkmode;
+        //_darkmode = darkmodeClass.darkmodeState;
       });
-
+    }
   }
-
-  darkmodeSwitch(bool value) async{
-    setState(() {
-      _darkmode = value;
-      widget.preferences.setBool('darkmode', _darkmode);
-    });
-  }
-*/
 
   static var tabs = [
     Tab(child: Container(
@@ -97,7 +81,7 @@ class ScreenControllerState extends State<ScreenController> {
             Text("DWB", style: TextStyle(fontSize: 12))
           ],
         ))),
-    Tab(child: Container(
+    /*Tab(child: Container(
         padding: EdgeInsetsDirectional.only(
             start: 0,
             top: 3.0,
@@ -111,7 +95,7 @@ class ScreenControllerState extends State<ScreenController> {
             ),
             Text("Live", style: TextStyle(fontSize: 12))
           ],
-        ))),
+        ))),*/
     Tab(child: Container(
       padding: EdgeInsetsDirectional.only(
           start: 0,
@@ -130,17 +114,18 @@ class ScreenControllerState extends State<ScreenController> {
     ))
   ];
 
-  final screens = [Home(), LargeWaveFlume(), DirectionalWaveBasin(), LiveView(), Settings()];
+  final screens = [Home(), LargeWaveFlume(), DirectionalWaveBasin(), /*LiveView(),*/ Settings()];
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   Widget build(BuildContext context) {
+    initDarkmode();
     return DefaultTabController(
-      length: 5,
+      length: 4,
       initialIndex: 0,
       child: Scaffold(
         key: _scaffoldKey,
-        backgroundColor: Color.fromRGBO(26, 26, 19, .9),
+        backgroundColor: darkmodeClass.darkmodeState ? Color.fromRGBO(26, 26, 19, .9) : Colors.white,
         appBar: AppBar(
           automaticallyImplyLeading: false,
             backgroundColor: Color.fromRGBO(220, 68, 5, 1.0),
@@ -172,8 +157,8 @@ class ScreenControllerState extends State<ScreenController> {
         //padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
         //margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
         //height: 100.0,
-      color: Colors.grey[800],
-      child: TabBar(labelColor: Colors.lightBlue, unselectedLabelColor: Colors.grey, tabs: tabs, )
+      color: darkmodeClass.darkmodeState ? Colors.grey[800] : Colors.grey[400],
+      child: TabBar(labelColor: darkmodeClass.darkmodeState ? Colors.lightBlue : Colors.blue[700], unselectedLabelColor: darkmodeClass.darkmodeState ? Colors.grey : Colors.black, tabs: tabs)
     );
   }
 }

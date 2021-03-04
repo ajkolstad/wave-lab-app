@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import '../screens/large_wave_flume.dart';
-import '../screens/directional_wave_basin.dart';
+import '../inheritable_data.dart';
+import '../models/darkmode_state.dart';
 import '../widgets/play_youtube.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:io';
 
 class LiveView extends StatefulWidget{
 
@@ -14,26 +12,20 @@ class LiveView extends StatefulWidget{
 
 class LiveViewState extends State<LiveView> {
 
-  bool darkmode;
+  Darkmode darkmodeClass;
 
-
-/*
-  @override
-  void initState() {
-    super.initState();
-    setState((){
-      darkmode = widget.preferences.getBool('darkmode') ?? false;
-    });
+  void initDarkmode(){
+    if (this.mounted) {
+      setState(() {
+        final dmodeContainer = StateContainer.of(context);
+        darkmodeClass = dmodeContainer.darkmode;
+      });
+    }
   }
 
-  void darkmodeSwitch(bool value) async{
-    setState(() {
-      darkmode = value;
-      widget.preferences.setBool('darkmode', darkmode);
-    });
-  }
-*/
   Widget build(BuildContext context){
+    initDarkmode();
+
     return SingleChildScrollView(
         padding: EdgeInsetsDirectional.only(
             start: 5.0,
@@ -66,10 +58,10 @@ class LiveViewState extends State<LiveView> {
         child: Column(
             children: [
               Container(
-                color: Colors.grey[800],
+                color: darkmodeClass.darkmodeState ? Colors.grey[800] : Colors.grey[400],
                   padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
                   margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
-                child: Text(title, style: TextStyle(color: Colors.white, fontSize: 20))
+                child: Text(title, style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20))
               ),
               Container(
                 child: Youtuber(url: url)
@@ -83,7 +75,7 @@ class LiveViewState extends State<LiveView> {
     return Container(
         margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
         padding: EdgeInsets.fromLTRB(25, 10, 20, 10),
-        child: Text('Wave View', style: TextStyle(fontSize: 35, color: Colors.white))
+        child: Text('Wave View', style: TextStyle(fontSize: 35, color: darkmodeClass.darkmodeState ? Colors.white : Colors.black))
     );
   }
 
@@ -94,7 +86,7 @@ class LiveViewState extends State<LiveView> {
         child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text('Large Wave Flume', style: TextStyle(fontSize: 30, color: Colors.white))
+              Text('Large Wave Flume', style: TextStyle(fontSize: 30, color: darkmodeClass.darkmodeState ? Colors.white : Colors.black))
             ]
         )
     );
@@ -123,7 +115,7 @@ class LiveViewState extends State<LiveView> {
               Wrap(
                 children: <Widget>[
                   Container(
-                      child: Text('Directional Wave Basin', style: TextStyle(fontSize: 30, color: Colors.white))
+                      child: Text('Directional Wave Basin', style: TextStyle(fontSize: 30, color: darkmodeClass.darkmodeState ? Colors.white : Colors.black))
                   )
                 ],
               )

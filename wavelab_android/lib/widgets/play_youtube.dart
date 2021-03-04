@@ -20,7 +20,7 @@ class YoutuberState extends State<Youtuber>{
         autoPlay: false,
         isLive: true,
         mute: true,
-        controlsVisibleAtStart: false,
+        controlsVisibleAtStart: true,
         disableDragSeek: true,
         enableCaption: true,
         //hideControls: true

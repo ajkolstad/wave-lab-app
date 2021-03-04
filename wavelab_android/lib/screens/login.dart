@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:io';
 
 class Login extends StatefulWidget{
 
@@ -16,23 +14,6 @@ class LoginState extends State<Login> {
 
   bool darkmode;
 
-
-/*
-  @override
-  void initState() {
-    super.initState();
-    setState((){
-      darkmode = widget.preferences.getBool('darkmode') ?? false;
-    });
-  }
-
-  void darkmodeSwitch(bool value) async{
-    setState(() {
-      darkmode = value;
-      widget.preferences.setBool('darkmode', darkmode);
-    });
-  }
-*/
   Widget build(BuildContext context){
     return SingleChildScrollView(
         padding: EdgeInsetsDirectional.only(
