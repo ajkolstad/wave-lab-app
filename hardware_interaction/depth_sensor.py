@@ -30,8 +30,8 @@ ARCHIVE = "/a1/walve/data"
 FACILITIES = [ "LWF", "DWB"]
 
 # The file path of the sqlite database
-# DBFILEPATH = "/a1/walve/data/levels.sqlite"
-DBFILEPATH = "levels.sqlite"
+DBFILEPATH = "/a1/walve/data/levels.sqlite"
+# DBFILEPATH = "levels.sqlite"
 
 def getDepth(basin):
     # Create db connection and metadata
@@ -46,9 +46,9 @@ def getDepth(basin):
 
     results = session.query(Data).order_by(Data.datetime.desc()).limit(2)
     if basin == 1:
-        return results[0]
-    elif basin == 0:
         return results[1]
+    elif basin == 0:
+        return results[0]
     else:
         print("\terror, not valid basin")
 
@@ -61,13 +61,11 @@ def updateDB(basin):
 
     # UPDATE_DB = """UPDATE `depth_data` SET `Depth` = %s AND 'Ddate' = CURRENT_TIMESTAMP WHERE `depth_data`.`Depth_flume_name` = %s"""
     UPDATE_DB = """UPDATE `depth_data` SET `Depth` = %s WHERE `depth_data`.`Depth_flume_name` = %s"""
-    val = (basin.value, basin.basin)
-
-    print "Updating"
-    print(basin.basin)
-    print(basin.value)
-    print(basin.datetime)
-
+    val = ()
+    if basin.basin == 0:
+        val = (basin.value, 1)
+    elif basin.basin == 1:
+        val = (basin.value, 0)
     query.execute(UPDATE_DB, val)
     db.commit()
 
@@ -95,7 +93,6 @@ def main():
         updateDB(LWF)
         # cleanDepthTable()
         time.sleep(DB_MONITOR_INTERVAL)
-    
 
 
 if __name__ == "__main__":
