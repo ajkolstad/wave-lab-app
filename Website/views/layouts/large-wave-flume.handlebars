@@ -38,12 +38,12 @@
                 {{#if message}}
                 <div class="col-lg-6 mb-3">
                     <div class="card h-100">
-                        <form  action="/target/postLWF" method="POST">
+                        <form  action="/auth/large-wave-flume" method="POST">
                             <div class="col p-4 d-flex flex-column position-static">
                                 <h5 class="d-inline-block mb-2 text-primary">Set New Target</h5>
                                 <div class="form-group">
                                     <label for="inputDepthTarget">Depth Target</label>
-                                    <input type="text" class="form-control" type="number"id="inputDepthTarget" placeholder="0.5" name="depthTarget">
+                                    <input type="number" class="form-control" type="number"id="inputDepthTarget" placeholder="0.5" name="depthTarget" step=".01">
                                 </div>
                                 <div class="form-group">
                                     <label for="inputOffset">Hour Offset</label>

@@ -1,6 +1,7 @@
 var mysql = require('mysql');
 var env = require('dotenv');
 var jwt = require('jsonwebtoken');
+var moment = require('moment');
 
 
 env.config({ path: './config.env'})
@@ -64,5 +65,43 @@ exports.login = async (req, res) => {
         res.status(401).render(`layouts${"/login"}`, {
             message: 'Incorrect Username or Password'
         });
+    }
+};
+
+exports.postLWF = async (req, res) => {
+    try {
+        var {depthTarget, timeOffset} = req.body;
+
+        console.log("[Webserver] New Depth Request - Target: " + depthTarget + " Offset: " + timeOffset);
+        var newTime = Date.now();
+        var addTime = moment(newTime).add(timeOffset, 'hours').format('YYYY-MM-DD hh:mm:ss');
+        var username = req.cookies['username'];
+        var flumeName = 1; //for LWF
+        var isComplete = 0;
+        console.log("[Webserver] New Depth Request: " + depthTarget + " LWF " + addTime + " " + username + " 0");
+        database.query('INSERT INTO target_depth (Tdepth, Target_Flume_Name, Tdate, Username, isComplete) VALUES (?,?,?,?,?)',[depthTarget, flumeName, addTime, username, isComplete], async (error, results) => {
+            console.log("[Webserver] Depth Request Added");
+        });
+    } catch (error) {
+        console.log("[Webserver] Failed To Add Depth Request");
+    }
+};
+
+exports.postDWB = async (req, res) => {
+    try {
+        var {depthTarget, timeOffset} = req.body;
+
+        console.log("[Webserver] New Depth Request - Target: " + depthTarget + " Offset: " + timeOffset);
+        var newTime = Date.now();
+        var addTime = moment(newTime).add(timeOffset, 'hours').format('YYYY-MM-DD hh:mm:ss');
+        var username = req.cookies['username'];
+        var flumeName = 0; //for DWB
+        var isComplete = 0;
+        console.log("[Webserver] New Depth Request: " + depthTarget + " LWF " + addTime + " " + username + " 0");
+        database.query('INSERT INTO target_depth (Tdepth, Target_Flume_Name, Tdate, Username, isComplete) VALUES (?,?,?,?,?)',[depthTarget, flumeName, addTime, username, isComplete], async (error, results) => {
+            console.log("[Webserver] Depth Request Added");
+        });
+    } catch (error) {
+        console.log("[Webserver] Failed To Add Depth Request");
     }
 };
