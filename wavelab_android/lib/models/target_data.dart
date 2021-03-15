@@ -1,3 +1,4 @@
+// Target data class used to when mapping data from sql call to get data from the target_depth table
 class targetData{
   String Tdepth;
   String target_flume_name;

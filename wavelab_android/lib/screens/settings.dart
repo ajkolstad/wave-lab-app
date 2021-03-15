@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import '../widgets/login.dart';
 import '../models/darkmode_state.dart';
 import '../models/user.dart';
 import '../models/user_data.dart';
 import '../models/db_calls.dart';
 import '../inheritable_data.dart';
+
+// Setting widget that shows login button and darkmode switch
 class Settings extends StatefulWidget {
 
   SettingsState createState() => SettingsState();
@@ -19,13 +20,14 @@ class SettingsState extends State<Settings> {
   Darkmode darkmodeClass;
   User user;
   bool newDarkmode;
-  bool error = false;
 
+  // Updates the inheritable widget to change darkmode data
   void updateDarkmode(bool _darkmode){
     final dmodeContainer = StateContainer.of(context);
     dmodeContainer.updateDarkmode(newDarkmode: _darkmode);
   }
 
+  // Initializes darkmode from inheritable widget
   void initAppState(){
     setState(() {
       final dmodeContainer = StateContainer.of(context);
@@ -35,13 +37,14 @@ class SettingsState extends State<Settings> {
   }
 
   Widget build(BuildContext context){
+
     initAppState();
 
     return Container(
-        //color: Colors.grey[700],
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
+            // Title of settings page
             Container(
                 padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
                 child: Row(
@@ -51,6 +54,7 @@ class SettingsState extends State<Settings> {
                     ]
                 )
             ),
+            // Sets bar across screen below title
             Divider(
               color: darkmodeClass.darkmodeState ? Colors.white : Colors.black,
               thickness: 4,
@@ -58,11 +62,13 @@ class SettingsState extends State<Settings> {
               endIndent: 20,
             ),
 
+            // Login/Logout button
             Container(
                 padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
+                      // If there is no user signed in show the login button
                       if(user.Name == "")
                         FlatButton(
                           padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * .3, 0, MediaQuery.of(context).size.width * .3, 0),
@@ -70,9 +76,9 @@ class SettingsState extends State<Settings> {
                           child: Text('Login', style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black)),
                           onPressed: () {LoginPopup(username, darkmodeClass.darkmodeState);}
                         )
+                        // If there is a user signed in, show the users name that is signed in and a logout button
                       else
                         Column(
-                          //mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Container(
                                 padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
@@ -88,7 +94,7 @@ class SettingsState extends State<Settings> {
                               child: Text('Logout', style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black)),
                               onPressed: () {
                                 final dmodeContainer = StateContainer.of(context);
-                                dmodeContainer.updateUser("", "");
+                                dmodeContainer.updateUser("", ""); // Sets user to empty if logout is pressed
                               },
                             )
                           ],
@@ -96,6 +102,7 @@ class SettingsState extends State<Settings> {
                     ]
                 )
             ),
+            // Darkmode switch
             Container(
                 padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * .1, 20, MediaQuery.of(context).size.width * .08, 0),
                 child: Row(
@@ -112,7 +119,7 @@ class SettingsState extends State<Settings> {
                           setState(() {
                             newDarkmode = state;
                             darkmodeClass.darkmodeSwitch(newDarkmode);
-                            updateDarkmode(newDarkmode);
+                            updateDarkmode(newDarkmode); // Update darkmode when switch is pressed
                           });
                         }
                         )
@@ -124,6 +131,7 @@ class SettingsState extends State<Settings> {
     );
   }
 
+  // Popup error if login information isnt in database
   void errorPopup(bool darkmode){
     showDialog(
       context: context,
@@ -144,10 +152,12 @@ class SettingsState extends State<Settings> {
     );
   }
 
+  // Check login data
   void login(String username, String password, bool darkmode){
     List<userData> userLoginData = [];
     dbCalls.loginUser(username, password).then((userData) {
       userLoginData = userData;
+      // Clear data in username and password if the text boxes arent empty when the user data doesn't match database
       if(userLoginData.length < 1){
         setState(() {
           usernameController.clear();
@@ -155,7 +165,7 @@ class SettingsState extends State<Settings> {
           errorPopup(darkmode);
         });
       }
-
+      // Login user and clear text boxes if user data matches database information
       else{
         final dmodeContainer = StateContainer.of(context);
         dmodeContainer.updateUser(userLoginData[0].Name, userLoginData[0].Username);
@@ -166,23 +176,24 @@ class SettingsState extends State<Settings> {
     });
   }
 
+  // Login popup for user to input username and password
   void LoginPopup(String username, bool darkmode) {
     showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
               backgroundColor: darkmode ? Colors.white : Colors.grey[400],
-              title: Text("User Login"),
+              title: Text("User Login"), // Title of popup
               content: Container(
                   height: 100.0,
                   child: Column(
                       children: <Widget>[
-                        if(error)
-                          Text("The username or password was incorrect"),
+                        // Text box for username
                         TextField(
                             controller: usernameController,
                             decoration: InputDecoration(hintText: "Username")
                         ),
+                        // Text box for password
                         TextField(
                             controller: passwordController,
                             decoration: InputDecoration(hintText: "Password")
@@ -190,12 +201,14 @@ class SettingsState extends State<Settings> {
                       ]
                   )),
               actions: <Widget>[
+                // Cancel button
                 MaterialButton(
                     child: Text("Cancel"),
                     onPressed: () {
                       Navigator.of(context).pop();
                     }
                 ),
+                // Login button
                 MaterialButton(
                     child: Text("Login"),
                     onPressed: () {

@@ -1,11 +1,9 @@
+// User data class used to when mapping data from sql call to get data from the user table
 class userData{
   String Name;
   String Username;
   String Password;
-  /*User(String initName, String initUser, ) {
-    this.Name = initName;
-    this.Username = initUser;
-  }*/
+
   userData({this.Name, this.Username, this.Password});
 
   factory userData.fromJson(Map<String, dynamic> json){

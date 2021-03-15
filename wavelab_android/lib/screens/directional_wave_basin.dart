@@ -10,6 +10,7 @@ import '../models/user.dart';
 import '../models/darkmode_state.dart';
 import '../widgets/play_youtube.dart';
 
+// Directional Wave Basin screen
 class DirectionalWaveBasin extends StatefulWidget{
 
   DirectionalWaveBasinState createState()=> DirectionalWaveBasinState();
@@ -17,16 +18,17 @@ class DirectionalWaveBasin extends StatefulWidget{
 }
 
 class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
-  List<targetData> _tDepthDataDwb = [];
-  List<targetData> _prevTDepthDataDwb = [];
-  List<depthData> _depthData = [];
-  var graphLine = Map<DateTime, double>();
+
+  List<targetData> _tDepthDataDwb = []; // Holds json response for target depth
+  List<targetData> _prevTDepthDataDwb = []; // Holds json response for previous target depth
+  List<depthData> _depthData = []; // Holds json response for depth data
+  var graphLine = Map<DateTime, double>(); // Holds the depth data in a 4 hour range that will be shown on a line graph
   var initGraphLine = Map<DateTime, double>(); // initial line that all points = 0.0 before DB data is received
 
   int dropdownValue = 0, graphDataMarker = 0;
   double _tDepthDwb, _prevTarget, depthHolder;
-  bool editTarget = false; // Bool that opens the Hour offset carousell if the button is pressed
-  bool editOffset = false;
+  bool editTarget = false;
+  bool editOffset = false; // Bool that opens the Hour offset carousel if the button is pressed
   bool boolTarget = false; // Bool that shows the buttons to add a new target depth to DB
   bool atEdge = true; // Bool that checks if line graph is showing data at an edge of the depth data
   DateTime prevTargetDate;// Date when previous target depth was set
@@ -37,7 +39,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
   Darkmode darkmodeClass;
   User user;
 
-
+  // Get current target depth from DB
   void getTDepthDwb(){
     dbCalls.getTDepthDwb().then((targetData) {
       setState(() {
@@ -47,17 +49,18 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
     });
   }
 
+  // Get most recently completed target depth from DB
   void getPrevTDwb(){
     dbCalls.getPreviousTargetDwb().then((targetData) {
       setState(() {
         _prevTDepthDataDwb = targetData;
         _prevTarget = double.parse(_prevTDepthDataDwb[0].Tdepth);
         prevTargetDate = DateTime.parse(_prevTDepthDataDwb[0].tDate);
-        //print("prevTargetDate: ${prevTargetDate}");
       });
     });
   }
 
+  // Get all depth data from DB for line graph
   void getGraphDepth(){
     DateTime start;
     DateTime end;
@@ -86,7 +89,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
     });
   }
 
-  // inital line where all values equal 0.0 and will be used before DB response is recieved
+  // Inital line where all values equal 0.0 and will be used before DB response is recieved
   void initGraph(){
     DateTime now = new DateTime.now();
     initGraphLine[now] = 0.0;
@@ -96,6 +99,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
     initGraphLine[now] = 0.0;
   }
 
+  // Init state for this screen
   @override
   void initState() {
     super.initState();
@@ -106,11 +110,11 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
         getGraphDepth();
         initGraph();
         dayCheck = now.subtract(new Duration(days: 1));
-      //  print("dayCheck: ${dayCheck}");
       });
     }
   }
 
+  // Get the darkmode state from inheritable widget
   void initDarkmode(){
     if (this.mounted) {
       setState(() {
@@ -138,46 +142,43 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
             ),
             dwb_intro(),
             fill_target(),
+            // Show the buttons for editing if the user has signed in and clicks edit
             if(boolTarget) hourOffset(),
             if(boolTarget) addTargetButton(),
             estimate_time(),
             lastFill(),
             dwb_lineChart(),
             switch_lineChart(),
-            generalInfo(),
-            //live_view_intro(),
-            //nDwb_video(),
+            generalInfo()
           ],
         )
     );
   }
 
+  // The heading for the DWB screen
   Widget dwb_intro(){
-    return SizedBox(
-      //width: MediaQuery.of(context).size.width * .8,
-        child: Container(
-            margin: EdgeInsets.fromLTRB(0, 0, 0, 15),
-            padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-            child: Column(
+    return Container(
+        margin: EdgeInsets.fromLTRB(0, 0, 0, 15),
+        padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+        child: Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                        child: Text('Directional Wave Basin', style: TextStyle(fontSize: 35, color: darkmodeClass.darkmodeState ? Colors.white : Colors.black))
-                    )
-                  ],
+                Container(
+                    child: Text('Directional Wave Basin', style: TextStyle(fontSize: 35, color: darkmodeClass.darkmodeState ? Colors.white : Colors.black))
                 )
               ],
             )
+          ],
         )
     );
   }
 
+  // Displays current fill target
   Widget fill_target() {
     return Container(
         padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-        //height: 100.0,
         width: MediaQuery.of(context).size.width * 0.9,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -187,6 +188,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
+                    // If the editTarget bool equals true then the user can edit and the format of page changes
                     if(editTarget) Column(
                         children: <Widget>[
                           Text("Current Fill", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0)),
@@ -194,13 +196,13 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
                         ]
                     )
                     else Text("Current Fill Target", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0)),
+                    // If user can edit the textfield appears for user
                     if(editTarget) Container(
                         width: MediaQuery.of(context).size.width * .4,
                         padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
                         height: 35,
                         child: TextField(
                           style: TextStyle(color: Colors.red),
-                          //autofocus: true,
                           onChanged: (value) => _tDepthDwb = double.parse(value),
                           decoration: InputDecoration(
                               labelText: '${_tDepthDwb}m',
@@ -209,18 +211,17 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
                               focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red))),
 
                           keyboardType: TextInputType.number,
-                          //controller: number,
                         ))
                     else Container(
                         child: Text(" ${_tDepthDwb}m", style: TextStyle(color: Colors.red, fontSize: 20))
                     )
                   ],
-
                 )
               ],
             ),
             Column(
               children: <Widget>[
+                // If the user is signed in show the edit button
                 if(user.Name != "" &&  editTarget != true) FlatButton(
                   child: Text("edit", style: TextStyle(color: Colors.grey, fontSize: 20)),
                   padding: EdgeInsets.all(0),
@@ -238,6 +239,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
     );
   }
 
+  // Displays each carousel option and styles each differently
   Widget carouselOptions(String option, int curSlide) {
     return Container(
         child: Column(
@@ -271,6 +273,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
     );
   }
 
+  // Display carousel slider
   Widget carouselSlider(){
     return Container(
         width: MediaQuery.of(context).size.width * .6,
@@ -281,7 +284,6 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
           ),
         ),
         child: CarouselSlider(
-
           options: CarouselOptions(
               height: 200,
               scrollDirection: Axis.vertical,
@@ -293,7 +295,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
                   dropdownValue = index;
                 });
               }),
-
+          // Options for hour offset carousel
           items: <Widget>[
             carouselOptions("0 hours", 0),
             carouselOptions("1 hour", 1),
@@ -324,10 +326,10 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
         ));
   }
 
+  // Display the current hour offset for new target depth
   Widget hourOffset() {
     return Container(
         padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-        //height: 100.0,
         width: MediaQuery.of(context).size.width * 0.9,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -379,6 +381,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
     );
   }
 
+  // Add new target depth to DB
   void addTarget() {
     editTarget = false;
     DateTime tDate = new DateTime.now();
@@ -391,6 +394,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
     });
   }
 
+  // Button to add target depth of cancel new target depth
   Widget addTargetButton() {
     return Container(
         padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
@@ -429,6 +433,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
         ));
   }
 
+  // Display estimated time to finish current target depth goal
   Widget estimate_time(){
     return Container(
         width: MediaQuery.of(context).size.width * 0.9,
@@ -441,6 +446,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
     );
   }
 
+  // Display previous target depth that was completed
   Widget lastFill(){
     return Container(
         width: MediaQuery.of(context).size.width * 0.9,
@@ -450,6 +456,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
+                // If the json response isn't back from calling the DB then display generating
                 if(_prevTDepthDataDwb.length < 1)
                   Container(
                     padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
@@ -487,9 +494,11 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
     );
   }
 
+  // Display line chart
   Widget dwb_lineChart(){
     return Column(
       children: <Widget>[
+        // If the line data hasn't been grabbed then display initial line on graph
         if(graphLine.length < 1)
           SizedBox(
               width: MediaQuery.of(context).size.width * .9,
@@ -501,6 +510,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
                   )
               )
           )
+          // If the line data is grabbed then display line
         else SizedBox(
             width: MediaQuery.of(context).size.width * .9,
             height: 200,
@@ -535,6 +545,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
     );
   }
 
+  // Increase time zone the line is grabbed from
   Widget increase_lineChart(){
     int pos = 0, holder;
     bool stop = false;
@@ -565,20 +576,17 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
     });
   }
 
+  // Decrease the time zone the line is grabbed from
   Widget decrease_lineChart(){
     int pos = 0;
     bool stop = false;
     DateTime date, lineStart, lineEnd;
     double depth;
     setState(() {
-      print("graphDataMarker: $graphDataMarker");
-      print("Length: ${graphLine.length}");
       graphDataMarker = graphDataMarker + graphLine.length - 1;
-      print("new graphDataMarker: $graphDataMarker");
       graphLine.clear();
       while(stop == false) {
         date = DateTime.parse(_depthData[graphDataMarker + pos].dDate);
-        print("date: $date");
         depth = double.parse(_depthData[graphDataMarker + pos].depth);
         graphLine[date] = depth;
         if(pos == 0) {
@@ -602,10 +610,12 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
   Widget switch_lineChart() {
     return Column(
       children: <Widget>[
+        // If the time zone is at the edge then only show one of the buttons to scroll through depth graph
         if(atEdge)
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              // Scroll left if at the right edge
               if(graphDataMarker == 0)
                 RaisedButton.icon(
                     shape: RoundedRectangleBorder(
@@ -616,6 +626,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
                     icon: Icon(Icons.arrow_back_ios, color: darkmodeClass.darkmodeState ? Colors.white : Colors.black),
                     onPressed: decrease_lineChart
                 )
+                // Scroll right if at the left edge
               else RaisedButton.icon(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(6.0),
@@ -627,6 +638,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
               )
             ],
           )
+          // Show both buttons if not at an edge
         else Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -654,6 +666,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
     );
   }
 
+  // Display general info under line graph
   Widget generalInfo() {
     return Container(
         width: MediaQuery.of(context).size.width * 0.9,
@@ -677,28 +690,6 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
               ],
             )
           ],
-        )
-    );
-  }
-
-  Widget live_view_intro(){
-    return Container(
-        padding: EdgeInsets.fromLTRB(25, 0, 0, 0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Text("Live View : North Wall", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20))
-          ],
-        )
-    );
-  }
-
-  Widget nDwb_video(){
-    return SizedBox(
-        width: MediaQuery.of(context).size.width * .9,
-        child: Container(
-            margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
-            child: Youtuber(url: 'https://www.youtube.com/watch?v=pHmmBQYVPCI&feature=emb_title')
         )
     );
   }

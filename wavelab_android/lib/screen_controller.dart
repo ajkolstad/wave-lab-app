@@ -3,37 +3,31 @@ import 'package:flutter/widgets.dart';
 import 'screens/home.dart';
 import 'screens/large_wave_flume.dart';
 import 'screens/directional_wave_basin.dart';
-import 'screens/live_views.dart';
 import 'screens/settings.dart';
 import 'models/darkmode_state.dart';
 import 'models/app_icons.dart';
 import 'inheritable_data.dart';
 class ScreenController extends StatefulWidget {
 
-  //final SharedPreferences preferences;
-
-
-
-  //ScreenController({this.preferences});
-
   ScreenControllerState createState() => ScreenControllerState();
+
 }
 
 class ScreenControllerState extends State<ScreenController> {
 
   static Darkmode darkmodeClass;
-  static bool _darkmode;
 
+  // Initializes darkmode from inheritable widget
   void initDarkmode(){
     if (this.mounted) {
       setState(() {
         final dmodeContainer = StateContainer.of(context);
         darkmodeClass = dmodeContainer.darkmode;
-        //_darkmode = darkmodeClass.darkmodeState;
       });
     }
   }
 
+  // Tabs for the app that holds tabs "Home", "LWF", "DWB", and "Settings"
   static var tabs = [
     Tab(child: Container(
         padding: EdgeInsetsDirectional.only(
@@ -45,9 +39,9 @@ class ScreenControllerState extends State<ScreenController> {
         child: Column(
             children: <Widget>[
               Icon(
-                Icons.home,
+                Icons.home, // Icon for home tab
               ),
-              Text("Home", style: TextStyle(fontSize: 12))
+              Text("Home", style: TextStyle(fontSize: 12)) // Text for home tab
             ],
         )
     )),
@@ -61,9 +55,9 @@ class ScreenControllerState extends State<ScreenController> {
         child: Column(
           children: <Widget>[
             Icon(
-                AppIcons.drop,
+                AppIcons.drop, // Icon for LWF tab
             ),
-            Text("LWF", style: TextStyle(fontSize: 12))
+            Text("LWF", style: TextStyle(fontSize: 12)) // Text for LWF tab
           ],
         ))),
     Tab(child: Container(
@@ -76,26 +70,11 @@ class ScreenControllerState extends State<ScreenController> {
         child: Column(
           children: <Widget>[
             Icon(
-              AppIcons.tint,
+              AppIcons.tint, // Icon for DWB tab
             ),
-            Text("DWB", style: TextStyle(fontSize: 12))
+            Text("DWB", style: TextStyle(fontSize: 12)) // Text for DWB tab
           ],
         ))),
-    /*Tab(child: Container(
-        padding: EdgeInsetsDirectional.only(
-            start: 0,
-            top: 3.0,
-            end: 0,
-            bottom: 0
-        ),
-        child: Column(
-          children: <Widget>[
-            Icon(
-              Icons.live_tv,
-            ),
-            Text("Live", style: TextStyle(fontSize: 12))
-          ],
-        ))),*/
     Tab(child: Container(
       padding: EdgeInsetsDirectional.only(
           start: 0,
@@ -106,27 +85,31 @@ class ScreenControllerState extends State<ScreenController> {
       child: Column(
         children: <Widget>[
           Icon(
-            Icons.settings,
+            Icons.settings, // Icon for settings tab
           ),
-          Text("Settings", style: TextStyle(fontSize: 12))
+          Text("Settings", style: TextStyle(fontSize: 12)) // Text for settings tab
         ],
       ),
     ))
   ];
 
-  final screens = [Home(), LargeWaveFlume(), DirectionalWaveBasin(), /*LiveView(),*/ Settings()];
+  // Screen holds widgets for each tab to switch to when tab is pressed
+  final screens = [Home(), LargeWaveFlume(), DirectionalWaveBasin(), Settings()];
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   Widget build(BuildContext context) {
+
     initDarkmode();
+
     return DefaultTabController(
-      length: 4,
+      length: 4, // Tab controller length
       initialIndex: 0,
       child: Scaffold(
         key: _scaffoldKey,
         backgroundColor: darkmodeClass.darkmodeState ? Color.fromRGBO(26, 26, 19, .9) : Colors.white,
-        appBar: AppBar(
+        // Designs the top bar of app
+          appBar: AppBar(
           automaticallyImplyLeading: false,
             backgroundColor: Color.fromRGBO(220, 68, 5, 1.0),
             centerTitle: true,
@@ -152,11 +135,9 @@ class ScreenControllerState extends State<ScreenController> {
     );
   }
 
+  // Control the navigation bar
   Widget Navigation(){
     return Container(
-        //padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-        //margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
-        //height: 100.0,
       color: darkmodeClass.darkmodeState ? Colors.grey[800] : Colors.grey[400],
       child: TabBar(labelColor: darkmodeClass.darkmodeState ? Colors.lightBlue : Colors.blue[700], unselectedLabelColor: darkmodeClass.darkmodeState ? Colors.grey : Colors.black, tabs: tabs)
     );

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'models/darkmode_state.dart';
 import 'models/user.dart';
-import 'package:collection/collection.dart';
 
+// Inheritable widget that stores the statewidget data
 class InheritableData extends InheritedWidget {
 
   final StateContainerState state;
@@ -11,10 +11,12 @@ class InheritableData extends InheritedWidget {
   InheritableData({this.state, Widget myChild})
       : super(child: myChild);
 
+  // The statewidget in the inheritable widget is changed automatically if the inheritable widget is called
   bool updateShouldNotify(InheritableData oldWidget) => true;
       //oldWidget.state.darkmode != state.darkmode;
 }
 
+// Holds the state of the inheritable data
 class StateContainer extends StatefulWidget{
   final Widget child;
   final Darkmode darkmode;
@@ -35,27 +37,30 @@ class StateContainerState extends State<StateContainer>{
   User user;
   bool initDarkmode;
 
+  // Initializes statecontainer for the app
   void initState(){
     super.initState();
     getDarkmode();
     initUser();
   }
 
+  // Initializes the user class object to empty
   void initUser() {
     setState(() {
       user = new User("", "");
     });
   }
 
+  // Initializes the darkmode class object to what the sharedPreferences of the app holds
   void getDarkmode() async{
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     setState(() {
-      initDarkmode = preferences.getBool('darkmode') ?? false;
+      initDarkmode = preferences.getBool('darkmode') ?? true; // If there is no saved data in the phone set darkmode to true
       darkmode = new Darkmode(initDarkmode);
     });
-
   }
 
+  // Updates the user class object
   void updateUser(newName, newUser){
     setState(() {
       user.Name = newName;
@@ -63,15 +68,15 @@ class StateContainerState extends State<StateContainer>{
     });
   }
 
+  // Updates the darkmode class object
   void updateDarkmode({newDarkmode}){
     setState(() {
       darkmode.darkmodeState = newDarkmode;
     });
   }
 
+  // Builds inheritable data with the initialized state
   Widget build(BuildContext context){
-    //getDarkmode();
-    //initUser();
     return InheritableData(
       state: this,
       myChild: widget.child

@@ -6,7 +6,9 @@ import 'target_data.dart';
 import 'user_data.dart';
 
 class dbCalls{
-  static const ROOT = "http://192.168.1.28/WavelabDB/get_depth.php";
+  static const ROOT = "http://192.168.1.28/WavelabDB/get_depth.php"; // The address in the database where the php file is stored
+
+  // Calls for the php file to use
   static const _GET_CUR_DEPTH_DWB = "GET_CUR_DEPTH_DWB";
   static const _GET_CUR_DEPTH_LWF = "GET_CUR_DEPTH_LWF";
   static const _GET_ALL_DEPTH_DWB = "GET_ALL_DEPTH_DWB";
@@ -18,29 +20,33 @@ class dbCalls{
   static const _ADD_T_DEPTH = "ADD_T_DEPTH";
   static const _LOGIN_USER = "LOGIN_USER";
 
+  // map the depth data grabbed from the database
   static List<depthData> parseDepth(String responseBody){
     final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
     return parsed.map<depthData>((json) => depthData.fromJson(json)).toList();
   }
 
+  // Map the target data grabbed from the database
   static List<targetData> parseTarget(String responseBody){
     final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
     return parsed.map<targetData>((json) => targetData.fromJson(json)).toList();
   }
 
+  // Map the user data grabbed from the database
   static List<userData> parseUser(String responseBody){
     final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
     return parsed.map<userData>((json) => userData.fromJson(json)).toList();
   }
 
+  // Call to grab and map the most recent depth in the DWB
   static Future<List<depthData>> getCurDepthDwb() async {
     try{
       var map = Map<String, dynamic>();
       map['action'] = _GET_CUR_DEPTH_DWB;
-      final response = await http.post(ROOT, body: map);
+      final response = await http.post(ROOT, body: map); // Calls the php file
       print('Get Depth DWB Response: ${response.body}');
       if (200 == response.statusCode) {
-        List<depthData> list = parseDepth(response.body);
+        List<depthData> list = parseDepth(response.body); // Maps data grabbed
         return list;
       }
       else {
@@ -52,15 +58,16 @@ class dbCalls{
     }
   }
 
+  // Call to grab and map the most recent depth in the LWF
   static Future<List<depthData>> getCurDepthLwf() async {
     try{
       print("in again");
       var map = Map<String, dynamic>();
       map['action'] = _GET_CUR_DEPTH_LWF;
-      final response = await http.post(ROOT, body: map);
+      final response = await http.post(ROOT, body: map); // Calls php file
       print('Get Depth LWF Response: ${response.body}');
       if (200 == response.statusCode) {
-        List<depthData> list = parseDepth(response.body);
+        List<depthData> list = parseDepth(response.body); // Maps data grabbed
         return list;
       }
       else {
@@ -72,14 +79,15 @@ class dbCalls{
     }
   }
 
+  // Gets all of the depth data for the graph in DWB
   static Future<List<depthData>> getAllDepthDwb() async {
     try{
       var map = Map<String, dynamic>();
       map['action'] = _GET_ALL_DEPTH_DWB;
-      final response = await http.post(ROOT, body: map);
+      final response = await http.post(ROOT, body: map); // Calls php file
       print('Get Depth DWB Response: ${response.body}');
       if (200 == response.statusCode) {
-        List<depthData> list = parseDepth(response.body);
+        List<depthData> list = parseDepth(response.body); // Maps data grabbed
         return list;
       }
       else {
@@ -91,14 +99,15 @@ class dbCalls{
     }
   }
 
+  // Gets all of the depth data for the graph in LWF
   static Future<List<depthData>> getAllDepthLwf() async {
     try{
       var map = Map<String, dynamic>();
       map['action'] = _GET_ALL_DEPTH_LWF;
-      final response = await http.post(ROOT, body: map);
+      final response = await http.post(ROOT, body: map); // Calls php file
       print('Get Depth LWF Response: ${response.body}');
       if (200 == response.statusCode) {
-        List<depthData> list = parseDepth(response.body);
+        List<depthData> list = parseDepth(response.body); // Maps data grabbed
         return list;
       }
       else {
@@ -110,14 +119,15 @@ class dbCalls{
     }
   }
 
+  // Gets the current target data in DWB from the database
   static Future<List<targetData>> getTDepthDwb() async {
     try{
       var map = Map<String, dynamic>();
       map['action'] = _GET_T_DEPTH_DWB;
-      final response = await http.post(ROOT, body: map);
+      final response = await http.post(ROOT, body: map); // Calls php file
       print('Get Target DWB Response: ${response.body}');
       if (200 == response.statusCode) {
-        List<targetData> list = parseTarget(response.body);
+        List<targetData> list = parseTarget(response.body); // Maps data grabbed
         return list;
       }
       else {
@@ -129,14 +139,15 @@ class dbCalls{
     }
   }
 
+  // Gets the current target data in LWF from the database
   static Future<List<targetData>> getTDepthLwf() async {
     try{
       var map = Map<String, dynamic>();
       map['action'] = _GET_T_DEPTH_LWF;
-      final response = await http.post(ROOT, body: map);
+      final response = await http.post(ROOT, body: map); // Calls php file
       print('Get Target LWF Response: ${response.body}');
       if (200 == response.statusCode) {
-        List<targetData> list = parseTarget(response.body);
+        List<targetData> list = parseTarget(response.body); // Maps data grabbed
         return list;
       }
       else {
@@ -148,14 +159,15 @@ class dbCalls{
     }
   }
 
+  // Grab the previous target depth that was completed in DWB from the database
   static Future<List<targetData>> getPreviousTargetDwb() async {
     try{
       var map = Map<String, dynamic>();
       map['action'] = _GET_PREV_T_DWB;
-      final response = await http.post(ROOT, body: map);
+      final response = await http.post(ROOT, body: map); // Calls php file
       print('Get Previous Target DWB Response: ${response.body}');
       if (200 == response.statusCode) {
-        List<targetData> list = parseTarget(response.body);
+        List<targetData> list = parseTarget(response.body); // Maps data grabbed
         return list;
       }
       else {
@@ -167,14 +179,15 @@ class dbCalls{
     }
   }
 
+  // Grab the previous target depth that was completed in LWF from the database
   static Future<List<targetData>> getPreviousTargetLwf() async {
     try{
       var map = Map<String, dynamic>();
       map['action'] = _GET_PREV_T_LWF;
-      final response = await http.post(ROOT, body: map);
+      final response = await http.post(ROOT, body: map); // Calls php file
       print('Get Previous Target LWF Response: ${response.body}');
       if (200 == response.statusCode) {
-        List<targetData> list = parseTarget(response.body);
+        List<targetData> list = parseTarget(response.body); // Maps data grabbed
         return list;
       }
       else {
@@ -186,6 +199,7 @@ class dbCalls{
     }
   }
 
+  // Adds a target depth to the database
   static Future<String> addTarget(double Tdepth, int fName, DateTime Tdate, String uName, int isComplete) async{
     try{
       var map = Map<String, dynamic>();
@@ -195,7 +209,7 @@ class dbCalls{
       map['Tdate'] = Tdate.toString();
       map['uName'] = uName.toString();
       map['isComplete'] = isComplete.toString();
-      final response = await http.post(ROOT, body: map);
+      final response = await http.post(ROOT, body: map); // Calls php file
       print('addTarget Response: ${response.body}');
       if(200 == response.statusCode) {
         return response.body;
@@ -210,16 +224,17 @@ class dbCalls{
     }
   }
 
+  // Grabs user from the database if the user information matches what the user entered
   static Future<List<userData>> loginUser(String username, String password) async {
     try {
       var map = Map<String, dynamic>();
       map['action'] = _LOGIN_USER;
       map['username'] = username;
       map['password'] = password;
-      final response = await http.post(ROOT, body: map);
+      final response = await http.post(ROOT, body: map); // Calls php file
       print('LoginUser Response: ${response.body}');
       if (200 == response.statusCode) {
-        List<userData> list = parseUser(response.body);
+        List<userData> list = parseUser(response.body); // Maps data grabbed
         return list;
       }
       else {

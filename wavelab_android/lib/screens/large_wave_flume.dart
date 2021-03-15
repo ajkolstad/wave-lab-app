@@ -9,8 +9,8 @@ import '../models/db_calls.dart';
 import '../models/target_data.dart';
 import '../models/user.dart';
 import '../models/darkmode_state.dart';
-import '../widgets/play_youtube.dart';
 
+// Large Wave Flume screen
 class LargeWaveFlume extends StatefulWidget{
 
   LargeWaveFlumeState createState()=> LargeWaveFlumeState();
@@ -112,7 +112,6 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
         initGraph();
         getGraphDepth();
         dayCheck = now.subtract(new Duration(days: 1));
-        //  print("dayCheck: ${dayCheck}");
       });
     }
     getTDepthLwf();
@@ -146,6 +145,7 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
             ),
             lwf_intro(),
             fill_target(),
+            // Show the buttons for editing if the user has signed in and clicks edit
             if(boolTarget) hourOffset(),
             if(boolTarget) addTargetButton(),
             estimate_time(),
@@ -153,8 +153,6 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
             lwf_lineChart(),
             switch_lineChart(),
             generalInfo(),
-            //live_view_intro(),
-            //bay10_video()
           ],
         )
     );
@@ -163,7 +161,6 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
   // The heading for the LWF screen
   Widget lwf_intro(){
     return SizedBox(
-        //width: MediaQuery.of(context).size.width * .8,
         child: Container(
             margin: EdgeInsets.fromLTRB(0, 0, 0, 15),
             padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
@@ -187,7 +184,6 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
   Widget fill_target() {
     return Container(
         padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-      //height: 100.0,
         width: MediaQuery.of(context).size.width * 0.9,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -220,18 +216,17 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
                           focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red))),
 
                       keyboardType: TextInputType.number,
-                  //controller: number,
                 ))
                 else Container(
                     child: Text(" ${_tDepthLwf}m", style: TextStyle(color: Colors.red, fontSize: 20))
                 )
               ],
-
               )
             ],
           ),
           Column(
             children: <Widget>[
+              // If the user is signed in show the edit button
               if(user.Name != "" && editTarget != true) FlatButton(
                 child: Text("edit", style: TextStyle(color: Colors.grey, fontSize: 20)),
                 padding: EdgeInsets.all(0),
@@ -306,6 +301,7 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
                   dropdownValue = index;
                 });
               }),
+          // Options for hour offset carousel
           items: <Widget>[
             carouselOptions("0 hours", 0),
             carouselOptions("1 hour", 1),
@@ -510,6 +506,7 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
   Widget lwf_lineChart(){
     return Column(
       children: <Widget>[
+        // If the line data hasn't been grabbed then display initial line on graph
         if(graphLine.length < 1)
           SizedBox(
             width: MediaQuery.of(context).size.width * .9,
@@ -521,6 +518,7 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
                   )
               )
           )
+          // If the line data is grabbed then display line
         else SizedBox(
             width: MediaQuery.of(context).size.width * .9,
             height: 200,
@@ -555,6 +553,7 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
     );
   }
 
+  // Increase time zone the line is grabbed from
   Widget increase_lineChart(){
     int pos = 0;
     bool stop = false;
@@ -564,7 +563,6 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
       graphLine.clear();
       while(stop == false) {
         date = DateTime.parse(_depthData[graphDataMarker - pos].dDate);
-
         depth = double.parse(_depthData[graphDataMarker].depth);
         graphLine[date] = depth;
         graphDataMarker -= 1;
@@ -587,16 +585,14 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
     });
   }
 
+  // Decrease the time zone the line is grabbed from
   Widget decrease_lineChart(){
     int pos = 0;
     bool stop = false;
     DateTime date;
     double depth;
     setState(() {
-      print("graphDataMarker: $graphDataMarker");
-      print("Length: ${graphLine.length}");
       graphDataMarker = graphDataMarker + graphLine.length - 1;
-      print("new graphDataMarker: $graphDataMarker");
       graphLine.clear();
       while(stop == false) {
         date = DateTime.parse(_depthData[graphDataMarker + pos].dDate);
@@ -624,10 +620,12 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
   Widget switch_lineChart() {
     return Column(
       children: <Widget>[
+        // If the time zone is at the edge then only show one of the buttons to scroll through depth graph
         if(atEdge)
           Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            // Scroll left if at the right edge
             if(graphDataMarker == 0)
             RaisedButton.icon(
                 shape: RoundedRectangleBorder(
@@ -638,6 +636,7 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
                 icon: Icon(Icons.arrow_back_ios, color: darkmodeClass.darkmodeState ? Colors.white : Colors.black),
               onPressed: decrease_lineChart
             )
+              // Scroll right if at the left edge
             else RaisedButton.icon(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(6.0),
@@ -649,6 +648,7 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
             )
           ],
         )
+          // Show both buttons if not at an edge
         else Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
