@@ -59,24 +59,14 @@ def updateDB(basin):
                                        password='1amSmsjbRKB5ez4P')
     query = db.cursor(prepared = True)
 
-    # UPDATE_DB = """UPDATE `depth_data` SET `Depth` = %s AND 'Ddate' = CURRENT_TIMESTAMP WHERE `depth_data`.`Depth_flume_name` = %s"""
-    UPDATE_DB = """UPDATE `depth_data` SET `Depth` = %s WHERE `depth_data`.`Depth_flume_name` = %s"""
+    UPDATE_DB = """UPDATE `depth_data` SET `Depth` = %s AND 'Ddate' = CURRENT_TIMESTAMP WHERE `depth_data`.`Depth_flume_name` = %s"""
+    #UPDATE_DB = """UPDATE `depth_data` SET `Depth` = %s WHERE `depth_data`.`Depth_flume_name` = %s"""
     val = ()
     if basin.basin == 0:
         val = (basin.value, 1)
     elif basin.basin == 1:
         val = (basin.value, 0)
     query.execute(UPDATE_DB, val)
-    db.commit()
-
-def cleanDepthTable():
-    db = mysql.connector.connect(host='engr-db.engr.oregonstate.edu',
-                                       database='wave_lab_database',
-                                       user='wave_lab_database',
-                                       password='1amSmsjbRKB5ez4P')
-    query = db.cursor(prepared = True)
-    cleanDB = """DELETE FROM `depth_data` WHERE Ddate < (SELECT DATE_ADD(NOW(), INTERVAL -7 DAY))"""
-    query.execute(cleanDB)
     db.commit()
 
 def main():
@@ -86,14 +76,19 @@ def main():
         print("File doesn't exist: %s" % DBFILEPATH)
 
     while(True):
+        print("Getting new depths")
         DWB = getDepth(0)
         LWF = getDepth(1)
-        updateDB(DWB)
-        time.sleep(0.5)
-        updateDB(LWF)
-        # cleanDepthTable()
-        time.sleep(DB_MONITOR_INTERVAL)
 
+        print("Updating DWB...")
+        updateDB(DWB)
+        print("done!")
+        time.sleep(0.5)
+
+        print("Updating LWF...")
+        updateDB(LWF)
+        print("done!")
+        time.sleep(DB_MONITOR_INTERVAL)
 
 if __name__ == "__main__":
     main()

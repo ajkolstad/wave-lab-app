@@ -10,10 +10,6 @@ ctrl_DWB = facility_controls['DWB']['basin_north']
 ctrl_LWF_north = facility_controls['LWF']['flume_north']
 ctrl_LWF_south = facility_controls['LWF']['flume_south']
 
-while True:
-    print("DWB")
-    print('\t' + ctrl_DWB.status().status)
-    print("LWF")
-    print('\t' + ctrl_LWF_north.status().status)
-    print('\t' + ctrl_LWF_south.status().status)
-    sleep(5)
+ctrl_DWB.close()
+ctrl_LWF_north.close()
+ctrl_LWF_south.close()
