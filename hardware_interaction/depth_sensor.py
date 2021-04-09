@@ -23,7 +23,8 @@ class Data(Base):
 
 db = None
 query = None
-DB_MONITOR_INTERVAL = 30
+DB_MONITOR_INTERVAL = 15
+PAUSE = 2.5
 DEBUG = False
 
 ARCHIVE = "/a1/walve/data"
@@ -59,8 +60,7 @@ def updateDB(basin):
                                        password='1amSmsjbRKB5ez4P')
     query = db.cursor(prepared = True)
 
-    UPDATE_DB = """UPDATE `depth_data` SET `Depth` = %s AND 'Ddate' = CURRENT_TIMESTAMP WHERE `depth_data`.`Depth_flume_name` = %s"""
-    #UPDATE_DB = """UPDATE `depth_data` SET `Depth` = %s WHERE `depth_data`.`Depth_flume_name` = %s"""
+    UPDATE_DB = """UPDATE `depth_data` SET `Depth` = %s, `Ddate` = CURRENT_TIMESTAMP WHERE `depth_data`.`Depth_flume_name` = %s"""
     val = ()
     if basin.basin == 0:
         val = (basin.value, 1)
@@ -83,12 +83,13 @@ def main():
         print("Updating DWB...")
         updateDB(DWB)
         print("done!")
-        time.sleep(0.5)
+        time.sleep(PAUSE)
 
         print("Updating LWF...")
         updateDB(LWF)
         print("done!")
         time.sleep(DB_MONITOR_INTERVAL)
+
 
 if __name__ == "__main__":
     main()

@@ -14,7 +14,7 @@ GLOBAL VARIABLES
 """
 db = None
 query = None
-DB_MONITOR_INTERVAL = 30
+DB_MONITOR_INTERVAL = 15
 
 sql_check_for_new_target = """SELECT * FROM `target_depth` WHERE Tdate < CURRENT_TIMESTAMP AND Target_Flume_Name = %s and isComplete = 0 ORDER BY Tdate DESC LIMIT 1;"""
 sql_check_if_fill_met = """SELECT * FROM `target_depth` WHERE Tdate < CURRENT_TIMESTAMP AND Target_Flume_Name = %s ORDER BY Tdate DESC LIMIT 1;"""
@@ -128,13 +128,13 @@ def check_complete_DWB():
             print "[Target Monitor][DWB] Filling    ", current_depth, " ==> ", truncate(records[0], 2)
             if ctrl.status().status != "open":
                 print "[Target Monitor][DWB] Opening valve"
-                # ctrl.open()
+                ctrl.open()
 
         elif current_depth >= records[0]:
             print("[Target Monitor][DWB] Fill finished, updating database")
             if ctrl.status().status != "closed":
                 print "[Target Monitor][DWB] Closing valve"
-            #   ctrl.close()
+                ctrl.close()
             high = truncate(records[0], 2) +.05
             low = truncate(records[0], 2) - .05
             val = (low, high)
@@ -176,19 +176,19 @@ def check_complete_LWF():
             print "[Target Monitor][LWF] Filling    ", current_depth, " ==> ", truncate(records[0], 2)
             if ctrl_north.status().status != "open":
                 print "[Target Monitor][LWF] Opening north valve"
-            #   ctrl_north.open()
-            if ctrl_south.status() != "open":
+                ctrl_north.open()
+            if ctrl_south.status().status != "open":
                 print "[Target Monitor][LWF] Opening south valve"
-            #   ctrl_south.open()
+                ctrl_south.open()
 
         elif current_depth > records[0]:
             print("[Target Monitor][LWF] Fill finished, updating database")
             if ctrl_north.status() != "closed":
                 print "[Target Monitor][LWF] Closing north valve"
-            #   ctrl_north.close()
+                ctrl_north.close()
             if ctrl_south.status() != "closed":
                 print "[Target Monitor][LWF] Closing south valve"
-            #    ctrl_south.close()
+                ctrl_south.close()
             high = truncate(records[0], 2) +.05
             low = truncate(records[0], 2) - .05
             val = (low, high)
