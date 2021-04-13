@@ -1,13 +1,14 @@
+html, body {
+    overflow-x: hidden;
+}
+
+body {
+    position: relative
+}
 
 h1 {
     color: white;
 }
-
-main {
-    width: 60%;
-    margin: 0 auto;
-}
-
 
 
 .text-center {
