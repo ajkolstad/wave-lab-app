@@ -324,7 +324,6 @@ async function getDepths(flumeNumber) {
                         var row = results[key];
                         array.push(Number(row.Depth));
                     });
-                    console.log(array);
                     resolve(array);
                 });
             } catch (error) {
@@ -340,7 +339,6 @@ async function getDepths(flumeNumber) {
                         var row = results[key];
                         array.push(Number(row.Depth));
                     });
-                    console.log(array);
                     resolve(array);
                 });
             } catch (error) {
@@ -361,11 +359,9 @@ async function getDepthTimes(flumeNumber) {
                         var row = results[key];
                         array.push(new Date(row.Ddate).toLocaleTimeString('en-US', { hour12: false }));
                     });
-                    console.log(array);
                     resolve(array);
                 });
             } catch (error) {
-                console.out("Error");
                 resolve("error");
             }
         })
@@ -378,11 +374,9 @@ async function getDepthTimes(flumeNumber) {
                         var row = results[key];
                         array.push(new Date(row.Ddate).toLocaleTimeString('en-US', { hour12: false }));
                     });
-                    console.log(array);
                     resolve(array);
                 });
             } catch (error) {
-                console.out("Error");
                 resolve("error");
             }
         })
