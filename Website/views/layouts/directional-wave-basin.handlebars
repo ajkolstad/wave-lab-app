@@ -27,9 +27,35 @@
                     </div>
                 </div>
             </div>
-            <div class="jumbotron p-4 p-md-5 text-white rounded bg-warning">
+            <div class="jumbotron p-4 p-md-5 text-white rounded bg-info">
                 <div class="col-md-6 px-0">
-                    <h1 class="display-5">Graph Goes Here</h1>
+                    <canvas id="myChart" width="400" height="400"></canvas>
+                    <script>
+                        var times = "{{times}}".split(',');
+                        var depths = "{{depths}}".split(',');
+                        console.log(times);
+                        console.log(depths);
+                        var ctx = document.getElementById('myChart').getContext('2d');
+                        var myChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: times,
+                                datasets: [{
+                                    label: 'Depth in meters',
+                                    data: depths,
+                                    borderColor: 'rgb(215, 63, 9)',
+                                    tension: 0.1
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
+                            }
+                        });
+                    </script>
                 </div>
             </div>
             <div class="row mb-2 justify-content-center">
