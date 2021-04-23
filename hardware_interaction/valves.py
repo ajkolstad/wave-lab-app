@@ -15,6 +15,8 @@ GLOBAL VARIABLES
 db = None
 query = None
 DB_MONITOR_INTERVAL = 15
+DWB_MAX_FILL = 190
+LWF_MAX_FILL = 410
 
 sql_check_for_new_target = """SELECT * FROM `target_depth` WHERE Tdate < CURRENT_TIMESTAMP AND Target_Flume_Name = %s and isComplete = 0 ORDER BY Tdate DESC LIMIT 1;"""
 sql_check_if_fill_met = """SELECT * FROM `target_depth` WHERE Tdate < CURRENT_TIMESTAMP AND Target_Flume_Name = %s ORDER BY Tdate DESC LIMIT 1;"""
@@ -130,7 +132,7 @@ def check_complete_DWB():
                 print "[Target Monitor][DWB] Opening valve"
                 ctrl.open()
 
-        elif current_depth >= records[0]:
+        elif current_depth >= records[0] or current_depth >= DWB_MAX_FILL:
             print("[Target Monitor][DWB] Fill finished, updating database")
             if ctrl.status().status != "closed":
                 print "[Target Monitor][DWB] Closing valve"
@@ -181,7 +183,7 @@ def check_complete_LWF():
                 print "[Target Monitor][LWF] Opening south valve"
                 ctrl_south.open()
 
-        elif current_depth > records[0]:
+        elif current_depth >= records[0] or current_depth >= LWF_MAX_FILL:
             print("[Target Monitor][LWF] Fill finished, updating database")
             if ctrl_north.status() != "closed":
                 print "[Target Monitor][LWF] Closing north valve"
