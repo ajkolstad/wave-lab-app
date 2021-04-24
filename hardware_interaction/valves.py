@@ -124,6 +124,7 @@ def monitor_database():
     logFile.write("[Target Monitor][DWB] Starting...\n")
     check_complete_DWB()
     logFile.write("[Target Monitor][LWF] Starting...\n")
+
     check_complete_LWF()
 
     i = 0
@@ -159,7 +160,7 @@ def check_complete_DWB():
         # if stagnating, exit
         if checkStagnate(0, current_depth):
             return
-
+      
         query.execute(sql_DWB_check_if_fill_met)
         records = query.fetchone()
 
@@ -184,6 +185,7 @@ def check_complete_DWB():
 
 def check_complete_LWF():
     current_depth = get_depth(1)
+
     db = mysql.connector.connect(host='engr-db.engr.oregonstate.edu',
                                        database='wave_lab_database',
                                        user='wave_lab_database',
@@ -191,7 +193,7 @@ def check_complete_LWF():
     query = db.cursor(prepared = True)
 
     logFile = open("output.log", "a")
-
+  
     # Executes query to get the currently set targets if they exist, then fetchs the closest upcoming / currently enacted
     query.execute(sql_LWF_check_for_new_target)
     records = query.fetchone()
@@ -302,3 +304,4 @@ APPLICATION
 
 if __name__ == '__main__':
     monitor_database()
+

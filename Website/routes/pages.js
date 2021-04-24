@@ -5,6 +5,7 @@ var env = require('dotenv');  /*  */
 var jwt = require('jsonwebtoken');
 var mysql = require('mysql');
 const { VM } = require('handlebars');
+var moment = require('moment');
 
 env.config({ path: './config.env'})
 
@@ -159,6 +160,8 @@ router.get("/large-wave-flume", async (req, res) => {
     largeWaveFlumeTarget = await getTarget(1);
     largeWaveFlumeTargetTime = await getTargetTime(1);
     largeWaveFlumeTargetUser = await getTargetUser(1);
+    graphDepths = await getDepths(1);
+    graphTimes = await getDepthTimes(1);
 
     var flumeText = "";
     var flumeProgText = "";
@@ -200,14 +203,18 @@ router.get("/large-wave-flume", async (req, res) => {
             flumeDepth: flumeText,
             flumeProg: flumeProgText,
             flumeTime: flumeTimeText,
-            flumeUser: flumeUserText
+            flumeUser: flumeUserText,
+            depths:  graphDepths,
+            times: graphTimes
         });
     } else {
         res.status(200).render(`layouts${req.url}`, {
             flumeDepth: flumeText,
             flumeProg: flumeProgText,
             flumeTime: flumeTimeText,
-            flumeUser: flumeUserText
+            flumeUser: flumeUserText,
+            depths: graphDepths,
+            times: graphTimes
         });
     }
 });
@@ -217,6 +224,8 @@ router.get("/directional-wave-basin", async (req, res) => {
     directionalWaveBasinTarget = await getTarget(0);
     directionalWaveBasinTargetTime = await getTargetTime(0);
     directionalWaveBasinTargetUser = await getTargetUser(0);
+    graphDepths = await getDepths(0);
+    graphTimes = await getDepthTimes(0);
 
     var basinText = "";
     var basinProgText = "";
@@ -259,14 +268,18 @@ router.get("/directional-wave-basin", async (req, res) => {
             basinDepth: basinText,
             basinProg: basinProgText,
             basinTime: basinTimeText,
-            basinUser: basinUserText
+            basinUser: basinUserText,
+            depths:  graphDepths,
+            times: graphTimes
         });
     } else {
         res.status(200).render(`layouts${req.url}`, {
             basinDepth: basinText,
             basinProg: basinProgText,
             basinTime: basinTimeText,
-            basinUser: basinUserText
+            basinUser: basinUserText,
+            depths:  graphDepths,
+            times: graphTimes
         });
     }
 });
@@ -291,6 +304,77 @@ async function getDepth(flumeNumber) {
                 database.query('SELECT * FROM `depth_data` WHERE Depth_Flume_Name = 1 ORDER BY Ddate DESC LIMIT 1',(error, results) => {
                     if(results.length < 1) resolve("error");
                     resolve(results[0].Depth);
+                });
+            } catch (error) {
+                resolve("error");
+            }
+        })
+    }
+    resolve("error");
+}
+
+async function getDepths(flumeNumber) {
+    if (flumeNumber == 0) {
+        return new Promise((resolve, reject) => {
+            try {
+                database.query('SELECT Depth FROM `depth_data` WHERE Depth_Flume_Name = 0 ORDER BY Ddate ASC',(error, results) => {
+                    
+                    array = [];
+                    Object.keys(results).forEach(function(key) {
+                        var row = results[key];
+                        array.push(Number(row.Depth));
+                    });
+                    resolve(array);
+                });
+            } catch (error) {
+                resolve("error");
+            }
+        })
+    } else {
+        return new Promise((resolve, reject) => {
+            try {
+                database.query('SELECT Depth FROM `depth_data` WHERE Depth_Flume_Name = 1 ORDER BY Ddate ASC',(error, results) => {
+                    array = [];
+                    Object.keys(results).forEach(function(key) {
+                        var row = results[key];
+                        array.push(Number(row.Depth));
+                    });
+                    resolve(array);
+                });
+            } catch (error) {
+                resolve("error");
+            }
+        })
+    }
+    resolve("error");
+}
+
+async function getDepthTimes(flumeNumber) {
+    if (flumeNumber == 0) {
+        return new Promise((resolve, reject) => {
+            try {
+                database.query('SELECT Ddate FROM `depth_data` WHERE Depth_Flume_Name = 0 ORDER BY Ddate ASC',(error, results) => {
+                    array = [];
+                    Object.keys(results).forEach(function(key) {
+                        var row = results[key];
+                        array.push(new Date(row.Ddate).toLocaleTimeString('en-US', { hour12: false }));
+                    });
+                    resolve(array);
+                });
+            } catch (error) {
+                resolve("error");
+            }
+        })
+    } else {
+        return new Promise((resolve, reject) => {
+            try {
+                database.query('SELECT Ddate FROM `depth_data` AS DATE WHERE Depth_Flume_Name = 1 ORDER BY Ddate ASC',(error, results) => {
+                    array = [];
+                    Object.keys(results).forEach(function(key) {
+                        var row = results[key];
+                        array.push(new Date(row.Ddate).toLocaleTimeString('en-US', { hour12: false }));
+                    });
+                    resolve(array);
                 });
             } catch (error) {
                 resolve("error");
@@ -339,6 +423,7 @@ async function getTargetTime(flumeNumber) {
                 });
             } catch (error) {
                 resolve("error");
+                
             }
         })
     } else {
@@ -382,3 +467,4 @@ async function getTargetUser(flumeNumber) {
     }
     resolve("error");
 }
+

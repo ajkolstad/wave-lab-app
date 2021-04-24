@@ -6,8 +6,6 @@ var mysql = require('mysql');
 var app = express();
 var env = require('dotenv');
 var cookieParser = require('cookie-parser');
-// var tools = require("../monitor/target.js");
-
 
 app.use(cookieParser());
 
@@ -30,9 +28,6 @@ database.connect(function(error) {
     } else {
         console.log('[Database]  Connected to Database');
     }
-
-    // tools.check_complete(0);
-    // tools.check_complete(1);
 })
 
 app.use(express.urlencoded({ extended: false}));

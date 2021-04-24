@@ -77,6 +77,7 @@ def check_valves(basin):
         query.execute(sql_update_target_fill, val)
         db.commit()
         sleep(PAUSE)
+
         if ctrl.status().status != "open":
             return 2
 
@@ -85,6 +86,7 @@ def check_valves(basin):
         query.execute(sql_update_target_fill, val)
         db.commit()
         sleep(PAUSE)
+
         if ctrl.status().status != "closed":
             return 3
         else:
@@ -94,6 +96,7 @@ def check_valves(basin):
     else:
         #setup valve controls and ensure a starting state of closed and no fill target
         print ("Checking LWF")
+
         ctrl_north = facility_controls['LWF']['flume_north']
         ctrl_south = facility_controls['LWF']['flume_south']
 
@@ -149,3 +152,4 @@ if __name__ == '__main__':
 
     LWF_error = check_valves(1)
     print(debrief(LWF_error))
+

@@ -23,8 +23,10 @@ class Data(Base):
 
 db = None
 query = None
-DB_MONITOR_INTERVAL = 15
+
+DB_MONITOR_INTERVAL = 30
 PAUSE = 2.5
+
 DEBUG = False
 
 ARCHIVE = "/a1/walve/data"
@@ -40,7 +42,8 @@ def getDepth(basin):
     connection = engine.connect()
     metaData = sqlite_db.MetaData()
 
-    # Load data table
+
+    # Load depth database table
     depths = sqlite_db.Table('data', metaData, autoload=True, autoload_with=engine)
     Session = sessionmaker(bind = engine)
     session = Session()
@@ -70,8 +73,10 @@ def updateDB(basin):
                                        password='1amSmsjbRKB5ez4P')
     query = db.cursor(prepared = True)
 
+
     UPDATE_DB = """INSERT INTO `depth_data`(`Ddate`, `Depth`, `Depth_Flume_Name`) VALUES (CURRENT_TIMESTAMP, %s, %s)"""
     # UPDATE_DB = """UPDATE `depth_data` SET `Depth` = %s, `Ddate` = CURRENT_TIMESTAMP WHERE `depth_data`.`Depth_flume_name` = %s"""
+
     val = ()
     if basin.basin == 0:
         val = (basin.value, 1)
@@ -96,12 +101,14 @@ def main():
         print("done!")
         time.sleep(PAUSE)
 
+
         print("Updating LWF...")
         updateDB(LWF)
         print("done!")
+
         time.sleep(PAUSE)
         cleanDepthTable()
-        time.sleep(DB_MONITOR_INTERVAL)
+
 
 if __name__ == "__main__":
     main()
