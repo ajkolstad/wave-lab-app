@@ -1,6 +1,10 @@
 # How to start:
  - pull files
- - Install MySQL, mysql-connector (python)
+ - Install XAMPP, launch Apache and MySQL
+ - Install python3 (sudo apt install python3.6)
+ - Install pip (sudo apt install python3-pip)
+      use pip to install mysql-connector-python (pip3 install mysql-connector-python)
+
  - open terminal and type "cd Website", then "node server.js"
  - Also do "npm install" to get the additional packages
  - go to localhost/phpmyadmin, make a new database and import the databaseSetp.sql

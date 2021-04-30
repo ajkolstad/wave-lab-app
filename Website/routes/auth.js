@@ -5,7 +5,7 @@ var router = express.Router();
 
 router.post("/login", authController.login);
 
-router.post("/large-wave-flume", authController.postLWF);
+//router.post("/large-wave-flume", authController.postLWF);
 
 router.post("/directional-wave-basin", authController.postDWB);
 

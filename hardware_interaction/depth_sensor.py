@@ -23,7 +23,10 @@ class Data(Base):
 
 db = None
 query = None
+
 DB_MONITOR_INTERVAL = 30
+PAUSE = 2.5
+
 DEBUG = False
 
 ARCHIVE = "/a1/walve/data"
@@ -39,6 +42,7 @@ def getDepth(basin):
     connection = engine.connect()
     metaData = sqlite_db.MetaData()
 
+
     # Load depth database table
     depths = sqlite_db.Table('data', metaData, autoload=True, autoload_with=engine)
     Session = sessionmaker(bind = engine)
@@ -52,6 +56,16 @@ def getDepth(basin):
     else:
         print("\terror, not valid basin")
 
+def cleanDepthTable():
+    db = mysql.connector.connect(host='engr-db.engr.oregonstate.edu',
+                                       database='wave_lab_database',
+                                       user='wave_lab_database',
+                                       password='1amSmsjbRKB5ez4P')
+    query = db.cursor(prepared = True)
+    cleanDB = """DELETE FROM `depth_data` WHERE Ddate < (SELECT DATE_ADD(NOW(), INTERVAL -7 DAY))"""
+    query.execute(cleanDB)
+    db.commit()
+
 def updateDB(basin):
     db = mysql.connector.connect(host='engr-db.engr.oregonstate.edu',
                                        database='wave_lab_database',
@@ -59,8 +73,10 @@ def updateDB(basin):
                                        password='1amSmsjbRKB5ez4P')
     query = db.cursor(prepared = True)
 
-    UPDATE_DB = """UPDATE `depth_data` SET `Depth` = %s AND 'Ddate' = CURRENT_TIMESTAMP WHERE `depth_data`.`Depth_flume_name` = %s"""
-    #UPDATE_DB = """UPDATE `depth_data` SET `Depth` = %s WHERE `depth_data`.`Depth_flume_name` = %s"""
+
+    UPDATE_DB = """INSERT INTO `depth_data`(`Ddate`, `Depth`, `Depth_Flume_Name`) VALUES (CURRENT_TIMESTAMP, %s, %s)"""
+    # UPDATE_DB = """UPDATE `depth_data` SET `Depth` = %s, `Ddate` = CURRENT_TIMESTAMP WHERE `depth_data`.`Depth_flume_name` = %s"""
+
     val = ()
     if basin.basin == 0:
         val = (basin.value, 1)
@@ -83,12 +99,16 @@ def main():
         print("Updating DWB...")
         updateDB(DWB)
         print("done!")
-        time.sleep(0.5)
+        time.sleep(PAUSE)
+
 
         print("Updating LWF...")
         updateDB(LWF)
         print("done!")
-        time.sleep(DB_MONITOR_INTERVAL)
+
+        time.sleep(PAUSE)
+        cleanDepthTable()
+
 
 if __name__ == "__main__":
     main()
