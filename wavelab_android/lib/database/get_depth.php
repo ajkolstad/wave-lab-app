@@ -87,7 +87,7 @@ else if("GET_ALL_DEPTH_LWF" == $action){
 }
 else if("GET_T_DEPTH_DWB" == $action){
     $new_depth = array();
-    $sql = "SELECT * FROM `target_depth` WHERE Target_Flume_Name = 0 AND isComplete = 0 ORDER BY Tdate DESC LIMIT 1";
+    $sql = "SELECT * FROM `target_depth` WHERE Target_Flume_Name = 0 ORDER BY Tdate DESC LIMIT 1";
     $result = $conn->query($sql);
     if($result->num_rows > 0){
         while($row = $result->fetch_assoc()){
@@ -104,7 +104,7 @@ else if("GET_T_DEPTH_DWB" == $action){
 
 else if("GET_T_DEPTH_LWF" == $action){
     $new_depth = array();
-    $sql = "SELECT * FROM `target_depth` WHERE Target_Flume_Name = 1 AND isComplete = 0 ORDER BY Tdate DESC LIMIT 1";
+    $sql = "SELECT * FROM `target_depth` WHERE Target_Flume_Name = 1 ORDER BY Tdate DESC LIMIT 1";
     $result = $conn->query($sql);
     if($result->num_rows > 0){
         while($row = $result->fetch_assoc()){

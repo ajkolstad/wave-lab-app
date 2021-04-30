@@ -11,8 +11,8 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   // Let the app on the phone work with both landscapes and right side up on the phone will work. Not upside down
   SystemChrome.setPreferredOrientations([
-    DeviceOrientation.landscapeLeft,
-    DeviceOrientation.landscapeRight,
+    //DeviceOrientation.landscapeLeft,
+    //DeviceOrientation.landscapeRight,
     DeviceOrientation.portraitUp
   ]);
   runApp(new StateContainer(child: App(/*preferences: await SharedPreferences.getInstance()*/)));

@@ -29,8 +29,8 @@ class HomeState extends State<Home> {
   DateTime dateLwf;
   DateTime dateDwb;
   Darkmode darkmodeClass;
-  bool _darkmode;
 
+  // Grabs the current depth data for the large wave flume
   void getCurDepthLwf() {
     print("in");
     dbCalls.getCurDepthLwf().then((depthData) {
@@ -43,6 +43,7 @@ class HomeState extends State<Home> {
     });
   }
 
+  // Grabs the current depth data for the directional wave basin
   void getCurDepthDwb(){
     dbCalls.getCurDepthDwb().then((depthData) {
       if (this.mounted) {
@@ -54,6 +55,7 @@ class HomeState extends State<Home> {
     });
   }
 
+  // Grabs the most recent target depth data for the large wave flume
   void getTDepthLwf(){
     dbCalls.getTDepthLwf().then((targetData) {
       if (this.mounted) {
@@ -66,6 +68,7 @@ class HomeState extends State<Home> {
     });
   }
 
+  // Grabs the most recent target depth data for the directional wave basin
   void getTDepthDwb(){
     dbCalls.getTDepthDwb().then((targetData) {
       if (this.mounted) {
@@ -92,6 +95,7 @@ class HomeState extends State<Home> {
     }
   }
 
+  // initializes the darkmode of the screen
   void initDarkmode(){
     if (this.mounted) {
       setState(() {
@@ -102,6 +106,7 @@ class HomeState extends State<Home> {
     }
   }
 
+  // Builds the home screen
   Widget build(BuildContext context){
     initDarkmode();
 
@@ -126,6 +131,7 @@ class HomeState extends State<Home> {
     );
   }
 
+  // Gets the live youtube stream using the url given to the function
   Widget liveVideo(String url) {
     return Container(
       //height: 250,
@@ -140,6 +146,7 @@ class HomeState extends State<Home> {
     );
   }
 
+  // introduces the home screen
   Widget intro_section(){
     return SizedBox(
         width: MediaQuery.of(context).size.width * .9,
@@ -165,6 +172,7 @@ class HomeState extends State<Home> {
     );
   }
 
+  // Provides information for the large wave flume
   Widget Lwf_Container(){
     return Container(
         padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
@@ -213,6 +221,7 @@ class HomeState extends State<Home> {
               ]
 
             ),
+            // Prints the current depth of the large wave flume
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -229,8 +238,9 @@ class HomeState extends State<Home> {
           Container(
               width: MediaQuery.of(context).size.width * .9,
 
+              // sets up a carousel slider with the live steam videos for the large wave flume
               child: CarouselSlider(
-              options: CarouselOptions(height: 173, autoPlay: false, enableInfiniteScroll: false, enlargeCenterPage: true),
+              options: CarouselOptions(aspectRatio: 16/9/*height: (MediaQuery.of(context).size.height * 0.23)173*/, autoPlay: false, enableInfiniteScroll: false, enlargeCenterPage: true),
               items: [
                 liveVideo('https://www.youtube.com/watch?v=ciioaETC6wE&feature=emb_title'),
                 liveVideo('https://www.youtube.com/watch?v=V3JsFPQA6YQ&feature=emb_title'),
@@ -252,6 +262,7 @@ class HomeState extends State<Home> {
     );
   }
 
+  // Provides data for the directional wave basin
   Widget Dwb_Container() {
     return Container(
         padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
@@ -262,6 +273,7 @@ class HomeState extends State<Home> {
       width: MediaQuery.of(context).size.width * .9,
       child: Column(
         children: <Widget>[
+          // Introduces the directional wave basin
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -298,6 +310,7 @@ class HomeState extends State<Home> {
                 )
             ]
           ),
+          // Prints the current depth of the directional wave basin
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -316,8 +329,9 @@ class HomeState extends State<Home> {
           Container(
               width: MediaQuery.of(context).size.width * .9,
 
+              // sets up a carousel slider with the live steam videos for the directional wave basin
               child: CarouselSlider(
-                  options: CarouselOptions(height: 173, autoPlay: false, enableInfiniteScroll: false, enlargeCenterPage: true),
+                  options: CarouselOptions(aspectRatio: 16/9/*height: (MediaQuery.of(context).size.height * 0.266)173*/, autoPlay: false, enableInfiniteScroll: false, enlargeCenterPage: true),
                   items: [
                     liveVideo('https://www.youtube.com/watch?v=pHmmBQYVPCI&feature=emb_title'),
                     liveVideo('https://www.youtube.com/watch?v=xNzdOP3ixd4&feature=emb_title'),
