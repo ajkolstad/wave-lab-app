@@ -8,27 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		0B1210B825BA230F00F84FDB /* Tests_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1210B725BA230F00F84FDB /* Tests_iOS.swift */; };
-		0B1210C325BA230F00F84FDB /* Tests_macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1210C225BA230F00F84FDB /* Tests_macOS.swift */; };
 		0B1210C525BA230F00F84FDB /* Wave_Lab_ManagementApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B12109C25BA230E00F84FDB /* Wave_Lab_ManagementApp.swift */; };
-		0B1210C625BA230F00F84FDB /* Wave_Lab_ManagementApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B12109C25BA230E00F84FDB /* Wave_Lab_ManagementApp.swift */; };
 		0B1210C725BA231000F84FDB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B12109D25BA230E00F84FDB /* ContentView.swift */; };
-		0B1210C825BA231000F84FDB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B12109D25BA230E00F84FDB /* ContentView.swift */; };
 		0B1210C925BA231000F84FDB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B12109E25BA230F00F84FDB /* Assets.xcassets */; };
-		0B1210CA25BA231000F84FDB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B12109E25BA230F00F84FDB /* Assets.xcassets */; };
 		0B4BF2FD25C37329004CF045 /* Video Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF2FC25C37329004CF045 /* Video Player.swift */; };
-		0B4BF2FE25C37329004CF045 /* Video Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF2FC25C37329004CF045 /* Video Player.swift */; };
 		0B4BF30425C3741D004CF045 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF30325C3741D004CF045 /* HomeView.swift */; };
-		0B4BF30525C3741D004CF045 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF30325C3741D004CF045 /* HomeView.swift */; };
 		0B4BF30B25C37456004CF045 /* LWFView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF30A25C37456004CF045 /* LWFView.swift */; };
-		0B4BF30C25C37456004CF045 /* LWFView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF30A25C37456004CF045 /* LWFView.swift */; };
 		0B4BF31225C3754E004CF045 /* DWBView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF31125C3754E004CF045 /* DWBView.swift */; };
-		0B4BF31325C3754E004CF045 /* DWBView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF31125C3754E004CF045 /* DWBView.swift */; };
-		0B4BF31925C3757D004CF045 /* LiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF31825C3757D004CF045 /* LiveView.swift */; };
-		0B4BF31A25C3757D004CF045 /* LiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF31825C3757D004CF045 /* LiveView.swift */; };
 		0B4BF32025C375A6004CF045 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF31F25C375A6004CF045 /* SettingsView.swift */; };
-		0B4BF32125C375A6004CF045 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF31F25C375A6004CF045 /* SettingsView.swift */; };
 		0B4BF32725C37604004CF045 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF32625C37604004CF045 /* Profile.swift */; };
-		0B4BF32825C37604004CF045 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4BF32625C37604004CF045 /* Profile.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,13 +27,6 @@
 			remoteGlobalIDString = 0B1210A225BA230F00F84FDB;
 			remoteInfo = "Wave Lab Management (iOS)";
 		};
-		0B1210BF25BA230F00F84FDB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0B12109725BA230E00F84FDB /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0B1210AA25BA230F00F84FDB;
-			remoteInfo = "Wave Lab Management (macOS)";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -54,20 +35,13 @@
 		0B12109E25BA230F00F84FDB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0B1210A325BA230F00F84FDB /* Wave Lab Management.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Wave Lab Management.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B1210A625BA230F00F84FDB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0B1210AB25BA230F00F84FDB /* Wave Lab Management.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Wave Lab Management.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0B1210AD25BA230F00F84FDB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0B1210AE25BA230F00F84FDB /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
 		0B1210B325BA230F00F84FDB /* Tests iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B1210B725BA230F00F84FDB /* Tests_iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests_iOS.swift; sourceTree = "<group>"; };
 		0B1210B925BA230F00F84FDB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0B1210BE25BA230F00F84FDB /* Tests macOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests macOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0B1210C225BA230F00F84FDB /* Tests_macOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests_macOS.swift; sourceTree = "<group>"; };
-		0B1210C425BA230F00F84FDB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0B4BF2FC25C37329004CF045 /* Video Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Video Player.swift"; sourceTree = "<group>"; };
 		0B4BF30325C3741D004CF045 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		0B4BF30A25C37456004CF045 /* LWFView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LWFView.swift; sourceTree = "<group>"; };
 		0B4BF31125C3754E004CF045 /* DWBView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DWBView.swift; sourceTree = "<group>"; };
-		0B4BF31825C3757D004CF045 /* LiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveView.swift; sourceTree = "<group>"; };
 		0B4BF31F25C375A6004CF045 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		0B4BF32625C37604004CF045 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -80,21 +54,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0B1210A825BA230F00F84FDB /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		0B1210B025BA230F00F84FDB /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0B1210BB25BA230F00F84FDB /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -109,9 +69,7 @@
 			children = (
 				0B12109B25BA230E00F84FDB /* Shared */,
 				0B1210A525BA230F00F84FDB /* iOS */,
-				0B1210AC25BA230F00F84FDB /* macOS */,
 				0B1210B625BA230F00F84FDB /* Tests iOS */,
-				0B1210C125BA230F00F84FDB /* Tests macOS */,
 				0B1210A425BA230F00F84FDB /* Products */,
 			);
 			sourceTree = "<group>";
@@ -126,7 +84,6 @@
 				0B4BF30325C3741D004CF045 /* HomeView.swift */,
 				0B4BF30A25C37456004CF045 /* LWFView.swift */,
 				0B4BF31125C3754E004CF045 /* DWBView.swift */,
-				0B4BF31825C3757D004CF045 /* LiveView.swift */,
 				0B4BF31F25C375A6004CF045 /* SettingsView.swift */,
 				0B4BF32625C37604004CF045 /* Profile.swift */,
 			);
@@ -137,9 +94,7 @@
 			isa = PBXGroup;
 			children = (
 				0B1210A325BA230F00F84FDB /* Wave Lab Management.app */,
-				0B1210AB25BA230F00F84FDB /* Wave Lab Management.app */,
 				0B1210B325BA230F00F84FDB /* Tests iOS.xctest */,
-				0B1210BE25BA230F00F84FDB /* Tests macOS.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -152,15 +107,6 @@
 			path = iOS;
 			sourceTree = "<group>";
 		};
-		0B1210AC25BA230F00F84FDB /* macOS */ = {
-			isa = PBXGroup;
-			children = (
-				0B1210AD25BA230F00F84FDB /* Info.plist */,
-				0B1210AE25BA230F00F84FDB /* macOS.entitlements */,
-			);
-			path = macOS;
-			sourceTree = "<group>";
-		};
 		0B1210B625BA230F00F84FDB /* Tests iOS */ = {
 			isa = PBXGroup;
 			children = (
@@ -168,15 +114,6 @@
 				0B1210B925BA230F00F84FDB /* Info.plist */,
 			);
 			path = "Tests iOS";
-			sourceTree = "<group>";
-		};
-		0B1210C125BA230F00F84FDB /* Tests macOS */ = {
-			isa = PBXGroup;
-			children = (
-				0B1210C225BA230F00F84FDB /* Tests_macOS.swift */,
-				0B1210C425BA230F00F84FDB /* Info.plist */,
-			);
-			path = "Tests macOS";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -199,23 +136,6 @@
 			productReference = 0B1210A325BA230F00F84FDB /* Wave Lab Management.app */;
 			productType = "com.apple.product-type.application";
 		};
-		0B1210AA25BA230F00F84FDB /* Wave Lab Management (macOS) */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0B1210D025BA231000F84FDB /* Build configuration list for PBXNativeTarget "Wave Lab Management (macOS)" */;
-			buildPhases = (
-				0B1210A725BA230F00F84FDB /* Sources */,
-				0B1210A825BA230F00F84FDB /* Frameworks */,
-				0B1210A925BA230F00F84FDB /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "Wave Lab Management (macOS)";
-			productName = "Wave Lab Management (macOS)";
-			productReference = 0B1210AB25BA230F00F84FDB /* Wave Lab Management.app */;
-			productType = "com.apple.product-type.application";
-		};
 		0B1210B225BA230F00F84FDB /* Tests iOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0B1210D325BA231000F84FDB /* Build configuration list for PBXNativeTarget "Tests iOS" */;
@@ -234,24 +154,6 @@
 			productReference = 0B1210B325BA230F00F84FDB /* Tests iOS.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
-		0B1210BD25BA230F00F84FDB /* Tests macOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0B1210D625BA231000F84FDB /* Build configuration list for PBXNativeTarget "Tests macOS" */;
-			buildPhases = (
-				0B1210BA25BA230F00F84FDB /* Sources */,
-				0B1210BB25BA230F00F84FDB /* Frameworks */,
-				0B1210BC25BA230F00F84FDB /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				0B1210C025BA230F00F84FDB /* PBXTargetDependency */,
-			);
-			name = "Tests macOS";
-			productName = "Tests macOS";
-			productReference = 0B1210BE25BA230F00F84FDB /* Tests macOS.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -264,16 +166,9 @@
 					0B1210A225BA230F00F84FDB = {
 						CreatedOnToolsVersion = 12.3;
 					};
-					0B1210AA25BA230F00F84FDB = {
-						CreatedOnToolsVersion = 12.3;
-					};
 					0B1210B225BA230F00F84FDB = {
 						CreatedOnToolsVersion = 12.3;
 						TestTargetID = 0B1210A225BA230F00F84FDB;
-					};
-					0B1210BD25BA230F00F84FDB = {
-						CreatedOnToolsVersion = 12.3;
-						TestTargetID = 0B1210AA25BA230F00F84FDB;
 					};
 				};
 			};
@@ -291,9 +186,7 @@
 			projectRoot = "";
 			targets = (
 				0B1210A225BA230F00F84FDB /* Wave Lab Management (iOS) */,
-				0B1210AA25BA230F00F84FDB /* Wave Lab Management (macOS) */,
 				0B1210B225BA230F00F84FDB /* Tests iOS */,
-				0B1210BD25BA230F00F84FDB /* Tests macOS */,
 			);
 		};
 /* End PBXProject section */
@@ -307,22 +200,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0B1210A925BA230F00F84FDB /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0B1210CA25BA231000F84FDB /* Assets.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		0B1210B125BA230F00F84FDB /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0B1210BC25BA230F00F84FDB /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -341,26 +219,9 @@
 				0B4BF30425C3741D004CF045 /* HomeView.swift in Sources */,
 				0B4BF30B25C37456004CF045 /* LWFView.swift in Sources */,
 				0B1210C525BA230F00F84FDB /* Wave_Lab_ManagementApp.swift in Sources */,
-				0B4BF31925C3757D004CF045 /* LiveView.swift in Sources */,
 				0B4BF31225C3754E004CF045 /* DWBView.swift in Sources */,
 				0B4BF32725C37604004CF045 /* Profile.swift in Sources */,
 				0B4BF2FD25C37329004CF045 /* Video Player.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0B1210A725BA230F00F84FDB /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0B1210C825BA231000F84FDB /* ContentView.swift in Sources */,
-				0B4BF32125C375A6004CF045 /* SettingsView.swift in Sources */,
-				0B4BF30525C3741D004CF045 /* HomeView.swift in Sources */,
-				0B4BF30C25C37456004CF045 /* LWFView.swift in Sources */,
-				0B1210C625BA230F00F84FDB /* Wave_Lab_ManagementApp.swift in Sources */,
-				0B4BF31A25C3757D004CF045 /* LiveView.swift in Sources */,
-				0B4BF31325C3754E004CF045 /* DWBView.swift in Sources */,
-				0B4BF32825C37604004CF045 /* Profile.swift in Sources */,
-				0B4BF2FE25C37329004CF045 /* Video Player.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -372,14 +233,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0B1210BA25BA230F00F84FDB /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0B1210C325BA230F00F84FDB /* Tests_macOS.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -387,11 +240,6 @@
 			isa = PBXTargetDependency;
 			target = 0B1210A225BA230F00F84FDB /* Wave Lab Management (iOS) */;
 			targetProxy = 0B1210B425BA230F00F84FDB /* PBXContainerItemProxy */;
-		};
-		0B1210C025BA230F00F84FDB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0B1210AA25BA230F00F84FDB /* Wave Lab Management (macOS) */;
-			targetProxy = 0B1210BF25BA230F00F84FDB /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -511,7 +359,6 @@
 		0B1210CE25BA231000F84FDB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = YS2DBPK69W;
@@ -526,14 +373,13 @@
 				PRODUCT_NAME = "Wave Lab Management";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
 		0B1210CF25BA231000F84FDB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = YS2DBPK69W;
@@ -548,54 +394,8 @@
 				PRODUCT_NAME = "Wave Lab Management";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		0B1210D125BA231000F84FDB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = macOS/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "CS461Group28.Wave-Lab-Management";
-				PRODUCT_NAME = "Wave Lab Management";
-				SDKROOT = macosx;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
-		};
-		0B1210D225BA231000F84FDB /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = macOS/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "CS461Group28.Wave-Lab-Management";
-				PRODUCT_NAME = "Wave Lab Management";
-				SDKROOT = macosx;
-				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -642,48 +442,6 @@
 			};
 			name = Release;
 		};
-		0B1210D725BA231000F84FDB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = "Tests macOS/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "CS461Group28.Tests-macOS";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = "Wave Lab Management (macOS)";
-			};
-			name = Debug;
-		};
-		0B1210D825BA231000F84FDB /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = "Tests macOS/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "CS461Group28.Tests-macOS";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = "Wave Lab Management (macOS)";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -705,29 +463,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0B1210D025BA231000F84FDB /* Build configuration list for PBXNativeTarget "Wave Lab Management (macOS)" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0B1210D125BA231000F84FDB /* Debug */,
-				0B1210D225BA231000F84FDB /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		0B1210D325BA231000F84FDB /* Build configuration list for PBXNativeTarget "Tests iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0B1210D425BA231000F84FDB /* Debug */,
 				0B1210D525BA231000F84FDB /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		0B1210D625BA231000F84FDB /* Build configuration list for PBXNativeTarget "Tests macOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0B1210D725BA231000F84FDB /* Debug */,
-				0B1210D825BA231000F84FDB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

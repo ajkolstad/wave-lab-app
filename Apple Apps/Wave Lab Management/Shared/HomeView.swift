@@ -18,6 +18,7 @@ struct HomeView: View {
     let customColor : Color = Color(red: 18/255, green: 18/255, blue: 18/255)
     
     var body: some View {
+        ScrollView(.vertical) {
         VStack {
             Text("Home")
                 .font(.title)
@@ -34,7 +35,7 @@ struct HomeView: View {
                 Webview(url: "https://www.youtube.com/embed/ciioaETC6wE?playsinline=1")
                     .frame(width: 288, height: 162)
                     .padding(.bottom, 15)
-            }.background(customColor).cornerRadius(15).frame(width: .infinity).padding(.bottom, 15)
+            }.background(customColor).cornerRadius(15).padding(.bottom, 15)
             
             VStack {
                 VStack {
@@ -48,9 +49,38 @@ struct HomeView: View {
                 Webview(url: "https://www.youtube.com/embed/pHmmBQYVPCI?playsinline=1")
                     .frame(width: 288, height: 162)
                     .padding(.bottom, 15)
-            }.background(customColor).cornerRadius(15).frame(width: .infinity)
+            }.background(customColor).cornerRadius(15)
+            VStack (alignment: .leading){
+                Text("Large Wave Flume")
+                    .font(.title2)
+                ScrollView(.horizontal) {
+                    HStack (spacing: 20){
+                        Webview(url: "https://www.youtube.com/embed/ciioaETC6wE?playsinline=1")
+                            .frame(width: 384, height: 216)
+                        Webview(url: "https://www.youtube.com/embed/V3JsFPQA6YQ?playsinline=1")
+                            .frame(width: 384, height: 216)
+                        Webview(url: "https://www.youtube.com/embed/VCluhS3RJpI?playsinline=1")
+                            .frame(width: 384, height: 216)
+                    }
+                }.padding(.bottom, 10)
+                Divider()
+                Text("Directional Wave Basin")
+                    .font(.title2)
+                    .padding(.top, 20)
+                ScrollView(.horizontal) {
+                    HStack (spacing: 20){
+                        Webview(url: "https://www.youtube.com/embed/pHmmBQYVPCI?playsinline=1")
+                            .frame(width: 384, height: 216)
+                        Webview(url: "https://www.youtube.com/embed/xNzdOP3ixd4?playsinline=1")
+                            .frame(width: 384, height: 216)
+                        Webview(url: "https://www.youtube.com/embed/Z7V0x92PpXU?playsinline=1")
+                            .frame(width: 384, height: 216)
+                    }
+                }
+            }
         }
     }
+}
 }
 
 struct HomeView_Previews: PreviewProvider {

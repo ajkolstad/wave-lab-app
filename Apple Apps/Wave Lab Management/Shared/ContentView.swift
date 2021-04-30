@@ -22,13 +22,9 @@ struct ContentView: View {
                     Image(systemName: "drop.fill")
                     Text("DWB")
             }
-            LiveView().tabItem {
-                    Image(systemName: "play.rectangle")
-                    Text("Live")
-            }
             SettingsView().tabItem {
-                    Image(systemName: "gear")
-                    Text("Settings")
+                    Image(systemName: "person.fill")
+                    Text("User")
             }
         }
     }
@@ -37,7 +33,6 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
-            .preferredColorScheme(.dark)
     }
 }
 
