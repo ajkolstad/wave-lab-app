@@ -160,6 +160,7 @@ router.get("/large-wave-flume", async (req, res) => {
     largeWaveFlumeTarget = await getTarget(1);
     largeWaveFlumeTargetTime = await getTargetTime(1);
     largeWaveFlumeTargetUser = await getTargetUser(1);
+    largeWaveFlumeTimeElasped = await getTargetTimeElapsed(1);
     graphDepths = await getDepths(1);
     graphTimes = await getDepthTimes(1);
 
@@ -203,6 +204,7 @@ router.get("/large-wave-flume", async (req, res) => {
             flumeDepth: flumeText,
             flumeProg: flumeProgText,
             flumeTime: flumeTimeText,
+            flumeTimeElapsed: largeWaveFlumeTimeElasped,
             flumeUser: flumeUserText,
             depths:  graphDepths,
             times: graphTimes
@@ -212,6 +214,7 @@ router.get("/large-wave-flume", async (req, res) => {
             flumeDepth: flumeText,
             flumeProg: flumeProgText,
             flumeTime: flumeTimeText,
+            flumeTimeElapsed: largeWaveFlumeTimeElasped,
             flumeUser: flumeUserText,
             depths: graphDepths,
             times: graphTimes
@@ -224,6 +227,7 @@ router.get("/directional-wave-basin", async (req, res) => {
     directionalWaveBasinTarget = await getTarget(0);
     directionalWaveBasinTargetTime = await getTargetTime(0);
     directionalWaveBasinTargetUser = await getTargetUser(0);
+    directionalWaveBasinTimeElasped = await getTargetTimeElapsed(0);
     graphDepths = await getDepths(0);
     graphTimes = await getDepthTimes(0);
 
@@ -268,6 +272,7 @@ router.get("/directional-wave-basin", async (req, res) => {
             basinDepth: basinText,
             basinProg: basinProgText,
             basinTime: basinTimeText,
+            basinTimeElapsed: "Fill started " + directionalWaveBasinTimeElasped,
             basinUser: basinUserText,
             depths:  graphDepths,
             times: graphTimes
@@ -277,6 +282,7 @@ router.get("/directional-wave-basin", async (req, res) => {
             basinDepth: basinText,
             basinProg: basinProgText,
             basinTime: basinTimeText,
+            flumeTimeElapse: "Fill started " + directionalWaveBasinTimeElasped,
             basinUser: basinUserText,
             depths:  graphDepths,
             times: graphTimes
@@ -432,6 +438,36 @@ async function getTargetTime(flumeNumber) {
                 database.query('SELECT * FROM `target_depth` WHERE Target_Flume_Name = 1 ORDER BY Tdate DESC LIMIT 1',(error, results) => {
                     if(results.length < 1) resolve("error");
                     resolve(results[0].Tdate);
+                });
+            } catch (error) {
+                resolve("error");
+            }
+        })
+    }
+    resolve("error");
+}
+
+async function getTargetTimeElapsed(flumeNumber) {
+    if (flumeNumber == 0) {
+        return new Promise((resolve, reject) => {
+            try {
+                database.query('SELECT * FROM `target_depth` WHERE Target_Flume_Name = 0 ORDER BY Tdate DESC LIMIT 1',(error, results) => {
+                    if(results.length < 1) resolve("error");
+                    var start = moment(results[0].Tdate);
+                    resolve(start.fromNow())
+                });
+            } catch (error) {
+                resolve("error");
+                
+            }
+        })
+    } else {
+        return new Promise((resolve, reject) => {
+            try {
+                database.query('SELECT * FROM `target_depth` WHERE Target_Flume_Name = 1 ORDER BY Tdate DESC LIMIT 1',(error, results) => {
+                    if(results.length < 1) resolve("error");
+                    var start = moment(results[0].Tdate);
+                    resolve(start.fromNow())
                 });
             } catch (error) {
                 resolve("error");

@@ -74,7 +74,7 @@ exports.postLWF = async (req, res) => {
 
         console.log("[Webserver] New Depth Request - Target: " + depthTarget + " Offset: " + timeOffset);
         var newTime = Date.now();
-        var addTime = moment(newTime).add(timeOffset, 'hours').format('YYYY-MM-DD hh:mm:ss');
+        var addTime = moment(newTime).add(timeOffset, 'hours').format('YYYY-MM-DD HH:mm:ss');
         var username = req.cookies['username'];
         var flumeName = 1; //for LWF
         var isComplete = 0;
@@ -93,7 +93,7 @@ exports.postDWB = async (req, res) => {
 
         console.log("[Webserver] New Depth Request - Target: " + depthTarget + " Offset: " + timeOffset);
         var newTime = Date.now();
-        var addTime = moment(newTime).add(timeOffset, 'hours').format('YYYY-MM-DD hh:mm:ss');
+        var addTime = moment(newTime).add(timeOffset, 'hours').format('YYYY-MM-DD HH:mm:ss');
         var username = req.cookies['username'];
         var flumeName = 0; //for DWB
         var isComplete = 0;
