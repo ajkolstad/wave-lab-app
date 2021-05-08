@@ -1,7 +1,7 @@
 """
 IMPORTS
 """
-import mysql, time, math
+import mysql, time, math, queries
 from mysql.connector import Error
 
 from time import sleep
@@ -15,23 +15,14 @@ db = None
 query = None
 PAUSE = 15
 
-sql_check_for_new_target = """SELECT * FROM `target_depth` WHERE Tdate < CURRENT_TIMESTAMP AND Target_Flume_Name = %s and isComplete = 0 ORDER BY Tdate DESC LIMIT 1;"""
-sql_update_target_fill = """UPDATE `target_depth` SET `Tdepth`= %s, `isComplete`= 0, Tdate = CURRENT_TIMESTAMP WHERE Target_Flume_Name = %s"""
-
 """
-FUNCITONS
+Connects to MySQL database and executes a query for the associated flume / basin depth value
 """
 def get_depth(flumeNumber):
-    # db = mysql.connector.connect(
-    #         host = os.getenv('DATABASE_HOST'),
-    #         user = os.getenv('DATABASE_USER'),
-    #         password = os.getenv('DATABASE_PASSWORD'),
-    #         database = os.getenv('DATABASE')
-    # )
     db = mysql.connector.connect(host='engr-db.engr.oregonstate.edu',
-    database='wave_lab_database',
-    user='wave_lab_database',
-    password='1amSmsjbRKB5ez4P')
+                                       database='wave_lab_database',
+                                       user='wave_lab_database',
+                                       password='1amSmsjbRKB5ez4P')
 
     query = db.cursor()
     if flumeNumber == 0:
@@ -48,16 +39,21 @@ def get_depth(flumeNumber):
         return
     return res
 
-
+"""
+Tests correct actuation of valves for given facility in order:
+1 Set start state closed, no target     detection of no target
+2 Set target fill                       opening of valves on target detect
+3 Set current depth to target fill      closing of valves on completion
+"""
 def check_valves(basin):
 
     db = mysql.connector.connect(host='engr-db.engr.oregonstate.edu',
-    database='wave_lab_database',
-    user='wave_lab_database',
-    password='1amSmsjbRKB5ez4P')
+                                       database='wave_lab_database',
+                                       user='wave_lab_database',
+                                       password='1amSmsjbRKB5ez4P')
 
     query = db.cursor()
-    #DWB
+
     if basin == 0:
         #setup valve controls and ensure a starting state of closed and no fill target
         print ("Checking DWB")
@@ -131,7 +127,9 @@ def check_valves(basin):
         else:
             return 0
 
-
+"""
+Maps error code to error encountered
+"""
 def debrief(error_codes):
     if error_codes == 0:
         return "Success"
@@ -140,7 +138,7 @@ def debrief(error_codes):
     if error_codes == 2:
         return "2: New target fill didn't open valve(s)"
     if error_codes == 3:
-        return "3: Set target fill to current depth didnt close valve(s)"
+        return "3: Set target fill complete didnt close valve(s)"
     else:
         return "debrief error: unrecognized error code"
 
@@ -152,4 +150,3 @@ if __name__ == '__main__':
 
     LWF_error = check_valves(1)
     print(debrief(LWF_error))
-

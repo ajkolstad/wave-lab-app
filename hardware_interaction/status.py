@@ -10,6 +10,7 @@ ctrl_DWB = facility_controls['DWB']['basin_north']
 ctrl_LWF_north = facility_controls['LWF']['flume_north']
 ctrl_LWF_south = facility_controls['LWF']['flume_south']
 
+# prints status of all valves in wave lab on 5 second interval
 while True:
     print("DWB")
     print('\t' + ctrl_DWB.status().status)

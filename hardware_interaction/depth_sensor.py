@@ -1,3 +1,5 @@
+# python2 depth_sensor.py {sqlite filepath} {db monitor interval}
+
 import sys, os, os.path
 import mysql, time, math
 from mysql.connector import Error
@@ -21,29 +23,22 @@ class Data(Base):
     basin = Column(Integer, index=True) # flume=0, basin=1
     datetime = Column(DateTime, index=True)
 
-db = None
-query = None
+# db = None
+# query = None
 
-DB_MONITOR_INTERVAL = 30
 PAUSE = 2.5
-
-DEBUG = False
-
 ARCHIVE = "/a1/walve/data"
 FACILITIES = [ "LWF", "DWB"]
+logFile = open("depth_output.log", "w")
 
-# The file path of the sqlite database
-DBFILEPATH = "/a1/walve/data/levels.sqlite"
-# DBFILEPATH = "levels.sqlite"
-
-def getDepth(basin):
-    # Create db connection and metadata
-    engine = sqlite_db.create_engine('sqlite:///%s' % DBFILEPATH, echo=DEBUG)
+"""
+Queries the SQLite databse for the most recent depth for both flume and basin, returns appropriate one
+"""
+def getDepth(basin, filepath):
+    engine = sqlite_db.create_engine('sqlite:///%s' % filepath)
     connection = engine.connect()
     metaData = sqlite_db.MetaData()
 
-
-    # Load depth database table
     depths = sqlite_db.Table('data', metaData, autoload=True, autoload_with=engine)
     Session = sessionmaker(bind = engine)
     session = Session()
@@ -54,8 +49,11 @@ def getDepth(basin):
     elif basin == 0:
         return results[0]
     else:
-        print("\terror, not valid basin")
+        return
 
+"""
+Cleans out old entries from the MySQL depth table
+"""
 def cleanDepthTable():
     db = mysql.connector.connect(host='engr-db.engr.oregonstate.edu',
                                        database='wave_lab_database',
@@ -66,7 +64,10 @@ def cleanDepthTable():
     query.execute(cleanDB)
     db.commit()
 
-def updateDB(basin):
+"""
+Updates MySQL database with depth information
+"""
+def update(basin):
     db = mysql.connector.connect(host='engr-db.engr.oregonstate.edu',
                                        database='wave_lab_database',
                                        user='wave_lab_database',
@@ -75,7 +76,6 @@ def updateDB(basin):
 
 
     UPDATE_DB = """INSERT INTO `depth_data`(`Ddate`, `Depth`, `Depth_Flume_Name`) VALUES (CURRENT_TIMESTAMP, %s, %s)"""
-    # UPDATE_DB = """UPDATE `depth_data` SET `Depth` = %s, `Ddate` = CURRENT_TIMESTAMP WHERE `depth_data`.`Depth_flume_name` = %s"""
 
     val = ()
     if basin.basin == 0:
@@ -85,30 +85,37 @@ def updateDB(basin):
     query.execute(UPDATE_DB, val)
     db.commit()
 
-def main():
-    if os.path.exists(DBFILEPATH):
-        print("File exists: %s" % DBFILEPATH)
+"""
+Verifies existence of SQLite file, then loops to update on interval
+"""
+def updateDB(filepath, monitor_interval):
+    logFile = open("depth_output.log", "a")
+
+    if os.path.exists(filepath):
+        logFile.write("File exists: %s\n" % filepath)
     else:
-        print("File doesn't exist: %s" % DBFILEPATH)
+        # print("File doesn't exist: %s" % DBFILEPATH)
+        sys.exit("File doesn't exist: %s" % filepath)
 
     while(True):
-        print("Getting new depths")
-        DWB = getDepth(0)
-        LWF = getDepth(1)
+        logFile.write("Getting new depths\n")
+        DWB = getDepth(0, filepath)
+        LWF = getDepth(1, filepath)
 
-        print("Updating DWB...")
-        updateDB(DWB)
-        print("done!")
+        update(DWB)
+        logFile.write("%s - DWB updated\n" % time.asctime( time.localtime(time.time()) ))
         time.sleep(PAUSE)
 
-
-        print("Updating LWF...")
-        updateDB(LWF)
-        print("done!")
-
+        update(LWF)
+        logFile.write("%s - LWF updated\n" % time.asctime( time.localtime(time.time()) ))
         time.sleep(PAUSE)
+        
         cleanDepthTable()
+        time.sleep(monitor_interval)
 
 
 if __name__ == "__main__":
-    main()
+
+    filepath = sys.argv[1]
+    monitor_interval = int(sys.argv[2]) | 30
+    updateDB(filepath, monitor_interval)
