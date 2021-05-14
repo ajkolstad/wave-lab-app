@@ -1,3 +1,8 @@
+/*
+pages.js
+Where most of the magic happens: Database connection, page serving, info insertion
+Is utilized by server.js
+*/
 var express = require('express');
 var router = express.Router();
 router.use(require('cookie-parser')());
@@ -32,17 +37,10 @@ database.connect(function(error) {
     }
 })
 
-/*INSERT INTO `target_depth`(`Tdepth`, `Target_Flume_Name`, `Tdate`, `Username`, `isComplete`) VALUES ("2.78","1",CURRENT_TIMESTAMP(),"ajkolstad","0")*/
-
 function authenticateUser(req) {
     try {
         var username = req.cookies['username'];
         var password = req.cookies['password'];
-        //console.log("[Webserver] User: \"" + username + "\" Authenticating...");
-        //var calcToken = jwt.sign({ username }, process.env.JWT_SECRET, {
-        //    expiresIn: process.env.JWT_EXPIRES_IN
-        //});
-        //console.log("Calctoken: " + calcToken);
         if (username && password) {
             console.log("[Webserver] User: \"" + username + "\" Authenticated");
             return true;
@@ -168,6 +166,7 @@ router.get("/large-wave-flume", async (req, res) => {
     var flumeProgText = "";
     var flumeTimeText = "";
     var flumeUserText = "";
+    var timeRemainingText = "";
 
     if (largeWaveFlumeTarget == -1) {
         if (largeWaveFlumeDepth == "error") {
@@ -196,6 +195,8 @@ router.get("/large-wave-flume", async (req, res) => {
         flumeProgText = "Filling to " + largeWaveFlumeTarget + "m";
         flumeTimeText = "Set at " + largeWaveFlumeTargetTime;
         flumeUserText = "Set by " + largeWaveFlumeTargetUser;
+        var time = (Number(largeWaveFlumeTarget) - Number(largeWaveFlumeDepth)) / 0.3048; //1 foot/hr = 0.3048m/hr
+        timeRemainingText = time.toFixed(2) + " hours remaining"
     }
 
     if (authenticateUser(req)) {
@@ -204,20 +205,22 @@ router.get("/large-wave-flume", async (req, res) => {
             flumeDepth: flumeText,
             flumeProg: flumeProgText,
             flumeTime: flumeTimeText,
-            flumeTimeElapsed: largeWaveFlumeTimeElasped,
+            flumeTimeElapsed: "Fill started " + largeWaveFlumeTimeElasped,
             flumeUser: flumeUserText,
             depths:  graphDepths,
-            times: graphTimes
+            times: graphTimes,
+            timeRemaining: timeRemainingText
         });
     } else {
         res.status(200).render(`layouts${req.url}`, {
             flumeDepth: flumeText,
             flumeProg: flumeProgText,
             flumeTime: flumeTimeText,
-            flumeTimeElapsed: largeWaveFlumeTimeElasped,
+            flumeTimeElapsed: "Fill started " + largeWaveFlumeTimeElasped,
             flumeUser: flumeUserText,
             depths: graphDepths,
-            times: graphTimes
+            times: graphTimes,
+            timeRemaining: timeRemainingText
         });
     }
 });
@@ -235,6 +238,7 @@ router.get("/directional-wave-basin", async (req, res) => {
     var basinProgText = "";
     var basinTimeText = "";
     var basinUserText = "";
+    var timeRemainingText = "";
 
     if (directionalWaveBasinTarget == -1) {
         if (directionalWaveBasinDepth == "error") {
@@ -264,6 +268,8 @@ router.get("/directional-wave-basin", async (req, res) => {
         basinProgText = "Filling to " + directionalWaveBasinTarget + "m";
         basinTimeText = "Set at " + directionalWaveBasinTargetTime;
         basinUserText = "Set by " + directionalWaveBasinTargetUser;
+        var time = (Number(directionalWaveBasinTarget) - Number(directionalWaveBasinDepth)) / 0.1524; //0.5 foot/hr = 0.1524m/hr
+        timeRemainingText = time.toFixed(2) + " hours remaining"
     }
 
     if (authenticateUser(req)) {
@@ -275,7 +281,8 @@ router.get("/directional-wave-basin", async (req, res) => {
             basinTimeElapsed: "Fill started " + directionalWaveBasinTimeElasped,
             basinUser: basinUserText,
             depths:  graphDepths,
-            times: graphTimes
+            times: graphTimes,
+            timeRemaining: timeRemainingText
         });
     } else {
         res.status(200).render(`layouts${req.url}`, {
@@ -285,12 +292,11 @@ router.get("/directional-wave-basin", async (req, res) => {
             flumeTimeElapse: "Fill started " + directionalWaveBasinTimeElasped,
             basinUser: basinUserText,
             depths:  graphDepths,
-            times: graphTimes
+            times: graphTimes,
+            timeRemaining: timeRemainingText
         });
     }
 });
-
-module.exports = router;
 
 async function getDepth(flumeNumber) {
     if (flumeNumber == 0) {
@@ -504,3 +510,4 @@ async function getTargetUser(flumeNumber) {
     resolve("error");
 }
 
+module.exports = router;

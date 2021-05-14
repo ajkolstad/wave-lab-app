@@ -15,6 +15,7 @@
                             <h5 class="d-inline-block mb-2 text-primary">Current Status</h5>
                             <h1 class="mb-2 text-dark">{{flumeDepth}}</h1>
                             <h2 class="mb-4 text-muted">{{flumeProg}}</h2>
+                            <h2 class="mb-4 text-success">{{timeRemaining}}</h2>
                             <h5 class="mb-2 text-info">{{flumeTime}}</h5>
                             <h5 class="mb-1 text-info">{{flumeUser}}</h5>
                             <h5 class="mb-1 text-info">{{flumeTimeElapsed}}</h5>
@@ -30,38 +31,40 @@
                     </div>
                 </div>
             </div>
-            <div class="jumbotron p-4 p-md-5 text-white rounded bg-info">
-                <div class="col-md-6 px-0">
-                    <canvas id="myChart" width="400" height="400"></canvas>
-                    <script>
-                        var times = "{{times}}".split(',');
-                        var depths = "{{depths}}".split(',');
-                        console.log(times);
-                        console.log(depths);
-                        var ctx = document.getElementById('myChart').getContext('2d');
-                        var myChart = new Chart(ctx, {
-                            type: 'line',
-                            data: {
-                                labels: times,
-                                datasets: [{
-                                    label: 'Depth in meters',
-                                    data: depths,
-                                    borderColor: 'rgb(215, 63, 9)',
-                                    tension: 0.1
-                                }]
-                            },
-                            options: {
-                                scales: {
-                                    y: {
-                                        beginAtZero: true
-                                    }
-                                }
-                            }
-                        });
-                    </script>
-                </div>
-            </div>
             <div class="row mb-2 justify-content-center">
+                <div class="col-lg-6 mb-3">
+                    <div class="card">
+                        <canvas id="myChart" width="250" height="250"></canvas>
+                            <script>
+                                var times = "{{times}}".split(',');
+                                var depths = "{{depths}}".split(',');
+                                console.log(times);
+                                console.log(depths);
+                                var ctx = document.getElementById('myChart').getContext('2d');
+                                var myChart = new Chart(ctx, {
+                                    type: 'line',
+                                    data: {
+                                        labels: times,
+                                        datasets: [{
+                                            label: 'Depth in meters',
+                                            data: depths,
+                                            borderColor: 'rgb(0, 0, 0)',
+                                            tension: 0.1
+                                        }]
+                                    },
+                                    options: {
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        scales: {
+                                            y: {
+                                                beginAtZero: true
+                                            }
+                                        }
+                                    }
+                                });
+                            </script>
+                    </div>
+                </div>
                 {{#if message}}
                 <div class="col-lg-6 mb-3">
                     <div class="card h-100">

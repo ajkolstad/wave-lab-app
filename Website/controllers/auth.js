@@ -1,11 +1,16 @@
+/*
+auth.js
+Handles logging in and posting new depth requests
+*/
 var mysql = require('mysql');
 var env = require('dotenv');
 var jwt = require('jsonwebtoken');
 var moment = require('moment');
 
-
+//Loads database information from config.env
 env.config({ path: './config.env'})
 
+//Loads database
 var database = mysql.createConnection({
     host: process.env.DATABASE_HOST,
     user: process.env.DATABASE_USER,
@@ -13,7 +18,7 @@ var database = mysql.createConnection({
     database: process.env.DATABASE
 });
 
-
+//Completes login of user
 exports.login = async (req, res) => {
     try {
         console.log("about to get data");
@@ -68,6 +73,7 @@ exports.login = async (req, res) => {
     }
 };
 
+//Posts large wave flume depth request to database
 exports.postLWF = async (req, res) => {
     try {
         var {depthTarget, timeOffset} = req.body;
@@ -87,6 +93,7 @@ exports.postLWF = async (req, res) => {
     }
 };
 
+//Posts directional wave basin depth request to database
 exports.postDWB = async (req, res) => {
     try {
         var {depthTarget, timeOffset} = req.body;
