@@ -12,6 +12,7 @@ var mysql = require('mysql');
 const { VM } = require('handlebars');
 var moment = require('moment');
 
+//Loads database information from config.env
 env.config({ path: './config.env'})
 
 var directionalWaveBasinDepth = 0;
@@ -20,7 +21,7 @@ var largeWaveFlumeDepth = 0;
 var directionalBasinTarget = 0;
 var largeWaveFlumeTarget = 0;
 
-
+//Loads database
 var database = mysql.createConnection({
     host: process.env.DATABASE_HOST,
     user: process.env.DATABASE_USER,
@@ -28,6 +29,7 @@ var database = mysql.createConnection({
     database: process.env.DATABASE
 });
 
+//Connects to database
 database.connect(function(error) {
     if(!!error) {
         console.log('[Router]  Error connecting to Database');
@@ -37,6 +39,7 @@ database.connect(function(error) {
     }
 })
 
+//Checks for presence of autheticated user cookies to allow admin access
 function authenticateUser(req) {
     try {
         var username = req.cookies['username'];
@@ -196,7 +199,10 @@ router.get("/large-wave-flume", async (req, res) => {
         flumeTimeText = "Set at " + largeWaveFlumeTargetTime;
         flumeUserText = "Set by " + largeWaveFlumeTargetUser;
         var time = (Number(largeWaveFlumeTarget) - Number(largeWaveFlumeDepth)) / 0.3048; //1 foot/hr = 0.3048m/hr
-        timeRemainingText = time.toFixed(2) + " hours remaining"
+        var hours = Math.trunc(time);
+        if (hours == 0) timeRemainingText = (60 * (time.toFixed(2) - hours)).toFixed(0) + " minutes remaining";
+        else if (hours == 1) timeRemainingText = hours + " hour and " + (60 * (time.toFixed(2) - hours)).toFixed(0) + " minutes remaining";
+        else timeRemainingText = hours + " hours and " + (60 * (time.toFixed(2) - hours)).toFixed(0) + " minutes remaining";
     }
 
     if (authenticateUser(req)) {
@@ -269,7 +275,10 @@ router.get("/directional-wave-basin", async (req, res) => {
         basinTimeText = "Set at " + directionalWaveBasinTargetTime;
         basinUserText = "Set by " + directionalWaveBasinTargetUser;
         var time = (Number(directionalWaveBasinTarget) - Number(directionalWaveBasinDepth)) / 0.1524; //0.5 foot/hr = 0.1524m/hr
-        timeRemainingText = time.toFixed(2) + " hours remaining"
+        var hours = Math.trunc(time);
+        if (hours == 0) timeRemainingText = (60 * (time.toFixed(2) - hours)).toFixed(0) + " minutes remaining";
+        else if (hours == 1) timeRemainingText = hours + " hour and " + (60 * (time.toFixed(2) - hours)).toFixed(0) + " minutes remaining";
+        else timeRemainingText = hours + " hours and " + (60 * (time.toFixed(2) - hours)).toFixed(0) + " minutes remaining";
     }
 
     if (authenticateUser(req)) {
@@ -289,7 +298,7 @@ router.get("/directional-wave-basin", async (req, res) => {
             basinDepth: basinText,
             basinProg: basinProgText,
             basinTime: basinTimeText,
-            flumeTimeElapse: "Fill started " + directionalWaveBasinTimeElasped,
+            basinTimeElapsed: "Fill started " + directionalWaveBasinTimeElasped,
             basinUser: basinUserText,
             depths:  graphDepths,
             times: graphTimes,
