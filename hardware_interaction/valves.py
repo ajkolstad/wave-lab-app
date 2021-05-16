@@ -1,8 +1,7 @@
 """
 IMPORTS
 """
-import mysql, time, math
-import queries
+import mysql, time, math, sys
 from mysql.connector import Error
 
 from time import sleep
@@ -11,19 +10,16 @@ from conf import facility_controls
 
 
 """
-GLOBAL VARIABLES
+GLOBALS
 """
-# db = None
-# query = None
+sql_DWB_check_for_new_target = "SELECT * FROM `target_depth` WHERE Tdate < CURRENT_TIMESTAMP AND Target_Flume_Name = 0 and isComplete = 0 ORDER BY Tdate DESC LIMIT 1;"
+sql_LWF_check_for_new_target = "SELECT * FROM `target_depth` WHERE Tdate < CURRENT_TIMESTAMP AND Target_Flume_Name = 1 and isComplete = 0 ORDER BY Tdate DESC LIMIT 1;"
+sql_DWB_check_if_fill_met = "SELECT * FROM `target_depth` WHERE Tdate < CURRENT_TIMESTAMP AND Target_Flume_Name = 0 ORDER BY Tdate DESC LIMIT 1;"
+sql_LWF_check_if_fill_met = "SELECT * FROM `target_depth` WHERE Tdate < CURRENT_TIMESTAMP AND Target_Flume_Name = 1 ORDER BY Tdate DESC LIMIT 1;"
+sql_DWB_update_isComplete = """UPDATE target_depth SET isComplete = 1 WHERE Tdepth > %s AND Tdepth < %s AND Target_Flume_Name = 0;"""
+sql_LWF_update_isComplete = """UPDATE target_depth SET isComplete = 1 WHERE Tdepth > %s AND Tdepth < %s AND Target_Flume_Name = 1;"""
 
-DB_MONITOR_INTERVAL = 30
-DWB_MAX_FILL = 190
-LWF_MAX_FILL = 410
-STAG_CONSTANT = 25
 stagnation = [[],[]]
-logFile = open("valve_output.log", "w")
-errorFile = open("valve_error.log", "w")
-
 
 """
 Returns a float truncated to a specific number of decimal places.
@@ -65,12 +61,12 @@ def get_depth(flumeNumber):
     return res
 
 """
-Checks a constantly updated list of previous depth values to ensure that the tank is filling, otherwise sets target as filled to stop filling
+Checks a constantly updated list of previous depth values to ensure that the tank is filling,
+otherwise sets target as filled to stop filling
 """
-def checkStagnate(flumeNumber, newDepth):
+def checkStagnate(flumeNumber, newDepth, stagConstant, errorPath):
     global stagnation
-    logFile = open("valve_output.log", "a")
-    errorFile = open("valve_error.log", "a")
+    errorFile = open(errorPath, "a")
 
     db = mysql.connector.connect(host='engr-db.engr.oregonstate.edu',
                                        database='wave_lab_database',
@@ -82,16 +78,16 @@ def checkStagnate(flumeNumber, newDepth):
         stagnation[flumeNumber].append(newDepth)
         return False
     else:
-        if (stagnation[flumeNumber][9] - stagnation[flumeNumber][0]) < STAG_CONSTANT:
+        if (stagnation[flumeNumber][9] - stagnation[flumeNumber][0]) < stagConstant:
             stagnation[flumeNumber] = []
             if flumeNumber == 0:
-                errorFile.write("[Target Monitor][DWB] STAGNATION DETECTED!!! STOPPING FILL\n")
+                errorFile.write("%s - [DWB] STAGNATION DETECTED!!! STOPPING FILL\n" % time.asctime( time.localtime(time.time()) ))
                 update_query = """UPDATE target_depth SET isComplete = 1 WHERE Target_Flume_Name = 0;"""
                 query.execute(update_query)
                 db.commit()
                 return True
             else:
-                errorFile.write("[Target Monitor][LWF] STAGNATION DETECTED!!! STOPPING FILL\n")
+                errorFile.write("%s - [LWF] STAGNATION DETECTED!!! STOPPING FILL\n" % time.asctime( time.localtime(time.time()) ))
                 update_query = """UPDATE target_depth SET isComplete = 1 WHERE Target_Flume_Name = 1;"""
                 query.execute(update_query)
                 db.commit()
@@ -104,24 +100,26 @@ def checkStagnate(flumeNumber, newDepth):
 """
 Loop to call monitoring functions on interval
 """
-def monitor_database():
-    logFile = open("valve_output.log", "a")
+def monitor_database(interval, dwbMax, lwf_max, stag, logPath, errorPath):
+    logFile = open(logPath, "a")
+    logFile.write("%s - [DWB] Starting...\n" % time.asctime( time.localtime(time.time()) ))
+    logFile.write("%s - [LWF] Starting...\n" % time.asctime( time.localtime(time.time()) ))
+    logFile.close()
 
-    logFile.write("[Target Monitor][DWB] Starting...\n")
-    check_complete_DWB()
-    logFile.write("[Target Monitor][LWF] Starting...\n")
-    check_complete_LWF()
+    check_complete_DWB(dwbMax, stag, logPath, errorPath)
+    check_complete_LWF(lwfMax, stag, logPath, errorPath)
 
     i = 0
     while i <= 10:
-        sleep(DB_MONITOR_INTERVAL)
-        check_complete_DWB()
-        check_complete_LWF()
+        sleep(interval)
+        check_complete_DWB(dwbMax, stag, logPath, errorPath)
+        check_complete_LWF(lwfMax, stag, logPath, errorPath)
 
 """
-Checks database for DWB target fill, actuates water fill valves depending on if current dpeth is higher than the target depth
+Checks database for DWB target fill, actuates water fill valves depending on if current depth
+is higher than the target depth
 """
-def check_complete_DWB():
+def check_complete_DWB(dwbMax, stag, logPath, errorPath):
     current_depth = get_depth(0)
     db = mysql.connector.connect(host='engr-db.engr.oregonstate.edu',
                                        database='wave_lab_database',
@@ -129,35 +127,43 @@ def check_complete_DWB():
                                        password='1amSmsjbRKB5ez4P')
     query = db.cursor(prepared = True)
 
-    logFile = open("valve_output.log", "a")
+    logFile = open(logPath, "a")
 
     query.execute(sql_DWB_check_for_new_target)
     records = query.fetchone()
 
     if records is None:
-        logFile.write("[Target Monitor][DWB] Not filling,   no target found\n")
+        logFile.write("%s - [DWB] Not filling,   no target found\n" % time.asctime( time.localtime(time.time()) ))
         return
 
     else:
         ctrl = facility_controls['DWB']['basin_north']
 
-        if checkStagnate(0, current_depth):
+        if checkStagnate(0, current_depth, stag, errorPath):
             return
-      
+
         query.execute(sql_DWB_check_if_fill_met)
         records = query.fetchone()
 
-        if current_depth < records[0]:
-            logFile.write("[Target Monitor][DWB] Filling\n")
+        if records[0] >= float(dwbMax * .95):
+            logFile.write("%s - [DWB] Target is over maximum fill level. Marking complete.\n" % time.asctime( time.localtime(time.time()) ))
+            high = truncate(records[0], 2) +.05
+            low = truncate(records[0], 2) - .05
+            val = (low, high)
+            query.execute(sql_DWB_update_isComplete, val)
+            db.commit()
+
+        elif current_depth < records[0]:
+            logFile.write("%s - [DWB] Filling\n" % time.asctime( time.localtime(time.time()) ))
             if ctrl.status().status != "open":
-                print("open")
+                print("dwb open")
                 # ctrl.open()
 
-        elif current_depth >= records[0] or current_depth >= DWB_MAX_FILL:
-            logFile.write("[Target Monitor][DWB] Fill finished, updating database\n")
+        elif current_depth >= records[0] or current_depth >= float(dwbMax * .95):
+            logFile.write("%s - [DWB] Fill finished, updating database\n" % time.asctime( time.localtime(time.time()) ))
             stagnation[0] = []
             if ctrl.status().status != "closed":
-                print("close")
+                print("dwb close")
                 # ctrl.close()
             high = truncate(records[0], 2) +.05
             low = truncate(records[0], 2) - .05
@@ -166,9 +172,10 @@ def check_complete_DWB():
             db.commit()
 
 """
-Checks database for LWF target fill, actuates water fill valves depending on if current dpeth is higher than the target depth
+Checks database for LWF target fill, actuates water fill valves depending on if current depth
+is higher than the target depth
 """
-def check_complete_LWF():
+def check_complete_LWF(lwfMax, stag, logPath, errorPath):
     current_depth = get_depth(1)
 
     db = mysql.connector.connect(host='engr-db.engr.oregonstate.edu',
@@ -177,41 +184,50 @@ def check_complete_LWF():
                                        password='1amSmsjbRKB5ez4P')
     query = db.cursor(prepared = True)
 
-    logFile = open("valve_output.log", "a")
-  
+    logFile = open(logPath, "a")
+
     query.execute(sql_LWF_check_for_new_target)
     records = query.fetchone()
     if records is None:
-        logFile.write("[Target Monitor][LWF] Not filling,   no target found\n")
+        logFile.write("%s - [LWF] Not filling,   no target found\n" % time.asctime( time.localtime(time.time()) ))
         return
 
     else:
         ctrl_north = facility_controls['LWF']['flume_north']
         ctrl_south = facility_controls['LWF']['flume_south']
 
-        if checkStagnate(1, current_depth):
+        if checkStagnate(1, current_depth, stag, errorPath):
             return
 
         query.execute(sql_LWF_check_if_fill_met)
         records = query.fetchone()
-        if current_depth < records[0]:
-            logFile.write("[Target Monitor][LWF] Filling\n")
+
+        if records[0] >= float(lwfMax * .95):
+            logFile.write("%s - [LWF] Target is over maximum fill level. Marking complete.\n" % time.asctime( time.localtime(time.time()) ))
+            high = truncate(records[0], 2) +.05
+            low = truncate(records[0], 2) - .05
+            val = (low, high)
+            query.execute(sql_LWF_update_isComplete, val)
+            db.commit()
+
+        elif current_depth < records[0]:
+            logFile.write("%s - [LWF] Filling\n" % time.asctime( time.localtime(time.time()) ))
             if ctrl_north.status().status != "open":
                 print("open north")
-                # ctrl_north.open()
+#                ctrl_north.open()
             if ctrl_south.status().status != "open":
                 print("open south")
-                # ctrl_south.open()
+#                ctrl_south.open()
 
-        elif current_depth >= records[0] or current_depth >= LWF_MAX_FILL:
-            logFile.write("[Target Monitor][LWF] Fill finished, updating database\n")
+        elif current_depth >= records[0] or current_depth >= float(lwfMax * .95):
+            logFile.write("%s - [LWF] Fill finished, updating database\n" % time.asctime( time.localtime(time.time()) ))
             stagnation[1] = []
             if ctrl_north.status() != "closed":
-                print("[close north")
-                # ctrl_north.close()
+                print("close north")
+#                ctrl_north.close()
             if ctrl_south.status() != "closed":
                 print("close south")
-                # ctrl_south.close()
+#                ctrl_south.close()
             high = truncate(records[0], 2) +.05
             low = truncate(records[0], 2) - .05
             val = (low, high)
@@ -219,9 +235,27 @@ def check_complete_LWF():
             db.commit()
 
 """
-Sets up globals then moves to monitor
+Grabs cmd line arguements, sets, outputs status, then moves to monitor
 """
 if __name__ == '__main__':
+    if len(sys.argv) <= 6 or len(sys.argv) > 7:
+        sys.exit("Missing cmd line arguments:\n\tpython valves.py [Update Interval] [DWB Max] [LWF Max] [Stagnation] [Log] [Error]")
 
-    monitor_database()
+    interval = int(sys.argv[1])
+    dwbMax = float(sys.argv[2])
+    lwfMax = float(sys.argv[3])
+    stag = float(sys.argv[4])
+    logPath = sys.argv[5]
+    errorPath = sys.argv[6]
 
+    logFile = open(logPath, "w")
+    errorFile = open(errorPath, "w")
+    logFile.write("Repeat interval:\t\t" + str(interval) + "s\n")
+    logFile.write("DWB Max:\t\t\t" + str(dwbMax) + "m\n")
+    logFile.write("LWF Max:\t\t\t" + str(lwfMax) + "m\n")
+    logFile.write("Min fill / 10 intervals:\t" + str(stag) + "m\n\n")
+    errorFile.write("Successfully started")
+    logFile.close()
+    errorFile.close()
+
+    monitor_database(interval, dwbMax, lwfMax, stag, logPath, errorPath)

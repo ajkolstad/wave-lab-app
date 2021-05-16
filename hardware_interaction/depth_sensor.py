@@ -1,5 +1,6 @@
-# python2 depth_sensor.py {sqlite filepath} {db monitor interval}
-
+"""
+IMPORTS
+"""
 import sys, os, os.path
 import mysql, time, math
 from mysql.connector import Error
@@ -15,6 +16,9 @@ from sqlalchemy import (
     DateTime
     )
 
+"""
+GLOBALS
+"""
 Base = declarative_base()
 class Data(Base):
     __tablename__ = 'data'
@@ -23,13 +27,21 @@ class Data(Base):
     basin = Column(Integer, index=True) # flume=0, basin=1
     datetime = Column(DateTime, index=True)
 
-# db = None
-# query = None
-
-PAUSE = 2.5
-ARCHIVE = "/a1/walve/data"
 FACILITIES = [ "LWF", "DWB"]
-logFile = open("depth_output.log", "w")
+
+"""
+Returns a float truncated to a specific number of decimal places.
+"""
+def truncate(number, decimals=0):
+    if not isinstance(decimals, int):
+        raise TypeError("decimal places must be an integer.")
+    elif decimals < 0:
+        raise ValueError("decimal places has to be 0 or more.")
+    elif decimals == 0:
+        return math.trunc(number)
+
+    factor = 10.0 ** decimals
+    return math.trunc(number * factor) / factor
 
 """
 Queries the SQLite databse for the most recent depth for both flume and basin, returns appropriate one
@@ -79,43 +91,48 @@ def update(basin):
 
     val = ()
     if basin.basin == 0:
-        val = (basin.value, 1)
+        val = (truncate(basin.value / 100, 2), 1)
     elif basin.basin == 1:
-        val = (basin.value, 0)
+        val = (truncate(basin.value / 100, 2), 0)
     query.execute(UPDATE_DB, val)
     db.commit()
 
 """
 Verifies existence of SQLite file, then loops to update on interval
 """
-def updateDB(filepath, monitor_interval):
-    logFile = open("depth_output.log", "a")
-
-    if os.path.exists(filepath):
-        logFile.write("File exists: %s\n" % filepath)
-    else:
-        # print("File doesn't exist: %s" % DBFILEPATH)
-        sys.exit("File doesn't exist: %s" % filepath)
+def updateDB(filePath, monitor_interval, logPath):
 
     while(True):
-        logFile.write("Getting new depths\n")
-        DWB = getDepth(0, filepath)
-        LWF = getDepth(1, filepath)
+        logFile = open(logPath, "a")
+        DWB = getDepth(0, filePath)
+        LWF = getDepth(1, filePath)
 
         update(DWB)
         logFile.write("%s - DWB updated\n" % time.asctime( time.localtime(time.time()) ))
-        time.sleep(PAUSE)
+        time.sleep(2)
 
         update(LWF)
         logFile.write("%s - LWF updated\n" % time.asctime( time.localtime(time.time()) ))
-        time.sleep(PAUSE)
-        
+        time.sleep(2)
+
         cleanDepthTable()
         time.sleep(monitor_interval)
+        logFile.close()
 
 
 if __name__ == "__main__":
+    if len(sys.argv) <= 3 or len(sys.argv) > 4:
+        sys.exit("Missing cmd line arguments:\n\tpython depth_sensor.py [Path] [Log] [Interval]")
 
     filepath = sys.argv[1]
-    monitor_interval = int(sys.argv[2]) | 30
-    updateDB(filepath, monitor_interval)
+    logPath = sys.argv[2]
+    monitor_interval = int(sys.argv[3])
+
+    logFile = open(logPath, "w")
+    if os.path.exists(filepath):
+        logFile.write("File exists: %s\n\n" % filepath)
+    else:
+        sys.exit("File doesn't exist: %s" % filepath)
+    logFile.close()
+
+    updateDB(filepath, monitor_interval, logPath)

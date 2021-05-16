@@ -1,6 +1,6 @@
 from control import *
 
-# Setup the valve controls
+# Map valve IPs to class and name
 facility_controls = dict(
     LWF=dict(
         flume_north = EPM3_120R_HaywardControl('10.214.152.134', debug=False, title="Flume Valve North"),

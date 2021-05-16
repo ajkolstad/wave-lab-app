@@ -174,7 +174,7 @@ class EPM2_120R_HaywardControl(HaywardControl):
                 ('offline',            0,       0,      0,       0,      0,      0 ) 
             ]  
         
-# north flume
+# north flume / north basin
 class EPM3_120R_HaywardControl(HaywardControl):
 
     states = [  #  status name        open    !open   closed  !closed signal1 signal2

@@ -1,5 +1,5 @@
 """
-Simple script to close all valves
+Script to close all valves
 """
 
 from time import sleep

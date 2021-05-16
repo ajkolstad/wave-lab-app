@@ -1,7 +1,7 @@
 """
 IMPORTS
 """
-import mysql, time, math, queries
+import mysql, time, math
 from mysql.connector import Error
 
 from time import sleep
@@ -9,11 +9,10 @@ from control import *
 from conf import facility_controls
 
 """
-GLOBAL VARIABLES
+SQL QUERIES
 """
-db = None
-query = None
-PAUSE = 15
+sql_check_for_new_target = """SELECT * FROM `target_depth` WHERE Tdate < CURRENT_TIMESTAMP AND Target_Flume_Name = %s and isComplete = 0 ORDER BY Tdate DESC LIMIT 1;"""
+sql_update_target_fill = """UPDATE `target_depth` SET `Tdepth`= %s, `isComplete`= 0, Tdate = CURRENT_TIMESTAMP WHERE Target_Flume_Name = %s"""
 
 """
 Connects to MySQL database and executes a query for the associated flume / basin depth value
@@ -55,73 +54,62 @@ def check_valves(basin):
     query = db.cursor()
 
     if basin == 0:
-        #setup valve controls and ensure a starting state of closed and no fill target
         print ("Checking DWB")
         ctrl = facility_controls['DWB']['basin_north']
 
-        #if the water valves are open, create start state of closed valves with no target fill
         if ctrl.status().status != "closed":
             ctrl.close()
-            sleep(PAUSE)
+            sleep(15)
 
-            #if it doesnt close return error
             if ctrl.status().status != "closed":
                 return 1
 
-        #set target fill to current depth + 10
         val = (get_depth(basin) + 10, basin)
         query.execute(sql_update_target_fill, val)
         db.commit()
-        sleep(PAUSE)
+        sleep(15)
 
         if ctrl.status().status != "open":
             return 2
 
-        #set target fill to current depth level
         val = (get_depth(basin), basin)
         query.execute(sql_update_target_fill, val)
         db.commit()
-        sleep(PAUSE)
+        sleep(15)
 
         if ctrl.status().status != "closed":
             return 3
         else:
             return 0
 
-    #LWF
     else:
-        #setup valve controls and ensure a starting state of closed and no fill target
         print ("Checking LWF")
 
         ctrl_north = facility_controls['LWF']['flume_north']
         ctrl_south = facility_controls['LWF']['flume_south']
 
-        #if the water valves are open, create start state of closed valves with no target fill
         if ctrl_north.status().status != "closed":
             ctrl_north.close()
-            sleep(PAUSE)
-            #if it doesnt close return error
+            sleep(15)
             if ctrl_north.status().status != "closed":
                 return 1
         if ctrl_south.status().status != "closed":
             ctrl_south.close()
-            sleep(PAUSE)
+            sleep(15)
             if ctrl_south.status().status != "closed":
                 return 1
 
-        #set target fill to current depth + 10
         val = (get_depth(basin) + 10, basin)
         query.execute(sql_update_target_fill, val)
         db.commit()
-        sleep(PAUSE)
+        sleep(15)
         if ctrl_north.status().status != "open":
             return 2
 
-        #set target fill to current depth level
         val = (get_depth(basin), basin)
         query.execute(sql_update_target_fill, val)
         db.commit()
-        sleep(PAUSE)
+        sleep(15)
         if ctrl_north.status().status != "closed":
             return 3
         else:
