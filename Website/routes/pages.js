@@ -159,9 +159,10 @@ router.get("/live", (req, res) => {
 router.get("/large-wave-flume", async (req, res) => {
     largeWaveFlumeDepth = await getDepth(1);
     largeWaveFlumeTarget = await getTarget(1);
-    largeWaveFlumeTargetTime = await getTargetTime(1);
-    largeWaveFlumeTargetUser = await getTargetUser(1);
-    largeWaveFlumeTimeElasped = await getTargetTimeElapsed(1);
+    largeWaveFlumeTargetTime = "";
+    largeWaveFlumeTargetUser = "";
+    largeWaveFlumeTimeElasped = "";
+    flumeTimeElapsedText = "";
     graphDepths = await getDepths(1);
     graphTimes = await getDepthTimes(1);
 
@@ -187,22 +188,29 @@ router.get("/large-wave-flume", async (req, res) => {
             flumeText = "Currently " + largeWaveFlumeDepth + "m";
         }
         flumeProgText = "No job found";
-        flumeTimeText = "Error finding time";
-        flumeUserText = "Error finding user";
     } else {
         if (largeWaveFlumeDepth == "error") {
             flumeText = "Error reading depth";
         } else {
             flumeText = "Currently " + largeWaveFlumeDepth + "m";
         }
+        largeWaveFlumeTargetTime = await getTargetTime(1);
+        largeWaveFlumeTargetUser = await getTargetUser(1);
+        largeWaveFlumeTimeElasped = await getTargetTimeElapsed(1);
+        flumeTimeElapsedText = "Fill started " + largeWaveFlumeTimeElasped;
         flumeProgText = "Filling to " + largeWaveFlumeTarget + "m";
         flumeTimeText = "Set at " + largeWaveFlumeTargetTime;
         flumeUserText = "Set by " + largeWaveFlumeTargetUser;
         var time = (Number(largeWaveFlumeTarget) - Number(largeWaveFlumeDepth)) / 0.3048; //1 foot/hr = 0.3048m/hr
-        var hours = Math.trunc(time);
-        if (hours == 0) timeRemainingText = (60 * (time.toFixed(2) - hours)).toFixed(0) + " minutes remaining";
-        else if (hours == 1) timeRemainingText = hours + " hour and " + (60 * (time.toFixed(2) - hours)).toFixed(0) + " minutes remaining";
-        else timeRemainingText = hours + " hours and " + (60 * (time.toFixed(2) - hours)).toFixed(0) + " minutes remaining";
+        if (time < 0) {
+            timeRemainingText = "Flume must be drained to meet target depth";
+        } else {
+            var hours = Math.trunc(time);
+            if (hours == 0) timeRemainingText = (60 * (time.toFixed(2) - hours)).toFixed(0) + " minutes remaining";
+            else if (hours == 1) timeRemainingText = hours + " hour and " + (60 * (time.toFixed(2) - hours)).toFixed(0) + " minutes remaining";
+            else timeRemainingText = hours + " hours and " + (60 * (time.toFixed(2) - hours)).toFixed(0) + " minutes remaining";
+        }
+        
     }
 
     if (authenticateUser(req)) {
@@ -211,7 +219,7 @@ router.get("/large-wave-flume", async (req, res) => {
             flumeDepth: flumeText,
             flumeProg: flumeProgText,
             flumeTime: flumeTimeText,
-            flumeTimeElapsed: "Fill started " + largeWaveFlumeTimeElasped,
+            flumeTimeElapsed: flumeTimeElapsedText,
             flumeUser: flumeUserText,
             depths:  graphDepths,
             times: graphTimes,
@@ -222,7 +230,7 @@ router.get("/large-wave-flume", async (req, res) => {
             flumeDepth: flumeText,
             flumeProg: flumeProgText,
             flumeTime: flumeTimeText,
-            flumeTimeElapsed: "Fill started " + largeWaveFlumeTimeElasped,
+            flumeTimeElapsed: flumeTimeElapsedText,
             flumeUser: flumeUserText,
             depths: graphDepths,
             times: graphTimes,
@@ -234,9 +242,10 @@ router.get("/large-wave-flume", async (req, res) => {
 router.get("/directional-wave-basin", async (req, res) => {
     directionalWaveBasinDepth = await getDepth(0);
     directionalWaveBasinTarget = await getTarget(0);
-    directionalWaveBasinTargetTime = await getTargetTime(0);
-    directionalWaveBasinTargetUser = await getTargetUser(0);
-    directionalWaveBasinTimeElasped = await getTargetTimeElapsed(0);
+    directionalWaveBasinTargetTime = "";
+    directionalWaveBasinTargetUser = "";
+    directionalWaveBasinTimeElasped = "";
+    basinTimeElapsedText = "";
     graphDepths = await getDepths(0);
     graphTimes = await getDepthTimes(0);
 
@@ -263,22 +272,29 @@ router.get("/directional-wave-basin", async (req, res) => {
             basinText = "Currently " + directionalWaveBasinDepth + "m";
         }
         basinProgText = "No job found";
-        basinTimeText = "Error finding time";
-        basinUserText = "Error finding user";
     } else {
         if (directionalWaveBasinTarget == "error") {
             basinText = "Error reading depth";
         } else {
             basinText = "Currently " + directionalWaveBasinDepth + "m";
         }
+        directionalWaveBasinTargetTime = await getTargetTime(0);
+        directionalWaveBasinTargetUser = await getTargetUser(0);
+        directionalWaveBasinTimeElasped = await getTargetTimeElapsed(0);
+        basinTimeElapsedText = "Fill started " + directionalWaveBasinTimeElasped
         basinProgText = "Filling to " + directionalWaveBasinTarget + "m";
         basinTimeText = "Set at " + directionalWaveBasinTargetTime;
         basinUserText = "Set by " + directionalWaveBasinTargetUser;
         var time = (Number(directionalWaveBasinTarget) - Number(directionalWaveBasinDepth)) / 0.1524; //0.5 foot/hr = 0.1524m/hr
-        var hours = Math.trunc(time);
-        if (hours == 0) timeRemainingText = (60 * (time.toFixed(2) - hours)).toFixed(0) + " minutes remaining";
-        else if (hours == 1) timeRemainingText = hours + " hour and " + (60 * (time.toFixed(2) - hours)).toFixed(0) + " minutes remaining";
-        else timeRemainingText = hours + " hours and " + (60 * (time.toFixed(2) - hours)).toFixed(0) + " minutes remaining";
+        if (time < 0) {
+            timeRemainingText = "Basin must be drained to meet target depth";
+        } else {
+            var hours = Math.trunc(time);
+            if (hours == 0) timeRemainingText = (60 * (time.toFixed(2) - hours)).toFixed(0) + " minutes remaining";
+            else if (hours == 1) timeRemainingText = hours + " hour and " + (60 * (time.toFixed(2) - hours)).toFixed(0) + " minutes remaining";
+            else timeRemainingText = hours + " hours and " + (60 * (time.toFixed(2) - hours)).toFixed(0) + " minutes remaining";
+        }
+        
     }
 
     if (authenticateUser(req)) {
@@ -287,7 +303,7 @@ router.get("/directional-wave-basin", async (req, res) => {
             basinDepth: basinText,
             basinProg: basinProgText,
             basinTime: basinTimeText,
-            basinTimeElapsed: "Fill started " + directionalWaveBasinTimeElasped,
+            basinTimeElapsed: basinTimeElapsedText,
             basinUser: basinUserText,
             depths:  graphDepths,
             times: graphTimes,
@@ -298,7 +314,7 @@ router.get("/directional-wave-basin", async (req, res) => {
             basinDepth: basinText,
             basinProg: basinProgText,
             basinTime: basinTimeText,
-            basinTimeElapsed: "Fill started " + directionalWaveBasinTimeElasped,
+            basinTimeElapsed: basinTimeElapsedText,
             basinUser: basinUserText,
             depths:  graphDepths,
             times: graphTimes,

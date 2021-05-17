@@ -88,6 +88,7 @@ exports.postLWF = async (req, res) => {
         database.query('INSERT INTO target_depth (Tdepth, Target_Flume_Name, Tdate, Username, isComplete) VALUES (?,?,?,?,?)',[depthTarget, flumeName, addTime, username, isComplete], async (error, results) => {
             console.log("[Webserver] Depth Request Added");
         });
+        res.redirect(req.get('referer'));
     } catch (error) {
         console.log("[Webserver] Failed To Add Depth Request");
     }
@@ -108,6 +109,7 @@ exports.postDWB = async (req, res) => {
         database.query('INSERT INTO target_depth (Tdepth, Target_Flume_Name, Tdate, Username, isComplete) VALUES (?,?,?,?,?)',[depthTarget, flumeName, addTime, username, isComplete], async (error, results) => {
             console.log("[Webserver] Depth Request Added");
         });
+        res.redirect(req.get('referer'));
     } catch (error) {
         console.log("[Webserver] Failed To Add Depth Request");
     }
