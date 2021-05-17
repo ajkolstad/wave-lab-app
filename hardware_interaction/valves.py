@@ -145,15 +145,7 @@ def check_complete_DWB(dwbMax, stag, logPath, errorPath):
         query.execute(sql_DWB_check_if_fill_met)
         records = query.fetchone()
 
-        if records[0] >= float(dwbMax * .95):
-            logFile.write("%s - [DWB] Target is over maximum fill level. Marking complete.\n" % time.asctime( time.localtime(time.time()) ))
-            high = truncate(records[0], 2) +.05
-            low = truncate(records[0], 2) - .05
-            val = (low, high)
-            query.execute(sql_DWB_update_isComplete, val)
-            db.commit()
-
-        elif current_depth < records[0]:
+        if current_depth < records[0]:
             logFile.write("%s - [DWB] Filling\n" % time.asctime( time.localtime(time.time()) ))
             if ctrl.status().status != "open":
                 print("dwb open")
@@ -202,15 +194,7 @@ def check_complete_LWF(lwfMax, stag, logPath, errorPath):
         query.execute(sql_LWF_check_if_fill_met)
         records = query.fetchone()
 
-        if records[0] >= float(lwfMax * .95):
-            logFile.write("%s - [LWF] Target is over maximum fill level. Marking complete.\n" % time.asctime( time.localtime(time.time()) ))
-            high = truncate(records[0], 2) +.05
-            low = truncate(records[0], 2) - .05
-            val = (low, high)
-            query.execute(sql_LWF_update_isComplete, val)
-            db.commit()
-
-        elif current_depth < records[0]:
+        if current_depth < records[0]:
             logFile.write("%s - [LWF] Filling\n" % time.asctime( time.localtime(time.time()) ))
             if ctrl_north.status().status != "open":
                 print("open north")
