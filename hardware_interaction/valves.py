@@ -1,5 +1,5 @@
 """
-IMPORTS
+Connects to database and opens / closes valves as needed
 """
 import mysql, time, math, sys
 from mysql.connector import Error
@@ -8,10 +8,7 @@ from time import sleep
 from control import *
 from conf import facility_controls
 
-
-"""
-GLOBALS
-"""
+# MySQL database queries
 sql_DWB_check_for_new_target = "SELECT * FROM `target_depth` WHERE Tdate < CURRENT_TIMESTAMP AND Target_Flume_Name = 0 and isComplete = 0 ORDER BY Tdate DESC LIMIT 1;"
 sql_LWF_check_for_new_target = "SELECT * FROM `target_depth` WHERE Tdate < CURRENT_TIMESTAMP AND Target_Flume_Name = 1 and isComplete = 0 ORDER BY Tdate DESC LIMIT 1;"
 sql_DWB_check_if_fill_met = "SELECT * FROM `target_depth` WHERE Tdate < CURRENT_TIMESTAMP AND Target_Flume_Name = 0 ORDER BY Tdate DESC LIMIT 1;"

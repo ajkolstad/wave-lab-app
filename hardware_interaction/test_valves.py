@@ -1,5 +1,5 @@
 """
-IMPORTS
+Tests the correct actuation of the valves under various circumstances
 """
 import mysql, time, math
 from mysql.connector import Error

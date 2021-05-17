@@ -1,5 +1,5 @@
 """
-Script to close all valves
+Prints status of all valves on 5s interval
 """
 
 from time import sleep

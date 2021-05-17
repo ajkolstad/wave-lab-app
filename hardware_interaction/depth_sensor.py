@@ -1,5 +1,5 @@
 """
-IMPORTS
+Transfers SQLite depth database information over to MySQL database 
 """
 import sys, os, os.path
 import mysql, time, math
