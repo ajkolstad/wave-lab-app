@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
+// Controls the live youtube videos
 class Youtuber extends StatefulWidget {
 
-  String url;
+  String url; // Youtube url
   Youtuber({this.url});
 
   YoutuberState createState()=> YoutuberState();
@@ -17,23 +18,25 @@ class YoutuberState extends State<Youtuber>{
     _controller = YoutubePlayerController(
       initialVideoId: YoutubePlayer.convertUrlToId(widget.url),
       flags: YoutubePlayerFlags(
-        autoPlay: false,
-        isLive: true,
-        mute: true,
-        //controlsVisibleAtStart: true,
-        //enableCaption: true,
-        //hideThumbnail: false,
-        //hideControls: false
+        autoPlay: false, // Prevents autoplay
+        isLive: true, // Starts at live
+        mute: true, // Prevents sound
+        controlsVisibleAtStart: true, // Shows the play button and scroll bar at start
+        disableDragSeek: true,
+        enableCaption: true,
+        //hideControls: true
       ),
     );
   }
 
+  // Initializes the youtube player
   @override
   void initState() {
     play();
     super.initState();
   }
 
+  // Pauses the video when the video is deactivated
   @override
   void deactivate(){
     _controller.pause();
@@ -51,7 +54,7 @@ class YoutuberState extends State<Youtuber>{
       player: YoutubePlayer(
         controller: _controller,
         bottomActions: <Widget>[
-          ProgressBar(isExpanded: true)
+          ProgressBar(isExpanded: false)
         ],
       ),
       builder: (context, player){
@@ -59,7 +62,6 @@ class YoutuberState extends State<Youtuber>{
           child: player,
         );
       }
-
     );
   }
 }

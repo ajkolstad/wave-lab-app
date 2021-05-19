@@ -23,12 +23,13 @@
 ///
 import 'package:flutter/widgets.dart';
 
+// Icons for the tab bar
 class AppIcons{
   AppIcons._();
 
-  static const _kFontFam = 'MyFlutterApp';
+  static const _kFontFam = 'AppIcons';
   static const String _kFontPkg = null;
 
-  static const IconData tint = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData drop = IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData tint = const IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg); // DWB icon
+  static const IconData drop = const IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg); // LWF icon
 }

@@ -4,10 +4,7 @@ import 'screen_controller.dart';
 
 class App extends StatelessWidget{
 
-  //final SharedPreferences preferences;
-
-  //App({this.preferences});
-
+  // Set title and primary color and call the screen controller for the app
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
