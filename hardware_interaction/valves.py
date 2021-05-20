@@ -129,13 +129,15 @@ def check_complete_DWB(dwbMax, stag, logPath, errorPath):
     query.execute(sql_DWB_check_for_new_target)
     records = query.fetchone()
 
+    ctrl = facility_controls['DWB']['basin_north']
     if records is None:
+        if ctrl.status().status != "closed":
+            print("dwb close")
+            # ctrl.close()
         logFile.write("%s - [DWB] Not filling,   no target found\n" % time.asctime( time.localtime(time.time()) ))
         return
 
     else:
-        ctrl = facility_controls['DWB']['basin_north']
-
         if checkStagnate(0, current_depth, stag, errorPath):
             return
 
@@ -177,17 +179,23 @@ def check_complete_LWF(lwfMax, stag, logPath, errorPath):
 
     query.execute(sql_LWF_check_for_new_target)
     records = query.fetchone()
+
+    ctrl_north = facility_controls['LWF']['flume_north']
+    ctrl_south = facility_controls['LWF']['flume_south']
     if records is None:
+        if ctrl_north.status().status != "closed":
+            print("lwf north close")
+            # ctrl.close()
+        if ctrl_south.status().status != "closed":
+            print("lwf south close")
+            # ctrl.close()
         logFile.write("%s - [LWF] Not filling,   no target found\n" % time.asctime( time.localtime(time.time()) ))
         return
 
     else:
-        ctrl_north = facility_controls['LWF']['flume_north']
-        ctrl_south = facility_controls['LWF']['flume_south']
 
         if checkStagnate(1, current_depth, stag, errorPath):
             return
-
         query.execute(sql_LWF_check_if_fill_met)
         records = query.fetchone()
 
