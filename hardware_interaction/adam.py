@@ -23,6 +23,7 @@ from decimal import Decimal, InvalidOperation
 class Timeout(Exception):
   pass
 
+# class for interfacing with an ADAM 6000 module and set / read voltages values
 class ADAM(object):
     
     def __init__(self, IP,
