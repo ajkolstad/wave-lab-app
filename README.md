@@ -25,7 +25,7 @@ depth_sensor.py
 - Dependencies:  None
 - Software:      MySQL, SQLAlchemy, SQLite
 
-```bash
+```
 python depth_sensor.py [Path]  [Log]  [Interval]
 	- Path		the absolute path to the SQLite DB
 	- Log		absolute path to output log file
@@ -38,7 +38,7 @@ valves.py
 - Dependencies:  control.py, conf.py, adam.py
 - Software:      MySQL
 
-```bash
+```
 python valves.py [Interval]  [DWB]  [LWF]  [Stag]  [Log]  [Error]
 	- Interval 		seconds to wait before looping
 	- DWB			directional wave basin max fill level (cm)
@@ -53,6 +53,6 @@ python valves.py [Interval]  [DWB]  [LWF]  [Stag]  [Log]  [Error]
 - Dependencies:  control.py, conf.py
 - Software:      MySQL
 
-```bash
+```
 python test_valves.py
 ```
