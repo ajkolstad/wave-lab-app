@@ -1,3 +1,8 @@
+/*************************************************************
+ * This file controls the youtube liveview video that is added to the Home
+ * screen. The youtube url is sent as an arguement to the youtuber widget and
+ * used to connect to the liveview video.
+ ************************************************************/
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -11,6 +16,7 @@ class Youtuber extends StatefulWidget {
 
 }
 
+// Controls the state of the live youtube videos
 class YoutuberState extends State<Youtuber>{
 
   YoutubePlayerController _controller;

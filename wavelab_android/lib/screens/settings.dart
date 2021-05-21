@@ -1,3 +1,10 @@
+/************************************************************
+ * This file controls the settings screen of the app. The main functions are
+ * loging in a user and changing the darkmode state. If the user logs in a
+ * popup will appear for them to enter their username and password. The
+ * darkmode state is saved on the phone so the next time the user enters the
+ * app the darkmode state will be the same.
+ ***********************************************************/
 import 'package:flutter/material.dart';
 import '../models/darkmode_state.dart';
 import '../models/user.dart';
@@ -12,6 +19,7 @@ class Settings extends StatefulWidget {
 
 }
 
+// The state of the setting widget
 class SettingsState extends State<Settings> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();

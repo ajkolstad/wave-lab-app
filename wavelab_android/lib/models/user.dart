@@ -1,4 +1,6 @@
-// User class holding name and username when user signs into app
+/*************************************************************
+ * User class holding name and username when user signs into app
+ *************************************************************/
 class User{
   String Name;
   String Username;

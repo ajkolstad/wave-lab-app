@@ -1,8 +1,17 @@
+/***************************************************************
+ * This file controls the large wave flume's screen. The main functions are to
+ * display information about the flume, display the water depths in a graph and
+ * set a new target depth to fill to. The user can only set a new target depth
+ * if they are logged in. The user can scroll between times in the graph by
+ * clicking a button to view previous water depths.
+ **************************************************************/
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:fl_animated_linechart/fl_animated_linechart.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'dart:async';
 import '../models/depth_data.dart';
 import '../inheritable_data.dart';
 import '../models/db_calls.dart';
@@ -28,6 +37,7 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
 
   int seconds = 0, minutes = 0, hours = 0; // These are the duration that the flume has been filling for
   int dropdownValue = 0, graphDataMarker = 0;
+  int etaHours = 0, etaMinutes = 0;
   double _tDepthLwf, depthHolder, _prevTarget;
   bool editTarget = false; //Bool that
   bool filling = false; // Bool that saves if the the flume will or is filling
@@ -35,6 +45,7 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
   bool editOffset = false; // Bool that opens the Hour offset carousell if the button is pressed
   bool boolTarget = false; // Bool that shows the buttons to add a new target depth to DB
   bool atEdge = true; // Bool that checks if line graph is showing data at an edge of the depth data
+  bool boolFilling = false; // Bool that checks if user wants to start or stop filling without focus on target depth
   DateTime prevTargetDate; // Date when previous target depth was set
   DateTime now = new DateTime.now(); // Date when app is running
   DateTime dayCheck; // Date a day ago from when app is running
@@ -47,22 +58,24 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
   void getTDepthLwf(){
     dbCalls.getTDepthLwf().then((targetData) {
       if (this.mounted) {
-        setState(() {
-          _tDepthDataLwf = targetData;
-          _tDepthLwf = double.parse(_tDepthDataLwf[0].Tdepth);
-          if(int.parse(_tDepthDataLwf[0].isComplete) == 0) {
-            filling = true;
-            if(now.isBefore(DateTime.parse(_tDepthDataLwf[0].tDate)) != true)
-              fillingRN = true;
-            Duration fillTime = now.difference(DateTime.parse(_tDepthDataLwf[0].tDate));
-            int fullSeconds = fillTime.inSeconds;
-            hours = (fullSeconds / 3600).toInt();
-            fullSeconds = fullSeconds - (hours * 3600);
-            minutes = (fullSeconds / 60).toInt();
-            seconds = fullSeconds - (minutes * 60);
-            print("duration: $fillTime");
-            print("date: ${_tDepthDataLwf[0].tDate}");
-          }
+        Timer(Duration(seconds: 1), ()
+        {
+          setState(() {
+            _tDepthDataLwf = targetData;
+            _tDepthLwf = double.parse(_tDepthDataLwf[0].Tdepth);
+            if (int.parse(_tDepthDataLwf[0].isComplete) == 0) {
+              filling = true;
+              if (now.isBefore(DateTime.parse(_tDepthDataLwf[0].tDate)) != true)
+                fillingRN = true;
+              Duration fillTime = now.difference(
+                  DateTime.parse(_tDepthDataLwf[0].tDate));
+              int fullSeconds = fillTime.inSeconds;
+              hours = (fullSeconds / 3600).toInt();
+              fullSeconds = fullSeconds - (hours * 3600);
+              minutes = (fullSeconds / 60).toInt();
+              seconds = fullSeconds - (minutes * 60);
+            }
+          });
         });
       }
     });
@@ -71,10 +84,13 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
   // Get most recently completed target depth from DB
   void getPrevTLwf(){
     dbCalls.getPreviousTargetLwf().then((targetData) {
-      setState(() {
-        _prevTDepthDataLwf = targetData;
-        _prevTarget = double.parse(_prevTDepthDataLwf[0].Tdepth);
-        prevTargetDate = DateTime.parse(_prevTDepthDataLwf[0].tDate);
+      Timer(Duration(seconds: 1), ()
+      {
+        setState(() {
+          _prevTDepthDataLwf = targetData;
+          _prevTarget = double.parse(_prevTDepthDataLwf[0].Tdepth);
+          prevTargetDate = DateTime.parse(_prevTDepthDataLwf[0].tDate);
+        });
       });
     });
   }
@@ -84,26 +100,28 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
     DateTime start;
     DateTime end;
     dbCalls.getAllDepthLwf().then((depthData) {
-      setState(() {
-        _depthData = depthData;
-        for(int i = 0; i < _depthData.length; i++){
-          DateTime date = DateTime.parse(_depthData[i].dDate);
-          // Get the bounds for the data on the first line graph
-          if(i == 0) {
-            start = date;
-            end = start.subtract(new Duration(hours: 4));
-            latestDepth = date;
-            lineStart = date;
-            lineEnd = lineStart.subtract(new Duration(hours: 4));
+      Timer(Duration(seconds: 1), ()
+      {
+        setState(() {
+          _depthData = depthData;
+          for (int i = 0; i < _depthData.length; i++) {
+            DateTime date = DateTime.parse(_depthData[i].dDate);
+            // Get the bounds for the data on the first line graph
+            if (i == 0) {
+              start = date;
+              end = start.subtract(new Duration(hours: 4));
+              latestDepth = date;
+              lineStart = date;
+              lineEnd = lineStart.subtract(new Duration(hours: 4));
+            }
+            // add data in the bounds to the line for the line graph
+            if (date.isBefore(end) != true)
+              graphLine[date] = double.parse(_depthData[i].depth);
+            // Get the latest data available in DB
+            if (i == (_depthData.length - 1))
+              earliestDepth = date;
           }
-          // add data in the bounds to the line for the line graph
-          if(date.isBefore(end) != true)
-            graphLine[date] = double.parse(_depthData[i].depth);
-          // Get the latest data available in DB
-          if(i == (_depthData.length - 1))
-            earliestDepth = date;
-          //graphData[date] = double.parse(_depthData[i].depth);
-        }
+        });
       });
     });
   }
@@ -118,19 +136,78 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
     initGraphLine[now] = 0.0;
   }
 
+  // Calculate the time left in the filling process
+  void calculateEta() {
+    setState(() {
+      dbCalls.getTDepthLwf().then((targetData) {
+        double tempTDepth = double.parse(targetData[0].Tdepth);
+        DateTime tempTDate = DateTime.parse(targetData[0].tDate);
+
+        //if (this.mounted) {
+        dbCalls.getCurDepthLwf().then((depthData) {
+          double tempCurDepth = double.parse(depthData[0].depth);
+          int hourOffset = 0;
+          int minuteOffset = 0;
+          Timer(Duration(seconds: 1), ()
+          {
+            if (now.isBefore(tempTDate)) {
+              if(now.day < tempTDate.day){
+                hourOffset = 24 - now.hour;
+                hourOffset = hourOffset + tempTDate.hour;
+              }
+              else{
+                hourOffset = tempTDate.hour - now.hour;
+              }
+              if(now.minute > tempTDate.minute) {
+                minuteOffset = 60 - now.minute;
+                minuteOffset = minuteOffset + tempTDate.minute;
+              }
+              else {
+                minuteOffset = tempTDate.minute - now.minute;
+              }            }
+            setState(() {
+              double etaLWF = (tempTDepth - tempCurDepth) * 0.0328085;
+              etaHours = etaLWF.toInt() + hourOffset;
+              double remainder = 10 * etaLWF.remainder(1);
+              etaMinutes = remainder.toInt() + minuteOffset;
+              double remainder2 = 10 * remainder.remainder(1);
+              int round = remainder2.toInt();
+              if (round >= 5)
+                etaMinutes ++;
+            });
+          });
+        });
+      });
+    });
+  }
+
   // Init state for this screen
   void initState() {
     super.initState();
-    if (this.mounted) {
-      setState(() {
-        getTDepthLwf();
-        getPrevTLwf();
-        initGraph();
-        getGraphDepth();
-        dayCheck = now.subtract(new Duration(days: 1));
-      });
-    }
+    //if (this.mounted) {
+    setState(() {
+      getTDepthLwf();
+      getPrevTLwf();
+      initGraph();
+      getGraphDepth();
+      calculateEta();
+      dayCheck = now.subtract(new Duration(days: 1));
+    });
+
+    //}
     getTDepthLwf();
+  }
+
+  // Rebuild the screen when a new depth target is set
+  void rebuildScreen(){
+    setState(() {
+      getTDepthLwf();
+      getPrevTLwf();
+      initGraph();
+      getGraphDepth();
+      calculateEta();
+      dayCheck = now.subtract(new Duration(days: 1));
+    });
   }
 
   // Get the darkmode state from inheritable widget
@@ -146,7 +223,6 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
 
   Widget build(BuildContext context){
     initDarkmode();
-
     return SingleChildScrollView(
         padding: EdgeInsetsDirectional.only(
             start: 5.0,
@@ -156,17 +232,21 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
         ),
         child: Column(
           children: <Widget>[
-            Row(
-              //mainAxisAlignment: MainAxisAlignment.center,
-            ),
             lwf_intro(),
             fill_target(),
             // Show the buttons for editing if the user has signed in and clicks edit
-            if(boolTarget) hourOffset(),
-            if(boolTarget) addTargetButton(),
-            //estimate_time()  //Hardcoded right now
-            fillingConfirm(),
-            if(fillingRN)  curFillTime(),
+            statusCurTarget(),
+            Divider(
+              color: darkmodeClass.darkmodeState ? Colors.white : Colors.black,
+              thickness: 2,
+              indent: 15,
+              endIndent: 15,
+            ),
+            if(user.Name != "") setNewTarget(),
+            if(user.Name != "") fillingNoTarget(),
+            curDepth(),
+            if(filling)  estimate_time(),
+            if(fillingRN) curFillTime(),
             lastFill(),
             lwf_lineChart(),
             switch_lineChart(),
@@ -188,7 +268,7 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(
-                        child: Text('Large Wave Flume', style: TextStyle(fontSize: 35, color: darkmodeClass.darkmodeState ? Colors.white : Colors.black))
+                        child: Text('Large Wave Flume', style: TextStyle(fontSize: 35, color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontWeight: FontWeight.bold))
                     )
                   ],
                 )
@@ -201,7 +281,7 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
   // Displays current fill target
   Widget fill_target() {
     return Container(
-        padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+        padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
         width: MediaQuery.of(context).size.width * 0.9,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -212,55 +292,13 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
                 mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 // If the editTarget bool equals true then the user can edit and the format of page changes
-                if(filling && editTarget) Column(
-                    children: <Widget>[
-                      Text("Fill", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0)),
-                      Text("Target ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0))
-                    ]
-                )
-                else if(filling) Text("Current Fill Target", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0))
-                else if(editTarget) Column(
-                      children: <Widget>[
-                        Text("Fill", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0)),
-                        Text("Target ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0))
-                      ]
-                  )
-                  else Text("Previous Fill Target", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0)),
+                if(filling) Text("Current Fill Target: ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0))
+                else Text("Previous Fill Target: ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0)),
                 // If user can edit the textfield appears for user
-                if(editTarget) Container(
-                    width: MediaQuery.of(context).size.width * .4,
-                    padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
-                    height: 35,
-                    child: TextField(
-                      style: TextStyle(color: Colors.red),
-                      onChanged: (value) => _tDepthLwf = double.parse(value),
-                      decoration: InputDecoration(
-                          labelText: '${_tDepthLwf}m',
-                          labelStyle: TextStyle(color: Colors.red, fontSize: 20),
-                          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
-                          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red))),
-
-                      keyboardType: TextInputType.number,
-                ))
-                else Container(
-                    child: Text(" ${_tDepthLwf}m", style: TextStyle(color: Colors.red, fontSize: 20))
+                Container(
+                    child: Text(" ${_tDepthLwf}cm", style: TextStyle(color: Colors.red, fontSize: 20))
                 )
               ],
-              )
-            ],
-          ),
-          Column(
-            children: <Widget>[
-              // If the user is signed in show the edit button
-              if(user.Name != "" && editTarget != true) FlatButton(
-                child: Text("edit", style: TextStyle(color: Colors.grey, fontSize: 20)),
-                padding: EdgeInsets.all(0),
-                textColor: Colors.grey,
-                onPressed: () {setState(() {
-                  depthHolder = _tDepthLwf;
-                  boolTarget = true;
-                  editTarget = true;
-                });},
               )
             ],
           ),
@@ -358,58 +396,38 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
     );
   }
 
-  // Display the current hour offset for new target depth
-  Widget hourOffset() {
+  // Display the current hour offset with open carousell scroll for new target depth
+  Widget openHourOffset() {
     return Container(
-        padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-        width: MediaQuery.of(context).size.width * 0.9,
+        width: MediaQuery.of(context).size.width * .4,
+        padding: EdgeInsets.fromLTRB(6, 0, 10, 0),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Column(
-              children: <Widget>[
-                // Display carousel slider if user pressed button and editOffset is true
-                if(editOffset)
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Text("Fill in ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0)),
-                        carouselSlider()
-                      ]
-                  )
-                // Display current hour offset in button
-                else
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Text("Fill in", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0)),
-                        Container(
-                            width: MediaQuery.of(context).size.width * .4,
-                            padding: EdgeInsets.fromLTRB(6, 0, 10, 0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                FlatButton(
-                                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(6.0),
-                                      side: BorderSide(color: Colors.red)
-                                  ),
-                                  child: Text("$dropdownValue hours", style: TextStyle(color: Colors.red, fontSize: 20)),
-                                  onPressed: () {
-                                    setState(() {
-                                      editOffset = true;
-                                    });},
-                                )
-                              ],
-                            )
-                        )
-                      ]
-                )
-              ],
-            ),
+            FlatButton(
+              padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6.0),
+                  side: BorderSide(color: Colors.red)
+              ),
+              child: Text("$dropdownValue hours", style: TextStyle(color: Colors.red, fontSize: 20)),
+              onPressed: () {
+                setState(() {
+                  editOffset = true;
+                });},
+            )
           ],
         )
+    );
+  }
+
+  // Display the current hour offset for new target depth
+  Widget hourOffset() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        carouselSlider()
+      ],
     );
   }
 
@@ -418,12 +436,13 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
     editTarget = false;
     DateTime tDate = new DateTime.now();
     tDate = tDate.add(new Duration(hours: dropdownValue));
-    dbCalls.addTarget(_tDepthLwf, 1, tDate, user.Name, 0);
+    dbCalls.addTarget(_tDepthLwf, 1, tDate, user.Username, 0);
     setState(() {
       boolTarget = false;
       editOffset = false;
       editTarget = false;
     });
+    rebuildScreen();
   }
 
   // Button to add target depth or cancel new target depth
@@ -465,29 +484,225 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
       ));
   }
 
-  // Display estimated time to finish current target depth goal
-  Widget estimate_time(){
+  Widget statusCurTarget(){
     return Container(
         width: MediaQuery.of(context).size.width * 0.9,
-      child: Row(
-        children: <Widget>[
-          Text("ETA", style: TextStyle(color: Colors.yellowAccent, fontSize: 20)),
-          Text(" 3hrs", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20))
-        ],
-      )
+        padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            setBy(),
+            fillingConfirm()
+          ],
+        )
+    );
+  }
+
+  Widget setBy(){
+    return Container(
+        child: Row(
+          children: <Widget>[
+            Text("Set By: ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20)),
+            if(_tDepthDataLwf.length < 1)
+              Text("Generating", style: TextStyle(color: Colors.red, fontSize: 20))
+            else
+              Text("${_tDepthDataLwf[0].username}", style: TextStyle(color: Colors.red, fontSize: 20))
+          ],
+        )
     );
   }
 
   // Display if the flume is currently filling or not
   Widget fillingConfirm(){
     return Container(
+        child: Row(
+          children: <Widget>[
+            Text("Status: ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20)),
+            if(fillingRN)
+              Text("Filling", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 20))
+            else
+              Text("Not Filling", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 20))
+          ],
+        )
+    );
+  }
+
+  Widget newTarget() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+      width: MediaQuery.of(context).size.width * 0.9,
+      child: Row(
+        children: [
+          Text("New Depth Target: ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20)),
+          Container(
+              width: MediaQuery.of(context).size.width * .4,
+              padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
+              height: 35,
+              child: TextField(
+                style: TextStyle(color: Colors.red),
+                onChanged: (value) => _tDepthLwf = double.parse(value),
+                decoration: InputDecoration(
+                    labelText: '0.0cm',
+                    labelStyle: TextStyle(color: Colors.red, fontSize: 20),
+                    enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+                    focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red))),
+                keyboardType: TextInputType.number,
+              )
+          )
+        ],
+      )
+    );
+  }
+
+  Widget setNewTarget(){
+    return Column(
+      children: [
+        if(!boolTarget)
+          FlatButton(
+            padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6.0),
+                side: BorderSide(color: Colors.red)
+            ),
+            child: Text("Set New Target", style: TextStyle(color: Colors.red, fontSize: 20)),
+            onPressed: () {setState(() {
+              depthHolder = _tDepthLwf;
+              boolTarget = true;
+              editTarget = true;
+            });},
+          )
+        else Column(
+          children: [
+            newTarget(),
+            Container(
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+              width: MediaQuery.of(context).size.width * 0.9,
+              child: Text("Delay start filling(in hours): ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0)),
+            ),
+            if(editOffset)
+              hourOffset()
+            else
+              openHourOffset(),
+            addTargetButton(),
+          ],
+        ),
+        Divider(
+          color: darkmodeClass.darkmodeState ? Colors.white : Colors.black,
+          thickness: 2,
+          indent: 15,
+          endIndent: 15,
+        ),
+      ],
+    );
+  }
+
+  Widget controlFilling(){
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            Container(
+                child: FlatButton(
+                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6.0),
+                      side: BorderSide(color: Colors.red)
+                  ),
+                  child: Text("Stop Filling", style: TextStyle(color: Colors.red, fontSize: 20)),
+                  onPressed: () {
+                    setState(() {
+                      dbCalls.stopFilling(1);
+                      boolFilling = false;
+                    });},
+                )
+            ),
+            Container(
+                child: FlatButton(
+                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6.0),
+                      side: BorderSide(color: Colors.red)
+                  ),
+                  child: Text("Start Filling", style: TextStyle(color: Colors.red, fontSize: 20)),
+                  onPressed: () {
+                    setState(() {
+                      DateTime now = DateTime.now();
+                      dbCalls.addTarget(100000, 1, now, user.Username, 0);
+                      boolFilling = false;
+                    });},
+                )
+            )
+          ],
+        ),
+        IconButton(
+          icon: const Icon(Icons.cancel_outlined),
+          color: Colors.red,
+          tooltip: 'Cancel',
+          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+          iconSize: 50,
+          onPressed: () {
+            setState(() {
+              boolFilling = false;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget fillingNoTarget(){
+    return Column(
+      children: [
+        if(!boolFilling) FlatButton(
+          padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(6.0),
+              side: BorderSide(color: Colors.red)
+          ),
+          child: Text("Fill(No Target Depth)", style: TextStyle(color: Colors.red, fontSize: 20)),
+          onPressed: () {setState(() {
+            boolFilling = true;
+          });},
+        )
+        else controlFilling(),
+        Divider(
+          color: darkmodeClass.darkmodeState ? Colors.white : Colors.black,
+          thickness: 2,
+          indent: 15,
+          endIndent: 15,
+        ),
+      ],
+    );
+  }
+
+  Widget curDepth(){
+    return Container(
         width: MediaQuery.of(context).size.width * 0.9,
         child: Row(
           children: <Widget>[
-            if(fillingRN)
-              Text("Filling", style: TextStyle(color: Color.fromRGBO(0, 131, 188, 1.0), fontSize: 20))
+            Text("Current Depth: ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20)),
+            if(_depthData.length < 1)
+              Text("Generating", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 20))
             else
-              Text("Not Filling", style: TextStyle(color: Color.fromRGBO(0, 131, 188, 1.0), fontSize: 20))
+              Text("${_depthData[0].depth}cm", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 20)),
+          ],
+        )
+    );
+  }
+
+  // Display estimated time to finish current target depth goal
+  Widget estimate_time(){
+    return Container(
+        width: MediaQuery.of(context).size.width * 0.9,
+        padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
+        child: Row(
+          children: <Widget>[
+            Text("ETA: ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20)),
+            if(_tDepthDataLwf.length < 1)
+              Text("Generating", style: TextStyle(color: Colors.red, fontSize: 20))
+            else
+              Text("~$etaHours hours $etaMinutes minutes", style: TextStyle(color: Colors.red, fontSize: 20))
           ],
         )
     );
@@ -497,6 +712,7 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
   Widget curFillTime(){
     return Container(
         width: MediaQuery.of(context).size.width * 0.9,
+        padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
@@ -504,31 +720,18 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 // If the json response isn't back from calling the DB then display generating
+                Text("Current Fill Time: ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20)),
+                // If the json response isn't back from calling the DB then display generating
                 if(_prevTDepthDataLwf.length < 1)
-                  Container(
-                    padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                    child: Text("Generating Current Fill Time", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15)),
-                  )
+                  Text("Generating", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 20))
                 else if(minutes < 10)
-                  Container(
-                    padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                    child: Text("Current Fill Time: $hours:0$minutes:$seconds", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15)),
-                  )
+                  Text("$hours:0$minutes:$seconds", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 20))
                 else if(seconds < 10)
-                    Container(
-                      padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                      child: Text("Current Fill Time: $hours:$minutes:0$seconds", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15)),
-                    )
+                    Text("$hours:$minutes:0$seconds", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 20))
                   else if(minutes < 10 && seconds < 10)
-                      Container(
-                        padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                        child: Text("Current Fill Time: $hours:0$minutes:0$seconds", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15)),
-                      )
+                      Text("$hours:0$minutes:0$seconds", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 20))
                     else
-                      Container(
-                        padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                        child: Text("Current Fill Time: $hours:$minutes:$seconds", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15)),
-                      ),
+                      Text("$hours:$minutes:$seconds", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 20))
               ],
             )
           ],
@@ -540,99 +743,80 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
   Widget lastFill(){
     return Container(
         width: MediaQuery.of(context).size.width * 0.9,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Row(
+        padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+        child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               // If the json response isnt back from calling the DB then display generating
+              Text("Last Filled Depth: ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15)),
+              // If the json response isn't back from calling the DB then display generating
               if(_prevTDepthDataLwf.length < 1)
-                Container(
-                  padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                  child: Text("Generating last filled", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15)),
-                )
+                Text("Generating", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15))
+              else if(prevTargetDate.isAfter(dayCheck))
+                Text("${_prevTarget}cm at ${DateFormat('jm').format(prevTargetDate)}", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15))
               else
-                Container(
-                  padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                  child: Text("Last Filled to ${_prevTarget}m", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15)),
-                ),
+                Text("${_prevTarget}cm ${DateFormat('Md').format(prevTargetDate)} at ${DateFormat('jm').format(prevTargetDate)}", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15))
+
             ],
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              // If the json response isnt back from calling the DB then display generating
-              if(_prevTDepthDataLwf.length < 1)
-                Container(
-                    padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                    child: Text("Generating date}", style: TextStyle(color: Colors.grey[800], fontSize: 15))
-                )
-              else if(prevTargetDate.isAfter(dayCheck))
-                Container(
-                    padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                    child: Text("${DateFormat('jm').format(prevTargetDate)}", style: TextStyle(color: Colors.grey[800], fontSize: 15))
-                )
-              else
-                Container(
-                    padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                    child: Text("${DateFormat('Md').format(prevTargetDate)} ${DateFormat('jm').format(prevTargetDate)}", style: TextStyle(color: Colors.grey[800], fontSize: 15))
-                )
-            ],
-          )
-        ],
-      )
     );
   }
 
   // Display line chart
   Widget lwf_lineChart(){
-    return Column(
-      children: <Widget>[
-        // If the line data hasn't been grabbed then display initial line on graph
-        if(graphLine.length < 1)
-          SizedBox(
-            width: MediaQuery.of(context).size.width * .9,
+    return Container(
+        padding: EdgeInsets.fromLTRB(5, 20, 5, 5),
+        decoration: new BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.white
+        ),
+        child: Column(
+        children: <Widget>[
+          // If the line data hasn't been grabbed then display initial line on graph
+          if(graphLine.length < 1)
+            SizedBox(
+              width: MediaQuery.of(context).size.width * .9,
+                height: 200,
+                child: AnimatedLineChart(
+                  LineChart.fromDateTimeMaps(
+                      [initGraphLine], [Colors.blue], ["S"],
+                      tapTextFontWeight: FontWeight.w400
+                  )
+                )
+            )
+          // If the line data is grabbed then display line
+          else SizedBox(
+              width: MediaQuery.of(context).size.width * .9,
               height: 200,
               child: AnimatedLineChart(
                   LineChart.fromDateTimeMaps(
-                      [initGraphLine], [Colors.blue], ['S'],
-                      tapTextFontWeight: FontWeight.w400
+                      [graphLine], [Colors.blue], ['S'],
+                      tapTextFontWeight: FontWeight.w400,
                   )
               )
-          )
-          // If the line data is grabbed then display line
-        else SizedBox(
-            width: MediaQuery.of(context).size.width * .9,
-            height: 200,
-            child: AnimatedLineChart(
-                LineChart.fromDateTimeMaps(
-                    [graphLine], [Colors.blue], ['S'],
-                    tapTextFontWeight: FontWeight.w400
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              if(lineStart == null)
+                Container(
+                    padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                    child: Text("Generating date", style: TextStyle(color: Colors.black/*darkmodeClass.darkmodeState ? Colors.white : Colors.black*/, fontSize: 15))
                 )
-            )
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            if(lineStart == null)
-              Container(
-                  padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                  child: Text("Generating date", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15))
-              )
-            else if(DateFormat('Md').format(lineStart) != DateFormat('Md').format(lineEnd))
-              Container(
-                  padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                  child: Text("${DateFormat('Md').format(lineEnd)}/${DateFormat('Md').format(lineStart)}", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15))
-              )
-            else
-              Container(
-                  padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                  child: Text("${DateFormat('Md').format(lineStart)}", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15))
-              )
-          ],
-        )
-      ],
+              else if(DateFormat('Md').format(lineStart) != DateFormat('Md').format(lineEnd))
+                Container(
+                    padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                    child: Text("${DateFormat('Md').format(lineEnd)}/${DateFormat('Md').format(lineStart)}", style: TextStyle(color: Colors.black/*darkmodeClass.darkmodeState ? Colors.white : Colors.black*/, fontSize: 15))
+                )
+              else
+                Container(
+                    padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                    child: Text("${DateFormat('Md').format(lineStart)}", style: TextStyle(color: Colors.black/*darkmodeClass.darkmodeState ? Colors.white : Colors.black*/, fontSize: 15))
+                )
+            ],
+          )
+        ],
+      )
     );
   }
 
@@ -649,18 +833,13 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
       //date = DateTime.parse(_depthData[graphDataMarker].dDate);
       //depth = double.parse(_depthData[graphDataMarker].depth);
       while(stop == false) {
-        print("1");
         date = DateTime.parse(_depthData[graphDataMarker].dDate);
-        print("date: ${date}");
-        print("graphDataMarker: ${graphDataMarker}");
 
         depth = double.parse(_depthData[graphDataMarker].depth);
         if(pos == 0){
           setState(() {
             lineStart = date;
             lineEnd = lineStart.add(new Duration(hours: 4));
-            print("lineEnd: $lineEnd");
-            print("latestDepth: $latestDepth");
           });
         }
 
@@ -674,7 +853,6 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
 
       }
       if(lineEnd.isAfter(latestDepth) || lineEnd == latestDepth) {
-        print("latestDepth: ${latestDepth}");
         atEdge = true;
       }
       else
@@ -685,27 +863,23 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
   // Decrease the time zone the line is grabbed from
   Widget decrease_lineChart(){
     DateTime test = DateTime.parse(_depthData[0].dDate);
-    print("test: $test");
     int pos = 0;
     bool stop = false;
     DateTime date;
     double depth;
     setState(() {
       graphDataMarker = graphDataMarker + graphLine.length - 1;
-      print("total length: ${_depthData.length}");
       graphLine.clear();
       date = DateTime.parse(_depthData[graphDataMarker + pos].dDate);
       depth = double.parse(_depthData[graphDataMarker + pos].depth);
 
       while(stop == false) {
-        print("date: ${date}");
         graphLine[date] = depth;
 
         if(pos == 0){
           setState(() {
             lineStart = date;
             lineEnd = lineStart.subtract(new Duration(hours: 4));
-            print("lineEnd: ${lineEnd}");
           });
         }
         pos += 1;
@@ -715,13 +889,10 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
           stop = true;
       }
       if(lineEnd.isBefore(earliestDepth) || lineEnd == earliestDepth) {
-        print("yesssss");
-        print("lineEnd: ${lineEnd}, earliestDepth: ${earliestDepth}");
         atEdge = true;
       }
       else
         atEdge = false;
-      print("graphDataMarker: ${graphDataMarker}");
     });
   }
 

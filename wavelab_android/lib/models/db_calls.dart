@@ -1,3 +1,8 @@
+/***********************************************************
+ * This file maps all of the data that will be used in the sql query call and
+ * sends the maped information to the get_depth.php file that communicates with
+ * the database.
+ **********************************************************/
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -6,7 +11,7 @@ import 'target_data.dart';
 import 'user_data.dart';
 
 class dbCalls{
-  static const ROOT = "http://192.168.1.27/WavelabDB/get_depth.php"; // The address in the database where the php file is stored
+  static const ROOT = "http://192.168.1.19/WavelabDB/get_depth.php"; // The address in the database where the php file is stored
 
   // Calls for the php file to use
   static const _GET_CUR_DEPTH_DWB = "GET_CUR_DEPTH_DWB";
@@ -18,6 +23,7 @@ class dbCalls{
   static const _GET_PREV_T_DWB = "GET_PREV_T_DWB";
   static const _GET_PREV_T_LWF = "GET_PREV_T_LWF";
   static const _ADD_T_DEPTH = "ADD_T_DEPTH";
+  static const _STOP_FILLING = "STOP_FILLING";
   static const _LOGIN_USER = "LOGIN_USER";
 
   // map the depth data grabbed from the database
@@ -123,7 +129,9 @@ class dbCalls{
   static Future<List<targetData>> getTDepthDwb() async {
     try{
       var map = Map<String, dynamic>();
+      DateTime now = new DateTime.now();
       map['action'] = _GET_T_DEPTH_DWB;
+      map['curDate'] = now.toString();
       final response = await http.post(ROOT, body: map); // Calls php file
       print('Get Target DWB Response: ${response.body}');
       if (200 == response.statusCode) {
@@ -143,7 +151,9 @@ class dbCalls{
   static Future<List<targetData>> getTDepthLwf() async {
     try{
       var map = Map<String, dynamic>();
+      DateTime now = new DateTime.now();
       map['action'] = _GET_T_DEPTH_LWF;
+      map['curDate'] = now.toString();
       final response = await http.post(ROOT, body: map); // Calls php file
       print('Get Target LWF Response: ${response.body}');
       if (200 == response.statusCode) {
@@ -211,6 +221,29 @@ class dbCalls{
       map['isComplete'] = isComplete.toString();
       final response = await http.post(ROOT, body: map); // Calls php file
       print('addTarget Response: ${response.body}');
+      if(200 == response.statusCode) {
+        return response.body;
+      }
+      else {
+        return "error";
+      }
+    }
+    catch(e) {
+      print("Error: ${e}");
+      return "error";
+    }
+  }
+
+  // stops filling process to the database
+  static Future<String> stopFilling(int flume_name) async{
+    try{
+      var map = Map<String, dynamic>();
+      DateTime now = new DateTime.now();
+      map['action'] = _STOP_FILLING;
+      map['fName'] = flume_name.toString();
+      map['curDate'] = now.toString();
+      final response = await http.post(ROOT, body: map); // Calls php file
+      print('stopFilling Response: ${response.body}');
       if(200 == response.statusCode) {
         return response.body;
       }

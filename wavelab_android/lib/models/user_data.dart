@@ -1,4 +1,7 @@
-// User data class used to when mapping data from sql call to get data from the user table
+/*****************************************************************
+ * User data class used to when mapping data from sql call to get data from
+ * the user table
+ ****************************************************************/
 class userData{
   String Name;
   String Username;

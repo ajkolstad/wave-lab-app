@@ -1,6 +1,8 @@
+/**********************************************************
+ * Darkmode class that stores darkmode state
+ *********************************************************/
 import 'package:shared_preferences/shared_preferences.dart';
 
-// Darkmode class that stores darkmode state
 class Darkmode{
   bool darkmodeState;
 

@@ -1,3 +1,8 @@
+/********************************************************************
+ * This is the main function that starts the program off. It controls how the
+ * app can be oriented on the phone, we have it set to only vertical to main
+ * way. Then runs the app.
+ *******************************************************************/
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'inheritable_data.dart';
@@ -15,5 +20,5 @@ void main() async{
     //DeviceOrientation.landscapeRight,
     DeviceOrientation.portraitUp
   ]);
-  runApp(new StateContainer(child: App(/*preferences: await SharedPreferences.getInstance()*/)));
+  runApp(new StateContainer(child: App()));
 }

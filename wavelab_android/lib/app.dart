@@ -1,5 +1,8 @@
+/*********************************************************
+ * This file controls the app by calling the screen controller materials
+ * This is the main function of the app that wont be called again.
+ ********************************************************/
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'screen_controller.dart';
 
 class App extends StatelessWidget{

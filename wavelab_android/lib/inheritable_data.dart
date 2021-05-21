@@ -1,3 +1,9 @@
+/************************************************************
+ * This file controls what the inheritable data stores. The data stored here
+ * are the darkmode status and the user information if they are signed in.
+ * Inheritable data is data that can be accessed by any screen at any time.
+ * This is good when data can't be passed as an agruement when calling a screen.
+ ***********************************************************/
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'models/darkmode_state.dart';
@@ -25,7 +31,7 @@ class StateContainer extends StatefulWidget{
   StateContainer({this.child, this.darkmode, this.user});
 
   static StateContainerState of(BuildContext context) {
-    return (context.inheritFromWidgetOfExactType(InheritableData) as InheritableData).state;
+    return (context.dependOnInheritedWidgetOfExactType<InheritableData>()/*inheritFromWidgetOfExactType(InheritableData)*/ as InheritableData).state;
   }
 
   StateContainerState createState() => new StateContainerState();

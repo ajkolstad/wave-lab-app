@@ -1,4 +1,7 @@
-// Depth data class used to when mapping data from sql call to get data from the depth table
+/***************************************************************
+ * Depth data class used to when mapping data from sql call to get data from
+ * the depth table
+ **************************************************************/
 class depthData{
   String depth;
   String depth_flume_name;

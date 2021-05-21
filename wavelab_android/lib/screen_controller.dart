@@ -1,3 +1,7 @@
+/****************************************************************************
+ * This file is used to control the apps ability to switch between tabs.
+ ***************************************************************************/
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'screens/home.dart';
@@ -101,38 +105,74 @@ class ScreenControllerState extends State<ScreenController> {
   Widget build(BuildContext context) {
 
     initDarkmode();
-
-    return DefaultTabController(
-      length: 4, // Tab controller length
-      initialIndex: 0,
-      child: Scaffold(
-        key: _scaffoldKey,
-        backgroundColor: darkmodeClass.darkmodeState ? Color.fromRGBO(26, 26, 19, .9) : Colors.white,
-        // Designs the top bar of app
-          appBar: AppBar(
-          automaticallyImplyLeading: false,
-            backgroundColor: Color.fromRGBO(220, 68, 5, 1.0),
-            centerTitle: true,
-            title: Row(
-              children: <Widget>[
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                          child: Image.asset(
-                            "assets/logo.png",
-                            scale: 1.5,
-                          )
-                      ),
-                    ]
+    if(darkmodeClass == null)
+      return DefaultTabController(
+          length: 4, // Tab controller length
+          initialIndex: 0,
+          child: Scaffold(
+              key: _scaffoldKey,
+              backgroundColor:  Color.fromRGBO(220, 68, 5, 1.0),
+              // Designs the top bar of app
+              appBar: AppBar(
+                automaticallyImplyLeading: false,
+                backgroundColor: Color.fromRGBO(220, 68, 5, 1.0),
+                centerTitle: true,
+                title: Row(
+                  children: <Widget>[
+                    Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                              child: Image.asset(
+                                "assets/logo.png",
+                                scale: 1.5,
+                              )
+                          ),
+                        ]
+                    ),
+                  ],
                 ),
-              ],
-            ),
-        ),
-        bottomNavigationBar: Navigation(),
-        body: TabBarView(children: screens)
-      )
-    );
+              ),
+              body: Center(
+                child: Text("Generating")
+              )
+          )
+      );
+
+    else
+      return DefaultTabController(
+          length: 4, // Tab controller length
+          initialIndex: 0,
+          child: Scaffold(
+              key: _scaffoldKey,
+              backgroundColor: darkmodeClass.darkmodeState ? Color.fromRGBO(
+                  26, 26, 19, .9) : Colors.white,
+              // Designs the top bar of app
+              appBar: AppBar(
+                automaticallyImplyLeading: false,
+                backgroundColor: Color.fromRGBO(220, 68, 5, 1.0),
+                centerTitle: true,
+                title: Row(
+                  children: <Widget>[
+                    Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                              child: Image.asset(
+                                "assets/logo.png",
+                                scale: 1.5,
+                              )
+                          ),
+                        ]
+                    ),
+                  ],
+                ),
+              ),
+              bottomNavigationBar: Navigation(),
+              body: TabBarView(children: screens)
+          )
+      );
+
   }
 
   // Control the navigation bar
