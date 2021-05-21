@@ -116,6 +116,7 @@ python test_valves.py
 
 ## How to use locally with an emulator
 1. Install XAMPP
+   - Start Apache and MySQL servers on XAMPP.
 2. To add the SQL commands to the local database:
    - Enter the xampp/htdocs folder. 
    - Create a new folder /WavelabDB.
@@ -124,11 +125,11 @@ python test_valves.py
    - Enter /wave-lab-app/wavelab_android/lib/models and the ROOT variable will be what is changed.
    - Run ipconfig in the command prompt to find the **Link-local IPv6 Address**.
    - Copy this address into the ROOT variable replacing "192.168.1.19" or a similar address in the string.
-5. Install Android Studio onto the computer: [Android Studio Download](https://developer.android.com/studio/?gclid=Cj0KCQjwkZiFBhD9ARIsAGxFX8DBMKeY751Vh5YeSbLYcRa_O5EmqeZwIKhWKGAtFi8KNTQhs4vDc4IaAoeNEALw_wcB&gclsrc=aw.ds).
-6. Install Flutter and Dart onto the computer: [Download](https://flutter.dev/docs/get-started/install/windows).
-7. Follow these steps to create an emulator on the computer: [Emulator Steps](https://developer.android.com/studio/run/managing-avds).
-8. Choose an emulator by clicking on **AVD Manager** in Android Studio to enter Your Virtual Devices page and pressing the green button to start the emulator up.
-9. To run go back to the original Android Studio Page and click the green arrow to launch the app on the Android emulator. 
+4. Install Android Studio onto the computer: [Android Studio Download](https://developer.android.com/studio/?gclid=Cj0KCQjwkZiFBhD9ARIsAGxFX8DBMKeY751Vh5YeSbLYcRa_O5EmqeZwIKhWKGAtFi8KNTQhs4vDc4IaAoeNEALw_wcB&gclsrc=aw.ds).
+5. Install Flutter and Dart onto the computer: [Download](https://flutter.dev/docs/get-started/install/windows).
+6. Follow these steps to create an emulator on the computer: [Emulator Steps](https://developer.android.com/studio/run/managing-avds).
+7. Choose an emulator by clicking on **AVD Manager** in Android Studio to enter Your Virtual Devices page and pressing the green button to start the emulator up.
+8. To run go back to the original Android Studio Page and click the green arrow to launch the app on the Android emulator. 
 
 ## How to download on Android phone
 - Before trying to download the app onto the android phone, Android Studio must be installed onto the computer: [Android Studio Download](https://developer.android.com/studio/?gclid=Cj0KCQjwkZiFBhD9ARIsAGxFX8DBMKeY751Vh5YeSbLYcRa_O5EmqeZwIKhWKGAtFi8KNTQhs4vDc4IaAoeNEALw_wcB&gclsrc=aw.ds).
