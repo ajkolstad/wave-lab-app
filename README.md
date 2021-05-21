@@ -58,10 +58,18 @@
 
 ---------------------------------------------------------
 # Database Daemon
-depth_sensor.py
+
+## Requirements
+- Python2
+- MySQL
+- SQLite
+
+## Important Files
+
+### `/hardware_ineraction/depth_sensor.py`
 
 - Description:   Accesses SQLite DB and transfers most recent depths to MySQL DB
-- Dependencies:  None
+- Dependencies:  N/A
 - Software:      MySQL, SQLAlchemy, SQLite
 
 ```
@@ -71,7 +79,7 @@ python depth_sensor.py [Path]  [Log]  [Interval]
 	- Interval	seconds to wait before looping
 ```
 
-valves.py
+### `/hardware_ineraction/valves.py`
 
 - Description:   Accesses MySQL DB to actuate valves
 - Dependencies:  control.py, conf.py, adam.py
@@ -87,7 +95,7 @@ python valves.py [Interval]  [DWB]  [LWF]  [Stag]  [Log]  [Error]
 	- Error		        absolute path to error log file
  ```
  
- test_valves.py
+ ### `/hardware_ineraction/test_valves.py`
 - Description:   Tests valve.py for correct actuation of the vavles when appropriate
 - Dependencies:  control.py, conf.py
 - Software:      MySQL
@@ -95,18 +103,3 @@ python valves.py [Interval]  [DWB]  [LWF]  [Stag]  [Log]  [Error]
 ```
 python test_valves.py
 ```
----------------------------------------------------------
-
-# How to start:
- - pull files
- - Install XAMPP, launch Apache and MySQL
- - Install python3 (sudo apt install python3.6)
- - Install pip (sudo apt install python3-pip)
-      use pip to install mysql-connector-python (pip3 install mysql-connector-python)
-
- - open terminal and type "cd Website", then "node server.js"
- - Also do "npm install" to get the additional packages
- - go to localhost/phpmyadmin, make a new database and import the databaseSetp.sql
- - You may have to add each table by themselves, with the User table being added last
- - Make your own user
---------------------------------------------------------
