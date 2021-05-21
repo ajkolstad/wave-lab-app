@@ -11,10 +11,22 @@ var router = express.Router();
 router.post("/login", authController.login);
 
 //Binds post large wave flume depth request button to function
-router.post("/large-wave-flume", authController.postLWF);
+router.post("/large-wave-flume-add", authController.postLWF);
+
+//Bind large wave flume start fill button to function
+router.post("/large-wave-flume-start", authController.startLWF);
+
+//Bind large wave flume stop fill button to function
+router.post("/large-wave-flume-stop", authController.stopLWF);
 
 //Binds post directional wave basin depth request button to function
-router.post("/directional-wave-basin", authController.postDWB);
+router.post("/directional-wave-basin-add", authController.postDWB);
+
+//Binds directional wave basin start fill button to function
+router.post("/directional-wave-basin-start", authController.startDWB);
+
+//Binds directional wave basin stop fill button to function
+router.post("/directional-wave-basin-stop", authController.stopDWB);
 
 //Allows other functions to use auth.js' functions
 module.exports = router;

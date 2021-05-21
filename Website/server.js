@@ -8,7 +8,7 @@ Connects to database and uses helper functions to serve content to users
 
 var path = require('path');
 var express = require('express');
-var port = process.env.PORT || 4420;
+var port = process.env.PORT || 3000;
 var exphbs = require('express-handlebars');
 var mysql = require('mysql');
 var app = express();

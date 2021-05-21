@@ -24,7 +24,6 @@ exports.login = async (req, res) => {
         console.log("about to get data");
         var {username, password} = req.body;
         console.log("Just got data");
-
         if(!username || !password) {
             return res.status(400).render('layouts.login', {
                 message: 'Please enter an Username and Password'
@@ -33,7 +32,6 @@ exports.login = async (req, res) => {
         console.log("[Webserver] User: \"" + username + "\" attempting login...");
         database.query('SELECT * FROM user WHERE username = ?',[username], async (error, results) => {
             console.log("[Database]  Checking for Username: " + username);
-            //console.log(results);
             if(results.length < 1) {
                     res.status(401).render(`layouts${"/login"}`, {
                         message: 'Incorrect Username or Password'
@@ -47,11 +45,6 @@ exports.login = async (req, res) => {
             } else {
                 console.log("[Webserver] Login successful")
                 var id = results[0].Username;
-                //console.log("Username: " + id);
-               // var token = jwt.sign({ id }, process.env.JWT_SECRET, {
-               //     expiresIn: process.env.JWT_EXPIRES_IN
-               // });
-                //console.log("Token: " + token);
                 var cookieOptions = {
                     expires: new Date(
                         Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000
@@ -61,9 +54,7 @@ exports.login = async (req, res) => {
                 console.log("[Webserver] Cookie created for User: " + username);
                 res.cookie('password', password, cookieOptions);
                 res.cookie('username', username, cookieOptions);
-                res.status(200).render(`layouts${'/'}`, {
-                    message: "admin"
-                });
+                res.redirect('/');
             }
         });
     } catch (error) {
@@ -77,7 +68,6 @@ exports.login = async (req, res) => {
 exports.postLWF = async (req, res) => {
     try {
         var {depthTarget, timeOffset} = req.body;
-
         console.log("[Webserver] New Depth Request - Target: " + depthTarget + " Offset: " + timeOffset);
         var newTime = Date.now();
         var addTime = moment(newTime).add(timeOffset, 'hours').format('YYYY-MM-DD HH:mm:ss');
@@ -88,17 +78,50 @@ exports.postLWF = async (req, res) => {
         database.query('INSERT INTO target_depth (Tdepth, Target_Flume_Name, Tdate, Username, isComplete) VALUES (?,?,?,?,?)',[depthTarget, flumeName, addTime, username, isComplete], async (error, results) => {
             console.log("[Webserver] Depth Request Added");
         });
-        res.redirect(req.get('referer'));
     } catch (error) {
         console.log("[Webserver] Failed To Add Depth Request");
     }
+    res.redirect(req.get('referer'));
+};
+
+//Starts filling large wave flume
+exports.startLWF = async (req, res) => {
+    try {
+        var depthTarget = 5;
+        var timeOffset = 0;
+        console.log("[Webserver] Starting LWF Fill - Target: " + depthTarget + " Offset: " + timeOffset);
+        var newTime = Date.now();
+        var addTime = moment(newTime).add(timeOffset, 'hours').format('YYYY-MM-DD HH:mm:ss');
+        var username = req.cookies['username'];
+        var flumeName = 1; //for LWF
+        var isComplete = 0;
+        console.log("[Webserver] New Depth Request: " + depthTarget + " LWF " + addTime + " " + username + " 0");
+        database.query('INSERT INTO target_depth (Tdepth, Target_Flume_Name, Tdate, Username, isComplete) VALUES (?,?,?,?,?)',[depthTarget, flumeName, addTime, username, isComplete], async (error, results) => {
+            console.log("[Webserver] Depth Request Added");
+        });
+    } catch (error) {
+        console.log("[Webserver] Failed To Start LWF Fill");
+    }
+    res.redirect(req.get('referer'));
+};
+
+//Stopps filling large wave flume
+exports.stopLWF = async (req, res) => {
+    try {
+        console.log("[Webserver] Stopping LWF Fill")
+        database.query('UPDATE target_depth SET isComplete = 1 WHERE Tdate < CURRENT_TIMESTAMP AND Target_Flume_Name = 1', async (error, results) => {
+            console.log("[Webserver] Stopped LWF Fill");
+        });
+    } catch (error) {
+        console.log("[Webserver] Failed To Stop LWF Fill");
+    }
+    res.redirect(req.get('referer'));
 };
 
 //Posts directional wave basin depth request to database
 exports.postDWB = async (req, res) => {
     try {
         var {depthTarget, timeOffset} = req.body;
-
         console.log("[Webserver] New Depth Request - Target: " + depthTarget + " Offset: " + timeOffset);
         var newTime = Date.now();
         var addTime = moment(newTime).add(timeOffset, 'hours').format('YYYY-MM-DD HH:mm:ss');
@@ -109,8 +132,42 @@ exports.postDWB = async (req, res) => {
         database.query('INSERT INTO target_depth (Tdepth, Target_Flume_Name, Tdate, Username, isComplete) VALUES (?,?,?,?,?)',[depthTarget, flumeName, addTime, username, isComplete], async (error, results) => {
             console.log("[Webserver] Depth Request Added");
         });
-        res.redirect(req.get('referer'));
     } catch (error) {
         console.log("[Webserver] Failed To Add Depth Request");
     }
+    res.redirect(req.get('referer'));
+};
+
+//Starts filling directional wave basin
+exports.startDWB = async (req, res) => {
+    try {
+        var depthTarget = 5;
+        var timeOffset = 0;
+        console.log("[Webserver] Starting DWB Fill - Target: " + depthTarget + " Offset: " + timeOffset);
+        var newTime = Date.now();
+        var addTime = moment(newTime).add(timeOffset, 'hours').format('YYYY-MM-DD HH:mm:ss');
+        var username = req.cookies['username'];
+        var flumeName = 0; //for DWB
+        var isComplete = 0;
+        console.log("[Webserver] New Depth Request: " + depthTarget + " LWF " + addTime + " " + username + " 0");
+        database.query('INSERT INTO target_depth (Tdepth, Target_Flume_Name, Tdate, Username, isComplete) VALUES (?,?,?,?,?)',[depthTarget, flumeName, addTime, username, isComplete], async (error, results) => {
+            console.log("[Webserver] Depth Request Added");
+        });
+    } catch (error) {
+        console.log("[Webserver] Failed To Start DWB Fill");
+    }
+    res.redirect(req.get('referer'));
+};
+
+//Stopps filling directional wave basin
+exports.stopDWB = async (req, res) => {
+    try {
+        console.log("[Webserver] Stopping DWB Fill")
+        database.query('UPDATE target_depth SET isComplete = 1 WHERE Tdate < CURRENT_TIMESTAMP AND Target_Flume_Name = 0', async (error, results) => {
+            console.log("[Webserver] Stopped DWB Fill");
+        });
+    } catch (error) {
+        console.log("[Webserver] Failed To Stop DWB Fill");
+    }
+    res.redirect(req.get('referer'));
 };

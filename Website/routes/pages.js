@@ -59,6 +59,7 @@ function authenticateUser(req) {
     return false;
 }
 
+//Renders and sends index
 router.get("/", async (req, res) => {
     directionalWaveBasinDepth = await getDepth(0);
     directionalWaveBasinTarget = await getTarget(0);
@@ -137,6 +138,8 @@ router.get("/", async (req, res) => {
     
 });
 
+
+//Logs user out
 router.get("/logout", (req, res) => {
     try {
         res.clearCookie('username');
@@ -144,18 +147,21 @@ router.get("/logout", (req, res) => {
     } catch (error) {
 
     }
-    res.status(200).render(`layouts${'/'}`);
+    res.redirect('/');
 
 });
 
+//Renders and sends login page
 router.get("/login", (req, res) => {
     res.status(200).render(`layouts${req.url}`);
 });
 
+//Renders and sends live page
 router.get("/live", (req, res) => {
         res.status(200).render(`layouts${req.url}`);
 });
 
+//Renders and sends large wave flume page
 router.get("/large-wave-flume", async (req, res) => {
     largeWaveFlumeDepth = await getDepth(1);
     largeWaveFlumeTarget = await getTarget(1);
@@ -239,6 +245,7 @@ router.get("/large-wave-flume", async (req, res) => {
     }
 });
 
+//Renders and sends directional wave basin page
 router.get("/directional-wave-basin", async (req, res) => {
     directionalWaveBasinDepth = await getDepth(0);
     directionalWaveBasinTarget = await getTarget(0);
@@ -323,6 +330,7 @@ router.get("/directional-wave-basin", async (req, res) => {
     }
 });
 
+//Queries database for depth of flumenumber
 async function getDepth(flumeNumber) {
     if (flumeNumber == 0) {
         return new Promise((resolve, reject) => {
@@ -338,7 +346,7 @@ async function getDepth(flumeNumber) {
     } else {
         return new Promise((resolve, reject) => {
             try {
-                database.query('SELECT * FROM `depth_data` WHERE Depth_Flume_Name = 1 ORDER BY Ddate DESC LIMIT 1',(error, results) => {
+                database.query('SELECT * FROM `depth_data` WHERE Depth_Flume_Name = 1 ORDER BY Ddate DESC LIMIT 1 ',(error, results) => {
                     if(results.length < 1) resolve("error");
                     resolve(results[0].Depth);
                 });
@@ -350,11 +358,12 @@ async function getDepth(flumeNumber) {
     resolve("error");
 }
 
+//Queries database for last 480 depth values (4 hours worth) for chart
 async function getDepths(flumeNumber) {
     if (flumeNumber == 0) {
         return new Promise((resolve, reject) => {
             try {
-                database.query('SELECT Depth FROM `depth_data` WHERE Depth_Flume_Name = 0 ORDER BY Ddate ASC',(error, results) => {
+                database.query('SELECT Depth FROM `depth_data` WHERE Depth_Flume_Name = 0 ORDER BY Ddate ASC LIMIT 480',(error, results) => {
                     
                     array = [];
                     Object.keys(results).forEach(function(key) {
@@ -370,7 +379,7 @@ async function getDepths(flumeNumber) {
     } else {
         return new Promise((resolve, reject) => {
             try {
-                database.query('SELECT Depth FROM `depth_data` WHERE Depth_Flume_Name = 1 ORDER BY Ddate ASC',(error, results) => {
+                database.query('SELECT Depth FROM `depth_data` WHERE Depth_Flume_Name = 1 ORDER BY Ddate ASC LIMIT 480',(error, results) => {
                     array = [];
                     Object.keys(results).forEach(function(key) {
                         var row = results[key];
@@ -386,11 +395,12 @@ async function getDepths(flumeNumber) {
     resolve("error");
 }
 
+//Queries database for last 480 times (4 hours worth) for chart
 async function getDepthTimes(flumeNumber) {
     if (flumeNumber == 0) {
         return new Promise((resolve, reject) => {
             try {
-                database.query('SELECT Ddate FROM `depth_data` WHERE Depth_Flume_Name = 0 ORDER BY Ddate ASC',(error, results) => {
+                database.query('SELECT Ddate FROM `depth_data` WHERE Depth_Flume_Name = 0 ORDER BY Ddate ASC LIMIT 480',(error, results) => {
                     array = [];
                     Object.keys(results).forEach(function(key) {
                         var row = results[key];
@@ -405,7 +415,7 @@ async function getDepthTimes(flumeNumber) {
     } else {
         return new Promise((resolve, reject) => {
             try {
-                database.query('SELECT Ddate FROM `depth_data` AS DATE WHERE Depth_Flume_Name = 1 ORDER BY Ddate ASC',(error, results) => {
+                database.query('SELECT Ddate FROM `depth_data` AS DATE WHERE Depth_Flume_Name = 1 ORDER BY Ddate ASC LIMIT 480',(error, results) => {
                     array = [];
                     Object.keys(results).forEach(function(key) {
                         var row = results[key];
@@ -421,6 +431,7 @@ async function getDepthTimes(flumeNumber) {
     resolve("error");
 }
 
+//Queries database for depth target of flumenumber
 async function getTarget(flumeNumber) {
     if (flumeNumber == 0) {
         return new Promise((resolve, reject) => {
@@ -450,6 +461,7 @@ async function getTarget(flumeNumber) {
     resolve("error");
 }
 
+//Queries database for target time of flumenumber
 async function getTargetTime(flumeNumber) {
     if (flumeNumber == 0) {
         return new Promise((resolve, reject) => {
@@ -478,6 +490,7 @@ async function getTargetTime(flumeNumber) {
     resolve("error");
 }
 
+//Queries database for time elapsed since the fill started
 async function getTargetTimeElapsed(flumeNumber) {
     if (flumeNumber == 0) {
         return new Promise((resolve, reject) => {
@@ -508,6 +521,7 @@ async function getTargetTimeElapsed(flumeNumber) {
     resolve("error");
 }
 
+//Queries database for the user who added the fill target
 async function getTargetUser(flumeNumber) {
     if (flumeNumber == 0) {
         return new Promise((resolve, reject) => {
@@ -535,4 +549,5 @@ async function getTargetUser(flumeNumber) {
     resolve("error");
 }
 
+//Allows other functions to use page.js' functions
 module.exports = router;
