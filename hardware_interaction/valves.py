@@ -132,8 +132,7 @@ def check_complete_DWB(dwbMax, stag, logPath, errorPath):
     ctrl = facility_controls['DWB']['basin_north']
     if records is None:
         if ctrl.status().status != "closed":
-            print("dwb close")
-            # ctrl.close()
+            ctrl.close()
         logFile.write("%s - [DWB] Not filling,   no target found\n" % time.asctime( time.localtime(time.time()) ))
         return
 
@@ -147,15 +146,13 @@ def check_complete_DWB(dwbMax, stag, logPath, errorPath):
         if current_depth < records[0]:
             logFile.write("%s - [DWB] Filling\n" % time.asctime( time.localtime(time.time()) ))
             if ctrl.status().status != "open":
-                print("dwb open")
-                # ctrl.open()
+                ctrl.open()
 
         elif current_depth >= records[0] or current_depth >= float(dwbMax * .95):
             logFile.write("%s - [DWB] Fill finished, updating database\n" % time.asctime( time.localtime(time.time()) ))
             stagnation[0] = []
             if ctrl.status().status != "closed":
-                print("dwb close")
-                # ctrl.close()
+                ctrl.close()
             high = truncate(records[0], 2) +.05
             low = truncate(records[0], 2) - .05
             val = (low, high)
@@ -184,11 +181,9 @@ def check_complete_LWF(lwfMax, stag, logPath, errorPath):
     ctrl_south = facility_controls['LWF']['flume_south']
     if records is None:
         if ctrl_north.status().status != "closed":
-            print("lwf north close")
-            # ctrl.close()
+            ctrl_north.close()
         if ctrl_south.status().status != "closed":
-            print("lwf south close")
-            # ctrl.close()
+            ctrl_south.close()
         logFile.write("%s - [LWF] Not filling,   no target found\n" % time.asctime( time.localtime(time.time()) ))
         return
 
@@ -202,21 +197,17 @@ def check_complete_LWF(lwfMax, stag, logPath, errorPath):
         if current_depth < records[0]:
             logFile.write("%s - [LWF] Filling\n" % time.asctime( time.localtime(time.time()) ))
             if ctrl_north.status().status != "open":
-                print("open north")
-#                ctrl_north.open()
+                ctrl_north.open()
             if ctrl_south.status().status != "open":
-                print("open south")
-#                ctrl_south.open()
+                ctrl_south.open()
 
         elif current_depth >= records[0] or current_depth >= float(lwfMax * .95):
             logFile.write("%s - [LWF] Fill finished, updating database\n" % time.asctime( time.localtime(time.time()) ))
             stagnation[1] = []
             if ctrl_north.status() != "closed":
-                print("close north")
-#                ctrl_north.close()
+                ctrl_north.close()
             if ctrl_south.status() != "closed":
-                print("close south")
-#                ctrl_south.close()
+                ctrl_south.close()
             high = truncate(records[0], 2) +.05
             low = truncate(records[0], 2) - .05
             val = (low, high)
