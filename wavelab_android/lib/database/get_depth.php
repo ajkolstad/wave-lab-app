@@ -20,7 +20,7 @@ if($conn->connect_error){
     return;
 }
 
-
+// Grab the most current water depth from DWB
 if("GET_CUR_DEPTH_DWB" == $action){
     $new_depth = array();
     $sql = "SELECT * FROM `depth_data` WHERE Depth_Flume_Name = 0 ORDER BY Ddate DESC LIMIT 1";
@@ -38,6 +38,7 @@ if("GET_CUR_DEPTH_DWB" == $action){
     return;
 }
 
+// Grab the most current water depth from LWF
 else if("GET_CUR_DEPTH_LWF" == $action){
     $new_depth = array();
     $sql = "SELECT * FROM `depth_data` WHERE Depth_Flume_Name = 1 ORDER BY Ddate DESC LIMIT 1";
@@ -55,6 +56,7 @@ else if("GET_CUR_DEPTH_LWF" == $action){
     return;
 }
 
+// Get all of the DWB depth data from database
 else if("GET_ALL_DEPTH_DWB" == $action){
     $new_depth = array();
     $sql = "SELECT * FROM `depth_data` WHERE Depth_Flume_Name = 0 ORDER BY Ddate DESC";
@@ -72,6 +74,7 @@ else if("GET_ALL_DEPTH_DWB" == $action){
     return;
 }
 
+// Get all of the LWF depth data from database
 else if("GET_ALL_DEPTH_LWF" == $action){
     $new_depth = array();
     $sql = "SELECT * FROM `depth_data` WHERE Depth_Flume_Name = 1 ORDER BY Ddate DESC";
@@ -88,6 +91,8 @@ else if("GET_ALL_DEPTH_LWF" == $action){
     $conn->close();
     return;
 }
+
+// Get current target depth for DWB
 else if("GET_T_DEPTH_DWB" == $action){
     $new_depth = array();
     $sql = "SELECT * FROM `target_depth` WHERE Target_Flume_Name = 0 AND `isComplete` = 0 ORDER BY Tdate ASC LIMIT 1";
@@ -105,6 +110,7 @@ else if("GET_T_DEPTH_DWB" == $action){
     return;
 }
 
+// Get current target depth for LWF
 else if("GET_T_DEPTH_LWF" == $action){
     $new_depth = array();
     $sql = "SELECT * FROM `target_depth` WHERE Target_Flume_Name = 1 AND `isComplete` = 0 ORDER BY Tdate ASC LIMIT 1";
@@ -122,6 +128,7 @@ else if("GET_T_DEPTH_LWF" == $action){
     return;
 }
 
+// Get the previously completed target depth DWB
 else if("GET_PREV_T_DWB" == $action){
     $new_depth = array();
     $sql = "SELECT * FROM `target_depth` WHERE Target_Flume_Name = 0 AND isComplete = 1 ORDER BY Tdate DESC LIMIT 1";
@@ -139,6 +146,7 @@ else if("GET_PREV_T_DWB" == $action){
     return;
 }
 
+// Get the previously completed target depth LWF
 else if("GET_PREV_T_LWF" == $action){
     $new_depth = array();
     $sql = "SELECT * FROM `target_depth` WHERE Target_Flume_Name = 1 AND isComplete = 1 ORDER BY Tdate DESC LIMIT 1";
@@ -156,6 +164,7 @@ else if("GET_PREV_T_LWF" == $action){
     return;
 }
 
+// Add a new target depth
 else if("ADD_T_DEPTH" == $action){
     $Tdepth = $_POST["Tdepth"];
     $fName = $_POST["fName"];
@@ -171,6 +180,7 @@ else if("ADD_T_DEPTH" == $action){
     return;
 }
 
+// Stop the current filling process
 else if("STOP_FILLING" == $action) {
     $fName = $_POST["fName"];
     $curDate = $_POST["curDate"];
@@ -183,6 +193,7 @@ else if("STOP_FILLING" == $action) {
     return;
 }
 
+// Log the user in if credentials are right
 else if("LOGIN_USER" == $action){
     $uName = $_POST["username"];
     $pWord = $_POST["password"];
