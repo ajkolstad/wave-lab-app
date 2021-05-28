@@ -44,6 +44,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
   bool boolTarget = false; // Bool that shows the buttons to add a new target depth to DB
   bool boolFilling = false; // Bool that checks if user wants to start or stop filling without focus on target depth
   bool atEdge = true; // Bool that checks if line graph is showing data at an edge of the depth data
+  bool dbConnect = false, prevDBConnect = false;
   DateTime prevTargetDate;// Date when previous target depth was set
   DateTime dayCheck; // Date a day ago from when app is running
   DateTime now = new DateTime.now(); // Date when app is running
@@ -59,6 +60,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
       Timer(Duration(seconds: 1), ()
       {
         setState(() {
+          dbConnect = true;
           _tDepthDataDwb = targetData;
           _tDepthDwb = double.parse(_tDepthDataDwb[0].Tdepth);
           if (int.parse(_tDepthDataDwb[0].isComplete) == 0) {
@@ -86,6 +88,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
       Timer(Duration(seconds: 1), ()
       {
         setState(() {
+          prevDBConnect = true;
           _prevTDepthDataDwb = targetData;
           _prevTarget = double.parse(_prevTDepthDataDwb[0].Tdepth);
           prevTargetDate = DateTime.parse(_prevTDepthDataDwb[0].tDate);
@@ -167,7 +170,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
               }
             }
             setState(() {
-              double etaDWB = 2 * ((tempTDepth - tempCurDepth) * 0.0328085);
+              double etaDWB = 2 * ((tempTDepth - tempCurDepth) * 3.2808399);
               etaHours = etaDWB.toInt() + hourOffset;
               double remainder = 10 * etaDWB.remainder(1);
               etaMinutes = remainder.toInt() + minuteOffset;
@@ -248,7 +251,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
             if(user.Name != "") setNewTarget(),
             if(user.Name != "") fillingNoTarget(),
             curDepth(),
-            if(filling)  estimate_time(),
+            if(filling && etaHours >= 0 && etaMinutes >= 0)  estimate_time(),
             if(fillingRN) curFillTime(),
             lastFill(),
             dwb_lineChart(),
@@ -293,12 +296,14 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     // If the editTarget bool equals true then the user can edit and the format of page changes
-                    if(filling) Text("Current Fill Target: ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0))
-                    else Text("Previous Fill Target", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0)),
+                    Text("Current Fill Target: ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0)),
                     // If user can edit the textfield appears for user
-                    Container(
-                        child: Text(" ${_tDepthDwb}cm", style: TextStyle(color: Colors.red, fontSize: 20))
-                    )
+                    if(dbConnect == false)
+                      Text(" Generating", style: TextStyle(color: Colors.red, fontSize: 20))
+                    else if(_tDepthDataDwb.length < 1)
+                      Text(" None", style: TextStyle(color: Colors.red, fontSize: 20))
+                    else
+                    Text(" ${_tDepthDwb}m", style: TextStyle(color: Colors.red, fontSize: 20))
                   ],
                 )
               ],
@@ -503,8 +508,10 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
         child: Row(
           children: <Widget>[
             Text("Set By: ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20)),
-            if(_tDepthDataDwb.length < 1)
+            if(dbConnect == false)
               Text("Generating", style: TextStyle(color: Colors.red, fontSize: 20))
+            else if(_tDepthDataDwb.length < 1)
+              Text("None", style: TextStyle(color: Colors.red, fontSize: 20))
             else
               Text("${_tDepthDataDwb[0].username}", style: TextStyle(color: Colors.red, fontSize: 20))
           ],
@@ -544,7 +551,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
                   style: TextStyle(color: Colors.red),
                   onChanged: (value) => _tDepthDwb = double.parse(value),
                   decoration: InputDecoration(
-                      labelText: '0.0cm',
+                      labelText: '0.0m',
                       labelStyle: TextStyle(color: Colors.red, fontSize: 20),
                       enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
                       focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red))),
@@ -687,7 +694,7 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
             if(_depthData.length < 1)
               Text("Generating", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 20))
             else
-              Text("${_depthData[0].depth}cm", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 20)),
+              Text("${_depthData[0].depth}m", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 20)),
           ],
         )
     );
@@ -723,8 +730,10 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
               children: <Widget>[
                 Text("Current Fill Time: ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20)),
                 // If the json response isn't back from calling the DB then display generating
-                if(_prevTDepthDataDwb.length < 1)
+                if(dbConnect == false)
                   Text("Generating", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 20))
+                else if(_tDepthDataDwb.length < 1)
+                  Text("None", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 20))
                 else if(minutes < 10)
                   Text("$hours:0$minutes:$seconds", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 20))
                 else if(seconds < 10)
@@ -750,12 +759,14 @@ class DirectionalWaveBasinState extends State<DirectionalWaveBasin> {
         children: <Widget>[
           Text("Last Filled Depth: ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15)),
           // If the json response isn't back from calling the DB then display generating
-          if(_prevTDepthDataDwb.length < 1)
+          if(prevDBConnect == false)
             Text("Generating", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15))
+          else if(_prevTDepthDataDwb.length < 1)
+            Text("None", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15))
           else if(prevTargetDate.isAfter(dayCheck))
-            Text("${_prevTarget}cm at ${DateFormat('jm').format(prevTargetDate)}", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15))
+            Text("${_prevTarget}m at ${DateFormat('jm').format(prevTargetDate)}", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15))
           else
-            Text("${_prevTarget}cm ${DateFormat('Md').format(prevTargetDate)} at ${DateFormat('jm').format(prevTargetDate)}", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15))
+            Text("${_prevTarget}m ${DateFormat('Md').format(prevTargetDate)} at ${DateFormat('jm').format(prevTargetDate)}", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15))
         ],
       ),
     );

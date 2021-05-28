@@ -203,6 +203,7 @@ class SettingsState extends State<Settings> {
                         ),
                         // Text box for password
                         TextField(
+                          obscureText: true,
                             controller: passwordController,
                             decoration: InputDecoration(hintText: "Password")
                         )
