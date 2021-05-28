@@ -11,7 +11,7 @@ import 'target_data.dart';
 import 'user_data.dart';
 
 class dbCalls{
-  static const ROOT = "http://192.168.1.19/WavelabDB/get_depth.php"; // The address in the database where the php file is stored
+  static const ROOT = "http://192.168.1.10/WavelabDB/get_depth.php"; // The address in the database where the php file is stored
 
   // Calls for the php file to use
   static const _GET_CUR_DEPTH_DWB = "GET_CUR_DEPTH_DWB";

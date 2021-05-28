@@ -46,6 +46,7 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
   bool boolTarget = false; // Bool that shows the buttons to add a new target depth to DB
   bool atEdge = true; // Bool that checks if line graph is showing data at an edge of the depth data
   bool boolFilling = false; // Bool that checks if user wants to start or stop filling without focus on target depth
+  bool dbConnect = false, prevDBConnect = false;
   DateTime prevTargetDate; // Date when previous target depth was set
   DateTime now = new DateTime.now(); // Date when app is running
   DateTime dayCheck; // Date a day ago from when app is running
@@ -61,6 +62,7 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
         Timer(Duration(seconds: 1), ()
         {
           setState(() {
+            dbConnect = true;
             _tDepthDataLwf = targetData;
             _tDepthLwf = double.parse(_tDepthDataLwf[0].Tdepth);
             if (int.parse(_tDepthDataLwf[0].isComplete) == 0) {
@@ -87,6 +89,7 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
       Timer(Duration(seconds: 1), ()
       {
         setState(() {
+          prevDBConnect = true;
           _prevTDepthDataLwf = targetData;
           _prevTarget = double.parse(_prevTDepthDataLwf[0].Tdepth);
           prevTargetDate = DateTime.parse(_prevTDepthDataLwf[0].tDate);
@@ -166,7 +169,7 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
                 minuteOffset = tempTDate.minute - now.minute;
               }            }
             setState(() {
-              double etaLWF = (tempTDepth - tempCurDepth) * 0.0328085;
+              double etaLWF = (tempTDepth - tempCurDepth) * 3.2808399;
               etaHours = etaLWF.toInt() + hourOffset;
               double remainder = 10 * etaLWF.remainder(1);
               etaMinutes = remainder.toInt() + minuteOffset;
@@ -245,7 +248,7 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
             if(user.Name != "") setNewTarget(),
             if(user.Name != "") fillingNoTarget(),
             curDepth(),
-            if(filling)  estimate_time(),
+            if(filling && etaHours >= 0 && etaMinutes >= 0)  estimate_time(),
             if(fillingRN) curFillTime(),
             lastFill(),
             lwf_lineChart(),
@@ -292,12 +295,14 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
                 mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 // If the editTarget bool equals true then the user can edit and the format of page changes
-                if(filling) Text("Current Fill Target: ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0))
-                else Text("Previous Fill Target: ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0)),
+                Text("Current Fill Target: ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20.0)),
                 // If user can edit the textfield appears for user
-                Container(
-                    child: Text(" ${_tDepthLwf}cm", style: TextStyle(color: Colors.red, fontSize: 20))
-                )
+                if(dbConnect == false)
+                  Text(" Generating", style: TextStyle(color: Colors.red, fontSize: 20))
+                else if(_tDepthDataLwf.length < 1)
+                  Text(" None", style: TextStyle(color: Colors.red, fontSize: 20))
+                else
+                  Text(" ${_tDepthLwf}m", style: TextStyle(color: Colors.red, fontSize: 20))
               ],
               )
             ],
@@ -503,8 +508,10 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
         child: Row(
           children: <Widget>[
             Text("Set By: ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20)),
-            if(_tDepthDataLwf.length < 1)
+            if(dbConnect == false)
               Text("Generating", style: TextStyle(color: Colors.red, fontSize: 20))
+            else if(_tDepthDataLwf.length < 1)
+              Text("None", style: TextStyle(color: Colors.red, fontSize: 20))
             else
               Text("${_tDepthDataLwf[0].username}", style: TextStyle(color: Colors.red, fontSize: 20))
           ],
@@ -542,7 +549,7 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
                 style: TextStyle(color: Colors.red),
                 onChanged: (value) => _tDepthLwf = double.parse(value),
                 decoration: InputDecoration(
-                    labelText: '0.0cm',
+                    labelText: '0.0m',
                     labelStyle: TextStyle(color: Colors.red, fontSize: 20),
                     enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
                     focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red))),
@@ -685,7 +692,7 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
             if(_depthData.length < 1)
               Text("Generating", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 20))
             else
-              Text("${_depthData[0].depth}cm", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 20)),
+              Text("${_depthData[0].depth}m", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 20)),
           ],
         )
     );
@@ -722,8 +729,10 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
                 // If the json response isn't back from calling the DB then display generating
                 Text("Current Fill Time: ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 20)),
                 // If the json response isn't back from calling the DB then display generating
-                if(_prevTDepthDataLwf.length < 1)
+                if(dbConnect == false)
                   Text("Generating", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 20))
+                else if(_tDepthDataLwf.length < 1)
+                  Text("None", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 20))
                 else if(minutes < 10)
                   Text("$hours:0$minutes:$seconds", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 20))
                 else if(seconds < 10)
@@ -750,12 +759,14 @@ class LargeWaveFlumeState extends State<LargeWaveFlume> {
               // If the json response isnt back from calling the DB then display generating
               Text("Last Filled Depth: ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15)),
               // If the json response isn't back from calling the DB then display generating
-              if(_prevTDepthDataLwf.length < 1)
+              if(prevDBConnect == false)
                 Text("Generating", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15))
+              else if(_prevTDepthDataLwf.length < 1)
+                Text("None", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15))
               else if(prevTargetDate.isAfter(dayCheck))
-                Text("${_prevTarget}cm at ${DateFormat('jm').format(prevTargetDate)}", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15))
+                Text("${_prevTarget}m at ${DateFormat('jm').format(prevTargetDate)}", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15))
               else
-                Text("${_prevTarget}cm ${DateFormat('Md').format(prevTargetDate)} at ${DateFormat('jm').format(prevTargetDate)}", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15))
+                Text("${_prevTarget}m ${DateFormat('Md').format(prevTargetDate)} at ${DateFormat('jm').format(prevTargetDate)}", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15))
 
             ],
           ),

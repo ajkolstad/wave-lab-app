@@ -30,6 +30,7 @@ class HomeState extends State<Home> {
   List<targetData> _tDepthDataLwf = [];
   List<targetData> _tDepthDataDwb = [];
   bool afterLwf = false, afterDwb = false;
+  bool dwbDBConnect = false, lwfDBConnect = false;
   double _curDepthLwf, _curDepthDwb, _tDepthLwf, _tDepthDwb;
   int isCompleteLwf = 0, isCompleteDwb = 0;
   int hoursLwf = 0, minutesLwf = 0, secondsLwf = 0, hoursDwb = 0, minutesDwb = 0, secondsDwb = 0;
@@ -75,6 +76,7 @@ class HomeState extends State<Home> {
       //if (this.mounted) {
       Timer(Duration(seconds: 1), () {
         setState(() {
+          lwfDBConnect = true;
           _tDepthDataLwf = targetData;
           _tDepthLwf = double.parse(_tDepthDataLwf[0].Tdepth);
           dateLwf = DateTime.parse(_tDepthDataLwf[0].tDate);
@@ -95,6 +97,7 @@ class HomeState extends State<Home> {
       Timer(Duration(seconds: 1), () {
 
         setState(() {
+          dwbDBConnect = true;
           _tDepthDataDwb = targetData;
           print("_tDepth: ${_tDepthDataDwb[0].isComplete}");
           _tDepthDwb = double.parse(_tDepthDataDwb[0].Tdepth);
@@ -121,7 +124,7 @@ class HomeState extends State<Home> {
           Timer(Duration(seconds: 1), ()
           {
             setState(() {
-              double etaLWF = (tempTDepth - tempCurDepth) * 0.0328085;
+              double etaLWF = (tempTDepth - tempCurDepth) * 3.2808399;
               int hourOffset = 0;
               int minuteOffset = 0;
               DateTime now = new DateTime.now();
@@ -172,7 +175,7 @@ class HomeState extends State<Home> {
             print("tempCurDepth: $tempCurDepth");
             Timer(Duration(seconds: 1), () {
               setState(() {
-                double etaDWB = 2 * ((tempTDepth - tempCurDepth) * 0.0328085);
+                double etaDWB = 2 * ((tempTDepth - tempCurDepth) * 3.2808399);
                 int hourOffset = 0;
                 int minuteOffset = 0;
                 DateTime now = new DateTime.now();
@@ -332,20 +335,20 @@ class HomeState extends State<Home> {
                   padding: EdgeInsets.fromLTRB(0,10,0,5),
                   child: Text("Status: ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15)),
                 ),
-                if(_tDepthDataLwf.length < 1)
+                if(lwfDBConnect == false)
                   Container(
                       padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
                       child: Text("Generating", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 15))
                   )
-                else if(isCompleteLwf == 1 && _curDepthLwf >= _tDepthLwf)
-                  Container(
-                      padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
-                      child: Text("Filling Complete", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 15))
-                  )
-                else if(isCompleteLwf == 1)
+                else if(_tDepthDataLwf.length < 1)
                   Container(
                       padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
                       child: Text("Not Filling", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 15))
+                  )
+                else if(_curDepthLwf >= _tDepthLwf)
+                  Container(
+                      padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
+                      child: Text("Filling Complete", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 15))
                   )
                 else if(afterLwf)
                   Row(
@@ -360,7 +363,7 @@ class HomeState extends State<Home> {
                       ),
                       Container(
                           padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
-                          child: Text("${_tDepthLwf}cm", style: TextStyle(color: Colors.red, fontSize: 15))
+                          child: Text("${_tDepthLwf}m", style: TextStyle(color: Colors.red, fontSize: 15))
                       ),
                       Container(
                           padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
@@ -397,7 +400,7 @@ class HomeState extends State<Home> {
 
             ),
             // Prints the current depth of the large wave flume
-            if(isCompleteLwf == 0)
+            if(_tDepthDataLwf.length >= 1 && hoursLwf >= 0 && minutesLwf >= 0)
             Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
@@ -492,20 +495,20 @@ class HomeState extends State<Home> {
                 padding: EdgeInsets.fromLTRB(0,10,0,5),
                 child: Text("Status: ", style: TextStyle(color: darkmodeClass.darkmodeState ? Colors.white : Colors.black, fontSize: 15)),
               ),
-              if(_tDepthDataDwb.length < 1)
+              if(dwbDBConnect == false)
                 Container(
                     padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
                     child: Text("Generating", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 15))
                 )
-              else if(isCompleteDwb == 1 && _curDepthDwb >= _tDepthDwb)
-                Container(
-                    padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
-                    child: Text("Filling Complete", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 15))
-                )
-              else if(isCompleteDwb == 1)
+              else if(_tDepthDataDwb.length < 1)
                 Container(
                     padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
                     child: Text("Not Filling", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 15))
+                )
+              else if(_curDepthDwb >= _tDepthDwb)
+                Container(
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
+                    child: Text("Filling Complete", style: TextStyle(color: Color.fromRGBO(0, 175, 255, 1.0), fontSize: 15))
                 )
               else if(afterDwb)
                 Row(
@@ -520,7 +523,7 @@ class HomeState extends State<Home> {
                     ),
                     Container(
                       padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
-                      child: Text("${_tDepthDwb}cm ", style: TextStyle(color: Colors.red, fontSize: 15))
+                      child: Text("${_tDepthDwb}m ", style: TextStyle(color: Colors.red, fontSize: 15))
                     ),
                     Container(
                         padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
@@ -555,7 +558,7 @@ class HomeState extends State<Home> {
                 )
             ]
           ),
-          if(isCompleteDwb == 0)
+          if(_tDepthDataDwb.length >= 1 && hoursDwb >= 0 && minutesDwb >= 0)
             Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
